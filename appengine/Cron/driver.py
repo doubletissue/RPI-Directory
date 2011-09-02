@@ -50,8 +50,7 @@ class Driver(webapp.RequestHandler):
     index_from_ds.put()
 	
 application = webapp.WSGIApplication([
-  ("/crawl/.*", Driver)
-  ])
+  ("/crawl/.*", Driver)])
 
 def main():
   run_wsgi_app(application)
