@@ -4,14 +4,6 @@ from google.appengine.ext import db
 
 class Person(db.Model):
   """Models a person in the RPI directory."""
-    'Class:'           : 'class',
-    'Curriculum:'      : 'major',
-    'Title:'           : 'title',
-    'Telephone:'       : 'phone',
-    'Fax:'             : 'fax',
-    'Office Location:' : 'office location',
-    'Campus Mailstop:' : 'campus mailstop',
-    'Mailing Address:' : 'mailing address'
   year = db.StringProperty()
   major = db.StringProperty()
   title = db.StringProperty()
