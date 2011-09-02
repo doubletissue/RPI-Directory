@@ -85,7 +85,7 @@ class Crawler(webapp.RequestHandler):
         email += str(letterID-28)
     return email
     
-  def findStuff( self,string ):
+  def findStuff( self,full_string ):
     
     d = {}
     
@@ -100,10 +100,11 @@ class Crawler(webapp.RequestHandler):
                     'Mailing Address:' : 'mailing_address'
                   }
     
-    string = string[string.find('id="singleDirectoryEntry"'):]
+    string = string[full_string.find('id="singleDirectoryEntry"'):]
     string = string[:string.find('</table')]
     
     if string is "":
+      logger.warn(full_string)
       return None
       
     name = self.findName(string)
