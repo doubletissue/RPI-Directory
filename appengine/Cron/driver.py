@@ -87,7 +87,7 @@ class Driver(webapp.RequestHandler):
 	
 class DriverWorker(webapp.RequestHandler):
   def post(self):
-    result = Crawler().getMap(cgi.escape(self.request.get('key')))
+    result = Crawler().getMap(cgi.escape(self.request.get('index')))
     putResult(result)
 	
 application = webapp.WSGIApplication([
