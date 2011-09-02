@@ -92,7 +92,7 @@ class DriverWorker(webapp.RequestHandler):
 	
 application = webapp.WSGIApplication([
   ("/crawl/.*", Driver),
-  ("/crawl/worker/.*.*", DriverWorker)])
+  ("/crawl/worker/.*", DriverWorker)])
 
 def main():
   run_wsgi_app(application)
