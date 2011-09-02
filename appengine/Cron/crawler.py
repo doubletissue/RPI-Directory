@@ -106,7 +106,7 @@ class Crawler(webapp.RequestHandler):
     string = string[:string.find('</table')]
     
     if string is "":
-      logger.warn(full_string)
+      logging.warn(full_string)
       return None
       
     name = self.findName(string)
