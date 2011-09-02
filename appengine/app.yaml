@@ -13,7 +13,7 @@ handlers:
   upload: static/favicon.ico
 
 - url: /crawl/.*
-  script: Crawler/Crawler.py
+  script: Cron/driver.py
 
 - url: /.*
   script: main.py
