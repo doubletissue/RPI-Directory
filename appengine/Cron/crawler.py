@@ -76,9 +76,15 @@ class Crawler(webapp.RequestHandler):
       endIndex   = string.find(".gif", startIndex)
       
       letterID = int(string[startIndex:endIndex].strip())
+      # Stop at an @ or at @rpi.edu
       if letterID == 99:
-        email += '@rpi.edu'
-      elif letterID < 28:
+        return email
+      if letterID == 39:
+        return email
+      if letterID < 28:
+        # WTF RPI?
+        if letterID == 22:
+          letterID = 2
         email += chr(letterID+96)
       else:
         email += str(letterID-28)
