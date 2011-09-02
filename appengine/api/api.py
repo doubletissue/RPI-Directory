@@ -49,7 +49,7 @@ class Api(webapp.RequestHandler):
 
 application = webapp.WSGIApplication(
   [
-    ("/api/", Api)
+    ("/api", Api)
   ])
    
 def main():

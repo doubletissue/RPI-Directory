@@ -21,7 +21,7 @@ handlers:
 - url: /crawl/.*
   script: cron/driver.py
 
-- url: /api/.*
+- url: /api.*
   script: api/api.py
 
 - url: /.*
