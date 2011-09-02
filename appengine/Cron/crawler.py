@@ -3,6 +3,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 import logging
 import cgi
+import re
 
 class Crawler(webapp.RequestHandler):
   def get(self):
@@ -40,13 +41,15 @@ class Crawler(webapp.RequestHandler):
       endIndex   = string.find('</td>',startIndex)
       r = string[startIndex:endIndex].strip()
       r = r.replace("<br />","\n")
-      return r
+      p = re.compile(' *\n *')
+      r = p.sub('\n',r)
+      return r.lower()
       
   def findName(self,string):
     startIndex = string.find('<th class="name">')
     startIndex = string.find('>',startIndex) + 1
     endIndex   = string.find('</th>',startIndex)
-    return string[startIndex:endIndex].strip()
+    return string[startIndex:endIndex].strip().lower()
 
   def findHomepage(self,string):
     homepage = self.findAttribute(string,"Homepage:")
@@ -54,7 +57,7 @@ class Crawler(webapp.RequestHandler):
       return ""
     startIndex = homepage.find('"') + 1
     endIndex   = homepage.find('"',startIndex)
-    return homepage[startIndex:endIndex].strip()
+    return homepage[startIndex:endIndex].strip().lower()
     
     
   def findEmail(self,string):
@@ -102,8 +105,10 @@ class Crawler(webapp.RequestHandler):
     
     if string is "":
       return None
-    
-    d['name'] = self.findName(string)
+      
+    name = self.findName(string)
+    if name is not "":
+      d['name'] = name
     
     homepage = self.findHomepage(string)
     if homepage is not "":
