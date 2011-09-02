@@ -99,6 +99,6 @@ def parseData( key ):
   findStuff(s)
 
 #parseData(4991)
-for key in range(4000,5000):
+for key in range(4900,5000):
   print key
   parseData(key)
