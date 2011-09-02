@@ -12,3 +12,7 @@ class Person(db.Model):
   office_location = db.StringProperty()
   campus_mailstop = db.StringProperty()
   mailing_address = db.StringProperty()
+
+class SearchPosition(db.Model):
+  """Model to store Crawler position."""
+  position = db.IntegerProperty()
