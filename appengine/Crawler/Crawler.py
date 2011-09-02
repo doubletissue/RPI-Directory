@@ -12,7 +12,7 @@ class Crawler(webapp.RequestHandler):
       self.response.out.write(k + "-->" + d[k] + '\n')
     self.response.out.write("-------------------------")
   
-  def get(self,key):
+  def getMap(self,key):
     return self.parseData(key)
     
   #def post(self):
