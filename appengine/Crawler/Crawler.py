@@ -11,6 +11,9 @@ class Crawler(webapp.RequestHandler):
     for k in d.keys():
       self.response.out.write(k + "-->" + d[k] + '\n')
     self.response.out.write("-------------------------")
+  
+  def get(self,key):
+    return self.parseData(key)
     
   #def post(self):
     #self.response.headers['Content-Type'] = 'text/plain'
