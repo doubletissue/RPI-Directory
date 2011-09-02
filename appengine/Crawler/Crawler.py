@@ -9,7 +9,7 @@ class Crawler(webapp.RequestHandler):
     self.response.headers['Content-Type'] = 'text/plain'
     d = self.parseData(cgi.escape(self.request.get('key')))
     for k in d.keys():
-      self.response.out.write(k + "-->" + d[k] + '\n')
+      self.response.out.write(k + " --> " + d[k] + '\n')
     self.response.out.write("-------------------------")
   
   def getMap(self,key):
@@ -101,6 +101,9 @@ class Crawler(webapp.RequestHandler):
     
     string = string[string.find('id="singleDirectoryEntry"'):]
     string = string[:string.find('</table')]
+    
+    if string is "":
+      return None
     
     d['name'] = self.findName(string)
     
