@@ -12,16 +12,8 @@ class Crawler(webapp.RequestHandler):
       self.response.out.write(k + " --> " + d[k] + '\n')
     self.response.out.write("-------------------------")
   
-  def getMap(self,key):
+  def getMap(self, key):
     return self.parseData(key)
-    
-  #def post(self):
-    #self.response.headers['Content-Type'] = 'text/plain'
-    #self.response.out.write(cgi.escape(self.request.get('key')))
-    #d = self.parseData(cgi.escape(self.request.get('key')))
-    #for k in d.keys():
-      #self.response.out.write(k + "-->" + d[k] + '\n')
-    #self.response.out.write("-------------------------")
   
   def getPage( self, key ):
     url = "http://prod3.server.rpi.edu/peopledirectory/entry.do?datasetName=directory&key=" + str(key)
