@@ -4,6 +4,7 @@ import logging
 import cgi
 import urllib
 from models import Person
+from django.utils import simplejson as json
 
 class Api(webapp.RequestHandler):
   def get(self):
@@ -42,8 +43,7 @@ class Api(webapp.RequestHandler):
     
     for p in people:
       l.append(Person.buildMap(p))
-    s = repr(l)
-    s = s.replace('"',"'")
+    s = json.dumps(l)
     self.response.out.write(s)
     
 
