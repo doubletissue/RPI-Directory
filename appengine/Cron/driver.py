@@ -90,7 +90,7 @@ class DriverWorker(webapp.RequestHandler):
     if result:
       putResult(result)
     else:
-      logging.info("Invalid index: " + index)
+      logging.error("Invalid index: " + index)
       raise Exception()
 	
 application = webapp.WSGIApplication([
