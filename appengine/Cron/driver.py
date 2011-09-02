@@ -57,11 +57,9 @@ def putResult(d):
 
 class Driver(webapp.RequestHandler):
   def get(self):
-    self.response.out.write('<html><body>')
     index = memcache.get("index")
 
     if not index:
-      self.response.out.write("Memcache Miss\n")
       index_from_ds = SearchPosition.get_by_key_name("index")
       if not index_from_ds:
         index = 1
@@ -87,11 +85,13 @@ class Driver(webapp.RequestHandler):
 	
 class DriverWorker(webapp.RequestHandler):
   def post(self):
-    logging.info("Spawned worker!")
-    logging.info("Index: " + cgi.escape(self.request.get('index')))
-    result = Crawler().getMap(cgi.escape(self.request.get('index')))
-    logging.info("Result: " + repr(result))
-    putResult(result)
+    index = cgi.escape(self.request.get('index'))
+    result = Crawler().getMap(index)
+    if result:
+      putResult(result)
+    else:
+      logging.info("Invalid index: " + index)
+      raise Exception()
 	
 application = webapp.WSGIApplication([
   ("/crawl/main", Driver),

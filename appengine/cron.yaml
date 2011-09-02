@@ -1,4 +1,4 @@
 cron:
 - description: minutly crawler
-  url: /crawl/
+  url: /crawl/main
   schedule: every 1 minutes
