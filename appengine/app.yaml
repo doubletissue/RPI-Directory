@@ -20,7 +20,9 @@ handlers:
 
 - url: /crawl/.*
   script: cron/driver.py
-  login: admin
+
+- url: /api/.*
+  script: api/api.py
 
 - url: /.*
   script: main.py

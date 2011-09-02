@@ -1,6 +1,6 @@
 from cron.crawler import Crawler
-from cron.models import SearchPosition
-from cron.models import Person
+from models import SearchPosition
+from models import Person
 
 import cgi
 import datetime
