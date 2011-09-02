@@ -16,7 +16,7 @@ from google.appengine.api import memcache
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 #Creates a person and stores it
-def putResult(self,d):
+def putResult(d):
   person = Person()
   
   # If we have the RCSID, use it as the key
@@ -87,12 +87,15 @@ class Driver(webapp.RequestHandler):
 	
 class DriverWorker(webapp.RequestHandler):
   def post(self):
+    logging.info("Spawned worker!")
+    logging.info("Index: " + cgi.escape(self.request.get('index')))
     result = Crawler().getMap(cgi.escape(self.request.get('index')))
+    logging.info("Result: " + repr(result))
     putResult(result)
 	
 application = webapp.WSGIApplication([
-  ("/crawl/.*", Driver),
-  ("/crawl/worker/.*", DriverWorker)])
+  ("/crawl/main", Driver),
+  ("/crawl/worker", DriverWorker)])
 
 def main():
   run_wsgi_app(application)
