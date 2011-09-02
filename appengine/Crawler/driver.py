@@ -22,6 +22,8 @@ class Driver(webapp.RequestHandler):
 	  index_from_ds = SearchPosition.get_by_key_name("index")
 	  if not index_from_ds:
 		index = 1
+		#Add it to datastore
+		SearchPosition(key_name="index", position=index).put()
 	  else:
 	  	index = index_from_ds.position
 	result = Crawler.getMap(index)
@@ -40,3 +42,12 @@ class Driver(webapp.RequestHandler):
 	index_from_ds.position = (index + 1)
 	index_from_ds.put()
 	
+application = webapp.WSGIApplication([
+  ("/crawl/.*", Driver)
+  ])
+
+def main():
+  run_wsgi_app(application)
+
+if __name__ == "__main__":
+  main()
