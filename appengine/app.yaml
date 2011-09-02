@@ -12,8 +12,14 @@ handlers:
   static_files: static/favicon.ico
   upload: static/favicon.ico
 
+- url: /css
+  static_dir: css
+
+- url: /js
+  static_dir: js
+
 - url: /crawl/.*
-  script: Cron/driver.py
+  script: cron/driver.py
   login: admin
 
 - url: /.*
