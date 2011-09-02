@@ -14,7 +14,7 @@ handlers:
 
 - url: /crawl/.*
   script: Cron/driver.py
-  login: required
+  login: admin
 
 - url: /.*
   script: main.py
