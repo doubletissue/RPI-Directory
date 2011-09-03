@@ -102,12 +102,15 @@ class Crawler(webapp.RequestHandler):
                     'Mailing Address:' : 'mailing_address'
                   }
     
+    if full_string.find('wrong state') >= 0:
+      return {'error':'end of database'}
+    
     string = string[string.find('id="singleDirectoryEntry"'):]
     string = string[:string.find('</table')]
     
     if string is "":
       logging.warn(full_string)
-      return None
+      return {'error':'page_not_found'}
       
     name = self.findName(string)
     if name is not "":
