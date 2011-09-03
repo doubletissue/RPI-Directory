@@ -24,5 +24,8 @@ handlers:
 - url: /api.*
   script: api/api.py
 
+- url: /tableApi.*
+  script: api/api.py
+
 - url: /.*
   script: main.py
