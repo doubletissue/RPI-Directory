@@ -12,67 +12,58 @@
 		</style>
 		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
-		<script type="text/javascript" charset="utf-8">
-			$(document).ready(function() {
-				$('#example').dataTable();
-			} );
-		</script>
-	</head>
-	<body id="dt_example">
-		<div id="container">
-			<div class="full_width big">
-				RPI Directory
+			<script type="text/javascript" charset="utf-8">
+				$(document).ready(function() {
+					$('#example').dataTable( {
+						"bProcessing": true,
+						"bServerSide": true,
+						"sAjaxSource": "http://rpidirectory.appspot.com/tableApi?name=peter"
+					} );
+				} );
+			</script>
+		</head>
+		<body id="dt_example">
+			<div id="container">
+				<div class="full_width big">
+					RPI Directory
+				</div>
+
+				<h1>Preamble</h1>
+				<p>Making an RPI Directory that's fast and always available!</p>
+
+				<h1>Search</h1>
+				<form action="/search" method="post">
+				      <div><input type="text" name="keyword" id="keyword" /></div>
+				      <div><input type="submit" value="Search"></div>
+				</form>
+
+				<h1>Live example</h1>
+				<div id="demo">
+					<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
+								<thead>
+							<tr>
+								<th width="20%">Name</th>
+								<th width="25%">Browser</th>
+								<th width="25%">Platform(s)</th>
+								<th width="15%">Engine version</th>
+								<th width="15%">CSS grade</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+						<td colspan="5" class="dataTables_empty">Loading data from server</td></tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<th>Rendering engine</th>
+								<th>Browser</th>
+								<th>Platform(s)</th>
+								<th>Engine version</th>
+								<th>CSS grade</th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
 			</div>
-			
-			<h1>Preamble</h1>
-			<p>Making an RPI Directory that's fast and always available!</p>
-			
-			<h1>Search</h1>
-			<form action="/search" method="post">
-			      <div><input type="text" name="keyword" id="keyword" /></div>
-			      <div><input type="submit" value="Search"></div>
-			</form>
-			
-			<h1>Live example</h1>
-			<div id="demo">
-			<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Browser</th>
-						<th>Platform(s)</th>
-						<th>Engine version</th>
-						<th>CSS grade</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="gradeX">
-						<td>Trident</td>
-						<td>Internet
-							 Explorer 4.0</td>
-						<td>Win 95+</td>
-						<td class="center">4</td>
-						<td class="center">X</td>
-					</tr>
-					<tr class="gradeC">
-						<td>Trident</td>
-						<td>Internet
-							 Explorer 5.0</td>
-						<td>Win 95+</td>
-						<td class="center">5</td>
-						<td class="center">C</td>
-					</tr>
-					<tfoot>
-						<tr>
-							<th>Rendering engine</th>
-							<th>Browser</th>
-							<th>Platform(s)</th>
-							<th>Engine version</th>
-							<th>CSS grade</th>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
-		</div>
-	</body>
+		</body>
 </html>

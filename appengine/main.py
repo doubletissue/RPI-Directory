@@ -1,6 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-from models import Person
+from cron.models import Person
 import os
 from google.appengine.ext.webapp import template
 import logging
