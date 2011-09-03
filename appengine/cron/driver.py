@@ -85,16 +85,20 @@ class Driver(webapp.RequestHandler):
       index_from_ds = SearchPosition(key_name="index", position=index)
     index_from_ds.put()
 
-	
+
 class DriverWorker(webapp.RequestHandler):
   def post(self):
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
-    if result:
-      putResult(result)
+    if 'error' in result.keys():
+      if result['error'] is 'page_not_found':
+        logging.error("Invalid index: " + index)
+        raise Exception()
+      if result['error'] is 'end of database':
+        memcache.add("index", 1, 86400)
+        SearchPosition(key_name="index", position=1).put()
     else:
-      logging.error("Invalid index: " + index)
-      raise Exception()
+      putResult(result)
 	
 application = webapp.WSGIApplication([
   ("/crawl/main", Driver),
