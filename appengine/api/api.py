@@ -87,6 +87,7 @@ class ChristiansStupidApi(webapp.RequestHandler):
     d2 = {}
     d2['iTotalRecords'] = len(l)
     d2['iTotalDisplayRecords'] = len(l)
+    d2['sColumns'] = 'name,email,class,major,title,phone,fax,homepage,office_location,campus_mailstop,mailing_address'
     d2['sEcho'] = urllib.unquote( cgi.escape(self.request.get('sEcho' )) )
     d2['aaData'] = l
     
