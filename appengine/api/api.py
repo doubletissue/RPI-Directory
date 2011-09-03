@@ -81,8 +81,19 @@ class ChristiansStupidApi(webapp.RequestHandler):
     
     l = []
     
+    keys = set()
     for p in people:
-      l.append(Person.buildMap(p))
+      m = Person.buildMap(p)
+      for k in m.keys():
+        keys.add(k)
+    
+    
+    for p in people:
+      m = Person.buildMap(p)
+      for key in keys:
+        if key not in m.keys():
+          m[key] = ""
+      l.append(m)
     
     d2 = {}
     d2['iTotalRecords'] = len(l)
