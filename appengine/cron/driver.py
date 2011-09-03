@@ -79,7 +79,10 @@ class Driver(webapp.RequestHandler):
     
     #Update DataStore
     index_from_ds = SearchPosition.get_by_key_name("index")
-    index_from_ds.position = (index + 5)
+    if index_from_ds:
+      index_from_ds.position = (index + 5)
+    else:
+      index_from_ds = SearchPosition(key_name="index", position=index)
     index_from_ds.put()
 
 	
