@@ -44,7 +44,6 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 			TextView year = (TextView)newView.findViewById(R.id.query_result_year);
 			TextView department = (TextView)newView.findViewById(R.id.query_result_department);
 
-			/*
 			if( name != null ){
 				name.setText(model.name);
 			}
@@ -55,9 +54,8 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 				year.setText(model.year);
 			}
 			if( department != null ){
-				year.setText(model.department);
+				department.setText(model.department);
 			}
-			*/
 		}
 		
 		return newView;
