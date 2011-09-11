@@ -43,12 +43,10 @@ public class DataDisplayerActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        ArrayList<String> list_items = new ArrayList<String>();
-        list_items.add("one");
-        list_items.add("two");
-        list_items.add("three");
-        setListAdapter(new ArrayAdapter<String>(this, R.layout.query_result_list_item, list_items));
-        list_items.add("four");
+        ArrayList<QueryResultModel> list_items = new ArrayList<QueryResultModel>();
+        list_items.add(new QueryResultModel("1","Steve","steve@rpi.edu","Freshman","CSCI"));
+        list_items.add(new QueryResultModel("2","Carl","carl@rpi.edu","Junior","CSYS"));
+        setListAdapter(new QueryResultArrayAdapter(this, R.layout.query_result_list_item, list_items));
               
         ListView lv = getListView();
         lv.setOnItemClickListener(new OnItemClickListener(){
