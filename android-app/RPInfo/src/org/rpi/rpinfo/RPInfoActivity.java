@@ -2,7 +2,6 @@ package org.rpi.rpinfo;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -10,10 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class RPInfoActivity extends Activity {
-	/*
-	 * rpidirectory.appspot.com/api?name=[name]
-	 */
-
 	/** Called when the activity is first created */
 	public void onCreate(Bundle savedInstanceState) {		
         super.onCreate(savedInstanceState);
