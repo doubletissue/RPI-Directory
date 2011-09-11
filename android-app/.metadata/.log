@@ -85,3 +85,6 @@ Command-line arguments:  -os linux -ws gtk -arch x86
 
 !ENTRY org.eclipse.core.resources 2 10035 2011-09-11 14:47:51.943
 !MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY org.eclipse.ui 4 4 2011-09-11 16:17:18.623
+!MESSAGE Invalid preference page path: XML Syntax

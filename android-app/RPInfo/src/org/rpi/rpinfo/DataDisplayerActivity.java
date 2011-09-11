@@ -44,15 +44,21 @@ public class DataDisplayerActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         
         ArrayList<QueryResultModel> list_items = new ArrayList<QueryResultModel>();
-        list_items.add(new QueryResultModel("1","Steve","steve@rpi.edu","Freshman","CSCI"));
-        list_items.add(new QueryResultModel("2","Carl","carl@rpi.edu","Junior","CSYS"));
+        list_items.add(new QueryResultModel("1","Benoid Mandelbrot","mandeb@rpi.edu","Senior","MATH/CSCI"));
+        list_items.add(new QueryResultModel("2","Andre Weil","weila3@rpi.edu","Sophomore", "MATH"));
+        list_items.add(new QueryResultModel("3","Thomas Bayes","bayest4@rpi.edu","Junior", "MATH"));
+        list_items.add(new QueryResultModel("4","Edsger Dijkstra","dijkse2@rpi.edu","Senior", "CSCI"));
+        list_items.add(new QueryResultModel("5","Blaise Pascal","pascab@rpi.edu","Freshman", "MATH"));
+        list_items.add(new QueryResultModel("6","Rene Descartes","descar14@rpi.edu","Junior", "PHIL/MATH"));
+        list_items.add(new QueryResultModel("7","Edward Teller","tellee@rpi.edu","Freshman", "PHYS"));
+        list_items.add(new QueryResultModel("8","Raymond Smullyan","smullr@rpi.edu","Junior", "PHIL"));
         setListAdapter(new QueryResultArrayAdapter(this, R.layout.query_result_list_item, list_items));
               
         ListView lv = getListView();
         lv.setOnItemClickListener(new OnItemClickListener(){
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
-				Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				TextView name = (TextView) view.findViewById(R.id.query_result_name);
+				Toast.makeText(getApplicationContext(), name.getText(), Toast.LENGTH_SHORT).show();
 			}
         });
                 
