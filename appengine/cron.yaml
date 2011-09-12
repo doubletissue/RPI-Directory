@@ -1,4 +1,5 @@
 cron:
-- description: minutly crawler
+- description: daily crawler update
   url: /crawl/main
-  schedule: every 1 minutes
+  schedule: every day 02:00
+  timezone: US/Eastern
