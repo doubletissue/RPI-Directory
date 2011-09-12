@@ -1,0 +1,5 @@
+package org.rpi.rpinfo;
+
+public class DetailedDataDisplayerActivity extends Activity {
+
+}

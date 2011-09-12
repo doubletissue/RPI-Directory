@@ -1,0 +1,19 @@
+package org.rpi.rpinfo;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+public class DetailedDataDisplayerActivity extends Activity {
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		Bundle b = getIntent().getExtras();
+		if( b == null ){
+			finish();
+		}
+		
+		//Extract the selected person from the intent
+		QueryResultModel selectedPerson = (QueryResultModel)b.get("selectedPerson");
+	}
+
+}
