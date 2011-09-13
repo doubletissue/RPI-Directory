@@ -1,6 +1,7 @@
 #App Engine Models
 
 from google.appengine.ext import db
+import string
 
 class Person(db.Model):
   """Models a person in the RPI directory."""
@@ -23,7 +24,7 @@ class Person(db.Model):
     person = Person()
     
     if 'email' in d:
-      person = Person(key_name = d['email'])
+      person = Person(key_name = string.rsplit(d['email'],'@',1)[0])
     
     if 'name' in d:
       names = d['name'].split()[:3]

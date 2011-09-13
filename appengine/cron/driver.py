@@ -15,6 +15,8 @@ from google.appengine.api import taskqueue
 from google.appengine.api import memcache
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+NUM_THREADS = 100
+
 #Creates a person and stores it
 def putResult(d):
   person = Person()
@@ -70,7 +72,7 @@ class Driver(webapp.RequestHandler):
       memcache.add("index", index, 86400)
 
     #Spawn 5 tasks and do them
-    for i in range(index, index + 5):
+    for i in range(index, index + NUM_THREADS):
       taskqueue.add(url='/crawl/worker', params={'index': i})
 
       #Update Memcache
@@ -80,7 +82,7 @@ class Driver(webapp.RequestHandler):
     #Update DataStore
     index_from_ds = SearchPosition.get_by_key_name("index")
     if index_from_ds:
-      index_from_ds.position = (index + 5)
+      index_from_ds.position = (index + NUM_THREADS)
     else:
       index_from_ds = SearchPosition(key_name="index", position=index)
     index_from_ds.put()
@@ -91,11 +93,13 @@ class DriverWorker(webapp.RequestHandler):
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
     if 'error' in result.keys():
-      if result['error'] is 'page_not_found':
+      logging.error("error at index" + index + ", error is " + result['error'])
+      if result['error'] == 'page_not_found':
         logging.error("Invalid index: " + index)
         raise Exception()
-      if result['error'] is 'end of database':
-        memcache.add("index", 1, 86400)
+      if result['error'] == 'end of database':
+        logging.error("Index out of range: " + index)
+        memcache.set("index", 1, 86400)
         SearchPosition(key_name="index", position=1).put()
     else:
       putResult(result)
