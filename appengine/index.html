@@ -3,24 +3,48 @@
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<link rel="shortcut icon" type="image/ico" href="http://www.datatables.net/media/images/favicon.ico" />
-		
 		<title>RPI Directory</title>
 		<style type="text/css" title="currentStyle">
 			@import "css/demo_page.css";
 			@import "css/demo_table.css";
 		</style>
 		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-		<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js"></script>
-			<script type="text/javascript" charset="utf-8">
-				$(document).ready(function() {
-					$('#example').dataTable( {
-						"bProcessing": true,
-						"bServerSide": true,
-						"sAjaxSource": "http://rpidirectory.appspot.com/tableApi?name=peter"
-					} );
-				} );
-			</script>
+		<script type="text/javascript" charset="utf-8">
+		var last_known_query = "";
+		$(document).ready(function() {
+			$("#keyword").keyup(function(event) {
+			  var keyword = $("#keyword").val();
+			  if ( event.which == 13 ) {
+			     event.preventDefault();
+			  }
+			  
+			  if (keyword != ''){
+				  $.ajax({
+				     type: "GET",
+				     url: "/api?name=" + encodeURI(keyword.toLowerCase()),
+				     async: true,
+				 	 dataType: "json",
+					 success: function(data){
+						if (data !== [] && data.length > 0){		
+						 $("#results").empty();	
+						 $.each(data, function(i, person){
+					       $("#results").append("<li>" + person.name + " - " + person.class + " -  " + person.major +  "</li>");
+						 });
+						 $("#output").text("Results for: " + keyword);
+						 last_known_query = keyword;
+						}else{
+							if (last_known_query != '')
+							$("#output").text("Nothing found for " + keyword + ", showing results for " + last_known_query);
+							else $("#output").text("Nothing found for " + keyword);
+						}
+					 }
+				   });
+			  }else{
+				$("#output").text("Type something above silly!");
+			}
+	      });					
+		});
+	    </script>
 		</head>
 		<body id="dt_example">
 			<div id="container">
@@ -32,38 +56,9 @@
 				<p>Making an RPI Directory that's fast and always available!</p>
 
 				<h1>Search</h1>
-				<form action="/search" method="post">
-				      <div><input type="text" name="keyword" id="keyword" /></div>
-				      <div><input type="submit" value="Search"></div>
-				</form>
-
-				<h1>Live example</h1>
-				<div id="demo">
-					<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
-								<thead>
-							<tr>
-								<th width="20%">Name</th>
-								<th width="25%">Browser</th>
-								<th width="25%">Platform(s)</th>
-								<th width="15%">Engine version</th>
-								<th width="15%">CSS grade</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-						<td colspan="5" class="dataTables_empty">Loading data from server</td></tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<th>Rendering engine</th>
-								<th>Browser</th>
-								<th>Platform(s)</th>
-								<th>Engine version</th>
-								<th>CSS grade</th>
-							</tr>
-						</tfoot>
-					</table>
-				</div>
+				  <input type="text" name="keyword" id="keyword" />
+			      <div id="output">Type something above silly!</div>
+				<ul id="results"></ul>	
 			</div>
 		</body>
 </html>
