@@ -15,6 +15,8 @@ from google.appengine.api import taskqueue
 from google.appengine.api import memcache
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+NUM_THREADS = 100
+
 #Creates a person and stores it
 def putResult(d):
   person = Person()
@@ -70,7 +72,7 @@ class Driver(webapp.RequestHandler):
       memcache.add("index", index, 86400)
 
     #Spawn 5 tasks and do them
-    for i in range(index, index + 5):
+    for i in range(index, index + NUM_THREADS):
       taskqueue.add(url='/crawl/worker', params={'index': i})
 
       #Update Memcache
@@ -80,7 +82,7 @@ class Driver(webapp.RequestHandler):
     #Update DataStore
     index_from_ds = SearchPosition.get_by_key_name("index")
     if index_from_ds:
-      index_from_ds.position = (index + 5)
+      index_from_ds.position = (index + NUM_THREADS)
     else:
       index_from_ds = SearchPosition(key_name="index", position=index)
     index_from_ds.put()
