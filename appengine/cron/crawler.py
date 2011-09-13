@@ -75,11 +75,11 @@ class Crawler(webapp.RequestHandler):
       if letterID == 99:
         email += "@rpi.edu"
         break
-      if letterID == 39:
+      elif letterID == 39:
         email += '@'
-      if letterID == 38:
+      elif letterID == 38:
         email += '.'
-      if letterID < 28:
+      elif letterID < 28:
         # WTF RPI?
         if letterID == 22:
           letterID = 2
