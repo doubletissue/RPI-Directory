@@ -73,16 +73,21 @@ class Crawler(webapp.RequestHandler):
       letterID = int(string[startIndex:endIndex].strip())
       # Stop at an @ or at @rpi.edu
       if letterID == 99:
-        return email
+        email += "@rpi.edu"
+        break
       if letterID == 39:
-        return email
+        email += '@'
+      if letterID == 38:
+        email += '.'
       if letterID < 28:
         # WTF RPI?
         if letterID == 22:
           letterID = 2
+        if letterID > 22:
+          letterID -= 1
         email += chr(letterID+96)
       else:
-        email += str(letterID-28)
+        email += str(letterID-27)
     return email
     
   def findStuff( self,string ):
@@ -103,13 +108,14 @@ class Crawler(webapp.RequestHandler):
                   }
     
     if full_string.find('wrong state') >= 0:
+      logging.warn("end of database!")
       return {'error':'end of database'}
     
     string = string[string.find('id="singleDirectoryEntry"'):]
     string = string[:string.find('</table')]
     
     if string is "":
-      logging.warn(full_string)
+      logging.warn("error reading data")
       return {'error':'page_not_found'}
       
     name = self.findName(string)

@@ -91,11 +91,13 @@ class DriverWorker(webapp.RequestHandler):
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
     if 'error' in result.keys():
-      if result['error'] is 'page_not_found':
+      logging.error("error at index" + index + ", error is " + result['error'])
+      if result['error'] == 'page_not_found':
         logging.error("Invalid index: " + index)
         raise Exception()
-      if result['error'] is 'end of database':
-        memcache.add("index", 1, 86400)
+      if result['error'] == 'end of database':
+        logging.error("Index out of range: " + index)
+        memcache.set("index", 1, 86400)
         SearchPosition(key_name="index", position=1).put()
     else:
       putResult(result)
