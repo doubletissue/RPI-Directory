@@ -55,23 +55,18 @@ public class DataDisplayerActivity extends ListActivity {
   			finish();
   		}
   		String searchTerm = (String)b.get("searchTerm");
-  		//Log.i("searchTerm", searchTerm);
+  		Log.i("searchTerm", searchTerm);
 
-  		//Get the JSON output from the api
-  		String json = null;
   		try {
   			URL apiURL = new URL("http://rpidirectory.appspot.com/api?name=" + searchTerm);
   			URLConnection connection = apiURL.openConnection();
   			InputStream in = new BufferedInputStream(connection.getInputStream());
-  			json = readInputStream(in);
-  	  		//Log.i("returnStuff", readInputStream(in));
+  	  		Log.i("returnStuff", readInputStream(in));
   		} catch (MalformedURLException e) {
   			e.printStackTrace();
   		} catch (IOException e) {
   			e.printStackTrace();
   		}
-  		
-  		
         
   		/*
         list_items.add(new QueryResultModel("1","Benoid Mandelbrot","mandeb@rpi.edu","Senior","MATH/CSCI"));

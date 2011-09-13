@@ -57,8 +57,7 @@ public class DataDisplayerActivity extends ListActivity {
   		String searchTerm = (String)b.get("searchTerm");
   		//Log.i("searchTerm", searchTerm);
 
-  		//Get the JSON output from the api
-  		String json = null;
+  		String json;
   		try {
   			URL apiURL = new URL("http://rpidirectory.appspot.com/api?name=" + searchTerm);
   			URLConnection connection = apiURL.openConnection();

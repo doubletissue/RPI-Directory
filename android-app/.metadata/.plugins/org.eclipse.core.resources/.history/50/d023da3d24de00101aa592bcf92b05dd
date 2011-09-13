@@ -55,25 +55,19 @@ public class DataDisplayerActivity extends ListActivity {
   			finish();
   		}
   		String searchTerm = (String)b.get("searchTerm");
-  		//Log.i("searchTerm", searchTerm);
-
-  		//Get the JSON output from the api
-  		String json = null;
+  		Log.i("USERTAG", searchTerm);
+  		
   		try {
-  			URL apiURL = new URL("http://rpidirectory.appspot.com/api?name=" + searchTerm);
+  			URL apiURL = new URL("rpidirectory.appspot.com/api?name=" + searchTerm);
   			URLConnection connection = apiURL.openConnection();
   			InputStream in = new BufferedInputStream(connection.getInputStream());
-  			json = readInputStream(in);
-  	  		//Log.i("returnStuff", readInputStream(in));
+  	  		Log.i("USERTAG", readInputStream(in));
   		} catch (MalformedURLException e) {
   			e.printStackTrace();
   		} catch (IOException e) {
   			e.printStackTrace();
   		}
-  		
-  		
         
-  		/*
         list_items.add(new QueryResultModel("1","Benoid Mandelbrot","mandeb@rpi.edu","Senior","MATH/CSCI"));
         list_items.add(new QueryResultModel("2","Andre Weil","weila3@rpi.edu","Sophomore", "MATH"));
         list_items.add(new QueryResultModel("3","Thomas Bayes","bayest4@rpi.edu","Junior", "MATH"));
@@ -82,7 +76,6 @@ public class DataDisplayerActivity extends ListActivity {
         list_items.add(new QueryResultModel("6","Rene Descartes","descar14@rpi.edu","Junior", "PHIL/MATH"));
         list_items.add(new QueryResultModel("7","Edward Teller","tellee@rpi.edu","Freshman", "PHYS"));
         list_items.add(new QueryResultModel("8","Raymond Smullyan","smullr@rpi.edu","Junior", "PHIL"));
-        */
         setListAdapter(new QueryResultArrayAdapter(this, R.layout.query_result_list_item, list_items));
               
         ListView lv = getListView();
