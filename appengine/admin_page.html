@@ -11,14 +11,39 @@
 				width: 30%;
 				text-align: center;
 			}
+			
+			button{
+				width: 40px;
+			}
 		 </style>
 		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript">
-		  
+		  $(document).ready(function() {
+			$("#memcache").click(function(){
+				$.ajax({
+			     type: "GET",
+			     url: "/admin_page=?flushcache=hi",
+			     async: true,
+			 	 dataType: "json",
+				 success: function(data){ alert("Cache flushed!"); },
+			   });
+			});
+			
+			$("#counter").click(function(){
+				$.ajax({
+			     type: "GET",
+			     url: "/admin_page=?resetpos=hi",
+			     async: true,
+			 	 dataType: "json",
+				 success: function(data){ alert("Position reset!"); },
+			   });
+			});
+		  });
 		</script>
 		</head>
 		<body id="body">
 		  <div class="full_width big">RPI Directory</div>
 		  <div class="clearButton" id="memcache">Clear MemCache<input type="button" name="keyword" id="keyword" /></div>
+		  <div class="clearButton" id="counter">Reset Counter<input type="button" name="keyword" id="keyword" /></div>
 		</body>
 </html>
