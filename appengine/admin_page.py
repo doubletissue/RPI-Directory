@@ -39,6 +39,7 @@ class AdminPage(webapp.RequestHandler):
         d['indexds'] = index_from_ds
       else:
         d['indexds'] = -1
+      s = json.dumps(d)
       self.response.out.write(s)
     else:
       template_values = {}
