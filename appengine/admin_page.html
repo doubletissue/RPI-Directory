@@ -18,13 +18,13 @@
 		 </style>
 		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript">
+		
 		  $(document).ready(function() {
 			$("#memcache").click(function(){
 				$.ajax({
 			     type: "GET",
-			     url: "/admin_page=?flushcache=hi",
-			     async: true,
-			 	 dataType: "json",
+			     url: "/admin_page?flushcache=hi",
+			     async: false,
 				 success: function(data){ alert("Cache flushed!"); },
 			   });
 			});
@@ -32,9 +32,8 @@
 			$("#counter").click(function(){
 				$.ajax({
 			     type: "GET",
-			     url: "/admin_page=?resetpos=hi",
-			     async: true,
-			 	 dataType: "json",
+			     url: "/admin_page?resetpos=hi",
+			     async: false,
 				 success: function(data){ alert("Position reset!"); },
 			   });
 			});
