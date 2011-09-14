@@ -51,9 +51,9 @@ class Api(webapp.RequestHandler):
     
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
-    year  = urllib.unquote( cgi.escape(self.request.get('year' )).lower() )
-    major = urllib.unquote( cgi.escape(self.request.get('major')).lower() )
-    name  = urllib.unquote( cgi.escape(self.request.get('name' )).lower() )
+    year  = urllib.unquote( cgi.escape(self.request.get('year' )).lower()[:50] )
+    major = urllib.unquote( cgi.escape(self.request.get('major')).lower()[:50] )
+    name  = urllib.unquote( cgi.escape(self.request.get('name' )).lower()[:50] )
     
     names = name.split()[:3]
     
