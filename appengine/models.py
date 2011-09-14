@@ -28,6 +28,12 @@ class Person(db.Model):
       rcsid = string.rsplit(d['email'],'@',1)[0]
       person = Person(key_name = rcsid)
       person.rcsid = rcsid
+    elif 'name' in d:
+      person = Person(key_name = d['name'])
+    else:
+      # No name for the person, no point in making them
+      person = Person()
+      return person
     
     if 'name' in d:
       names = d['name'].split()[:3]
