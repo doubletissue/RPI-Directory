@@ -1,10 +1,11 @@
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import memcache
 from models import Person
 from models import SearchPosition
+import urllib
 import os
-from google.appengine.ext.webapp import template
 import logging
 import cgi
 
@@ -17,7 +18,7 @@ class AdminPage(webapp.RequestHandler):
     
     if flush_cache:
       if not memcache.flush_all():
-        logging.error("Error flushing memcache"
+        logging.error("Error flushing memcache")
     if reset_pos:
       memcache.set("index", 1, 86400)
       SearchPosition(key_name="index", position=1).put()
