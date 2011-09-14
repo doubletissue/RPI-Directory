@@ -44,11 +44,13 @@ $(document).ready(function() {
 	  }
 	  
 	  if (keyword != ''){
+	    var margin = $("#container").css("margin-top");
+	    
 	    //Animate text box up
-   	  if ( $("#container").css("margin-top") != "0%" ){
+   	  if ( margin != "0%" || margin != "0px" ){
    	    $("#container").animate({
    	      marginTop: '0%',
-   	    }, delay);
+   	    }, delay, function(){ $("#container").css("margin-top","0%"); });
    	  }
    	  
 		  $.ajax({
@@ -58,11 +60,12 @@ $(document).ready(function() {
 		 	 dataType: "json",
 			 success: parseData,
 		   });
+		   
 		  $("#results").show();
 	  }else if (keyword == ''){ // Entry is blank
-	    if ($("#container").css("margin-top") == "0%"){
+	    $("#results").hide();
+	    if ( margin == "0%" || margin == "0px"){
 	      $("#output").text("Type something above!");
-  		  $("#results").hide();
   		  $("#container").animate({
 		      marginTop: padding,
 		    }, delay*2);
