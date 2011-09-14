@@ -1,5 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.api import memcache
 import logging
 import cgi
 import urllib
@@ -7,11 +8,24 @@ from models import Person
 from django.utils import simplejson as json
 
 class Api(webapp.RequestHandler):
-  def get(self):
-    self.response.headers['Content-Type'] = 'text/plain'
-    year  = urllib.unquote( cgi.escape(self.request.get('year' )) )
-    major = urllib.unquote( cgi.escape(self.request.get('major')) )
-    name  = urllib.unquote( cgi.escape(self.request.get('name' )) )
+  
+  def nameSearch(self,name_type,name,year,major, num_results, page_offset):
+    result = index = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
+    if result:
+      
+      # Reset the timer
+      #if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, result, 86400):
+        #logging.error("Memcache set failed.")
+        
+      if len(result) > 0:
+        return result, True
+      else:
+        results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
+        return results, False
+    
+    
+    if name == '':
+      return [], True
     
     query = Person.all()
     
@@ -20,96 +34,59 @@ class Api(webapp.RequestHandler):
     if major is not "":
       query = query.filter('major = ',major)
     
-    names = name.split()[:3]
-    if len(names) > 0:
-      query = query.filter('first_name = ', names[0])
-    if len(names) > 1:
-      query = query.filter('last_name = ', names[-1])
-    if len(names) > 2:
-      query = query.filter('middle_name = ', names[1])
+    query = query.filter(name_type + ' >= ', name)
+    query = query.filter(name_type + ' <= ', name+u'\ufffd')
+    query = query.order(name_type)
+    results = query.fetch(num_results)
     
-    people = query.fetch(100)
+    modded = False
     
-    if len(names) == 1:
-      query = Person.all()
-      if year is not "":
-        query = query.filter('year = ',year)
-      if major is not "":
-        query = query.filter('major = ',major)
-      query = query.filter('last_name = ', names[0])
-      people.extend(query.fetch(100))
-    
-    l = []
-    
-    for p in people:
-      l.append(Person.buildMap(p))
-    s = json.dumps(l)
-    self.response.out.write(s)
+    if len(results) == 0:
+      modded = True
+      results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
+    if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, results, 86400):
+      logging.error("Memcache set failed.")
 
-class ChristiansStupidApi(webapp.RequestHandler):
+    return results, modded
+    
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
-    year  = urllib.unquote( cgi.escape(self.request.get('year' )) )
-    major = urllib.unquote( cgi.escape(self.request.get('major')) )
-    name  = urllib.unquote( cgi.escape(self.request.get('name' )) )
-    
-    query = Person.all()
-    
-    if year is not "":
-      query = query.filter('year = ',year)
-    if major is not "":
-      query = query.filter('major = ',major)
+    year  = urllib.unquote( cgi.escape(self.request.get('year' )).lower()[:50] )
+    major = urllib.unquote( cgi.escape(self.request.get('major')).lower()[:50] )
+    name  = urllib.unquote( cgi.escape(self.request.get('name' )).lower()[:50] )
     
     names = name.split()[:3]
-    if len(names) > 0:
-      query = query.filter('first_name = ', names[0])
-    if len(names) > 1:
-      query = query.filter('last_name = ', names[-1])
-    if len(names) > 2:
-      query = query.filter('middle_name = ', names[1])
-    
-    people = query.fetch(100)
-    
-    if len(names) == 1:
-      query = Person.all()
-      if year is not "":
-        query = query.filter('year = ',year)
-      if major is not "":
-        query = query.filter('major = ',major)
-      query = query.filter('last_name = ', names[0])
-      people.extend(query.fetch(100))
     
     l = []
     
-    keys = set()
-    for p in people:
-      m = Person.buildMap(p)
-      for k in m.keys():
-        keys.add(k)
-    
-    
-    for p in people:
-      m = Person.buildMap(p)
-      for key in keys:
-        if key not in m.keys():
-          m[key] = ""
-      l.append(m)
-    
-    d2 = {}
-    d2['iTotalRecords'] = len(l)
-    d2['iTotalDisplayRecords'] = len(l)
-    d2['sColumns'] = 'name,email,class,major,title,phone,fax,homepage,office_location,campus_mailstop,mailing_address'
-    d2['sEcho'] = urllib.unquote( cgi.escape(self.request.get('sEcho' )) )
-    d2['aaData'] = l
-    
-    s = json.dumps(d2)
+    if len(names) == 1:
+      first_name_results, modded = self.nameSearch('first_name',names[0],year,major, 10, 0)
+      for p in first_name_results:
+        l.append(Person.buildMap(p))
+      last_name_results, modded  = self.nameSearch('last_name',names[0],year,major, 10, 0)
+      for p in last_name_results:
+        l.append(Person.buildMap(p))
+    elif len(names) > 1:
+      d = set()
+      last_name_results, modded = self.nameSearch('last_name',names[-1],year,major, 1000, 0)
+      for p in last_name_results:
+        d.add(p.key().name())
+      first_name_results, modded  = self.nameSearch('first_name',names[0],year,major, 1000, 0)
+      i = 0
+      for p in first_name_results:
+        if p.key().name() in d:
+          l.append(Person.buildMap(p))
+          i += 1
+          if i > 20:
+            break
+    l = sorted(l, key=lambda person: person['name'])
+    s = json.dumps(l)
     self.response.out.write(s)
     
 
 application = webapp.WSGIApplication(
   [
-    ("/api", Api),
-    ("/tableApi", ChristiansStupidApi)
+    ("/api", Api)
   ])
    
 def main():

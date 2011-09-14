@@ -5,16 +5,17 @@ import string
 
 class Person(db.Model):
   """Models a person in the RPI directory."""
-  first_name = db.StringProperty()
-  middle_name = db.StringProperty()
-  last_name = db.StringProperty()
-  email = db.StringProperty()
-  year = db.StringProperty()
-  major = db.StringProperty()
-  title = db.StringProperty()
-  phone = db.StringProperty()
-  fax = db.StringProperty()
-  homepage = db.StringProperty()
+  first_name      = db.StringProperty()
+  middle_name     = db.StringProperty()
+  last_name       = db.StringProperty()
+  email           = db.StringProperty()
+  rcsid           = db.StringProperty()
+  year            = db.StringProperty()
+  major           = db.StringProperty()
+  title           = db.StringProperty()
+  phone           = db.StringProperty()
+  fax             = db.StringProperty()
+  homepage        = db.StringProperty()
   office_location = db.StringProperty(multiline=True)
   campus_mailstop = db.StringProperty(multiline=True)
   mailing_address = db.StringProperty(multiline=True)
@@ -24,7 +25,15 @@ class Person(db.Model):
     person = Person()
     
     if 'email' in d:
-      person = Person(key_name = string.rsplit(d['email'],'@',1)[0])
+      rcsid = string.rsplit(d['email'],'@',1)[0]
+      person = Person(key_name = rcsid)
+      person.rcsid = rcsid
+    elif 'name' in d:
+      person = Person(key_name = d['name'])
+    else:
+      # No name for the person, no point in making them
+      person = Person()
+      return person
     
     if 'name' in d:
       names = d['name'].split()[:3]
@@ -65,43 +74,45 @@ class Person(db.Model):
     
     if p.email is not None:
       d['email'] = p.email
+    if p.rcsid is not None:
+      d['rcsid'] = p.rcsid
     
     name = ''
     if p.first_name is not None:
-      name += p.first_name
+      name += p.first_name.capitalize()
     if p.middle_name is not None:
-      name += ' ' + p.middle_name
+      name += ' ' + p.middle_name.capitalize()
     if p.last_name is not None:
-      name += ' ' + p.last_name
+      name += ' ' + p.last_name.capitalize()
     if name is not "":
       d['name'] = name
     
     if p.year is not None:
-      d['class'] = p.year
+      d['class'] = p.year.capitalize()
     
     if p.major is not None:
-      d['major'] = p.major
+      d['major'] = p.major.capitalize()
     
     if p.title is not None:
-      d['title'] = p.title
+      d['title'] = p.title.capitalize()
     
     if p.phone is not None:
-      d['phone'] = p.phone
+      d['phone'] = p.phone.capitalize()
     
     if p.fax is not None:
-      d['fax'] = p.fax
+      d['fax'] = p.fax.capitalize()
     
     if p.homepage is not None:
-      d['homepage'] = p.homepage
+      d['homepage'] = p.homepage.capitalize()
     
     if p.office_location is not None:
-      d['office_location'] = p.office_location
+      d['office_location'] = p.office_location.capitalize()
     
     if p.campus_mailstop is not None:
-      d['campus_mailstop'] = p.campus_mailstop
+      d['campus_mailstop'] = p.campus_mailstop.capitalize()
     
     if p.mailing_address is not None:
-      d['mailing_address'] = p.mailing_address
+      d['mailing_address'] = p.mailing_address.capitalize()
     
     return d
   
