@@ -21,7 +21,7 @@ function parseData(data){
 	   table_row += "</tr>"
        $("#results").find("tbody").append(table_row);
 	 });
-	 $("#output").text("Results for: " + keyword);
+	 $("#output").empty();
 	 last_known_query = keyword;
 	$("#results").trigger("update");
 	}else{
