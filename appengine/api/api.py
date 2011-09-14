@@ -9,9 +9,9 @@ from django.utils import simplejson as json
 class Api(webapp.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
-    year  = urllib.unquote( cgi.escape(self.request.get('year' )) )
-    major = urllib.unquote( cgi.escape(self.request.get('major')) )
-    name  = urllib.unquote( cgi.escape(self.request.get('name' )) )
+    year  = urllib.unquote( cgi.escape(self.request.get('year' )).lower() )
+    major = urllib.unquote( cgi.escape(self.request.get('major')).lower() )
+    name  = urllib.unquote( cgi.escape(self.request.get('name' )).lower() )
     
     query = Person.all()
     

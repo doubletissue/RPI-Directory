@@ -88,31 +88,31 @@ class Person(db.Model):
       d['name'] = name
     
     if p.year is not None:
-      d['class'] = p.year
+      d['class'] = p.year.capitalize()
     
     if p.major is not None:
-      d['major'] = p.major
+      d['major'] = p.major.capitalize()
     
     if p.title is not None:
-      d['title'] = p.title
+      d['title'] = p.title.capitalize()
     
     if p.phone is not None:
-      d['phone'] = p.phone
+      d['phone'] = p.phone.capitalize()
     
     if p.fax is not None:
-      d['fax'] = p.fax
+      d['fax'] = p.fax.capitalize()
     
     if p.homepage is not None:
-      d['homepage'] = p.homepage
+      d['homepage'] = p.homepage.capitalize()
     
     if p.office_location is not None:
-      d['office_location'] = p.office_location
+      d['office_location'] = p.office_location.capitalize()
     
     if p.campus_mailstop is not None:
-      d['campus_mailstop'] = p.campus_mailstop
+      d['campus_mailstop'] = p.campus_mailstop.capitalize()
     
     if p.mailing_address is not None:
-      d['mailing_address'] = p.mailing_address
+      d['mailing_address'] = p.mailing_address.capitalize()
     
     return d
   
