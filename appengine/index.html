@@ -30,6 +30,14 @@
 				font-family: 'Puritan', 'Trebuchet MS', Helvetica, sans-serif;
 				text-align: center;
 			}
+			
+			#results {
+				font-family: arial, sans-serif;
+			}
+			
+			#output {
+				font-family: arial, sans-serif;
+			}
 		</style>
 		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript" charset="utf-8">
@@ -63,7 +71,7 @@
 					 }
 				   });
 			  }else{
-				$("#output").text("Type something above silly!");
+				$("#output").text("Type something above!");
 			}
 	      });					
 		});
@@ -72,8 +80,8 @@
 		<body id="body">
 			<div id="container">
 				<div class="full_width big">RPI Directory</div>
-				  <div id="inputBox"><input type="text" name="keyword" id="keyword" /></div>
-			      <div id="output">Type something above silly!</div>
+				  <div id="inputBox"><input type="text" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" /></div>
+			      <div id="output">Type something above!</div>
 				<ul id="results"></ul>	
 			</div>
 		</body>
