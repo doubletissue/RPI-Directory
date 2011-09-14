@@ -4,6 +4,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import memcache
 from models import Person
 from models import SearchPosition
+from django.utils import simplejson as json
 import urllib
 import os
 import logging
@@ -15,6 +16,7 @@ class AdminPage(webapp.RequestHandler):
     
     flush_cache  = urllib.unquote( cgi.escape(self.request.get('flushcache' )).lower()[:50] )
     reset_pos = urllib.unquote( cgi.escape(self.request.get('resetpos')).lower()[:50] )
+    get_stats = urllib.unquote( cgi.escape(self.request.get('getstats')).lower()[:50] )
     
     if flush_cache:
       if not memcache.flush_all():
@@ -22,12 +24,17 @@ class AdminPage(webapp.RequestHandler):
     if reset_pos:
       memcache.set("index", 1, 86400)
       SearchPosition(key_name="index", position=1).put()
-      
     
     
-    template_values = {}
-    path = os.path.join(os.path.dirname(__file__), 'admin_page.html')
-    self.response.out.write(template.render(path, template_values))
+    
+    if get_stats:
+      d = memcache.get_stats()
+      s = json.dumps(d)
+      self.response.out.write(s)
+    else:
+      template_values = {}
+      path = os.path.join(os.path.dirname(__file__), 'admin_page.html')
+      self.response.out.write(template.render(path, template_values))
     
     
 application = webapp.WSGIApplication(
