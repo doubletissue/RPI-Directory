@@ -31,12 +31,12 @@ class AdminPage(webapp.RequestHandler):
       d = memcache.get_stats()
       index = memcache.get("index")
       if index:
-        d['indexmc'] = index
+        d['indexmc'] = index.position
       else:
         d['indexmc'] = -1
       index_from_ds = SearchPosition.get_by_key_name("index")
       if index_from_ds:
-        d['indexds'] = index_from_ds
+        d['indexds'] = index_from_ds.position
       else:
         d['indexds'] = -1
       s = json.dumps(d)
