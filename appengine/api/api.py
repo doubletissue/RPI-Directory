@@ -1,5 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.api import memcache
 import logging
 import cgi
 import urllib
@@ -9,6 +10,20 @@ from django.utils import simplejson as json
 class Api(webapp.RequestHandler):
   
   def nameSearch(self,name_type,name,year,major, num_results, page_offset):
+    
+    result = index = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
+    
+    if result:
+      if len(result) > 0:
+        logging.error("have results!")
+        return result, True
+      else:
+        logging.error("empty results :(")
+        results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
+        return results, False
+    
+    logging.error("nothing D:")
+    
     if name == '':
       return [], True
     
@@ -27,10 +42,15 @@ class Api(webapp.RequestHandler):
     
     results = query.fetch(num_results)
     
-    if len(results) > 0:
-      return results, True
-    results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
-    return results, False
+    modded = True
+    
+    if len(results) == 0:
+      modded = False
+      results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
+    
+    memcache.set(name_type + ":" + name + ":" + year + ":" + major, results, 86400)
+    logging.error("Setting " + name_type + ":" + name + ":" + year + ":" + major)
+    return results, modded
     
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
