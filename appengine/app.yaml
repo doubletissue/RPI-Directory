@@ -26,7 +26,7 @@ handlers:
   
 - url: /admin_page.*
   script: admin_page.py
-  login: admin
+  login: required
 
 - url: /.*
   script: main.py
