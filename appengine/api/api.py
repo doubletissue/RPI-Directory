@@ -10,15 +10,15 @@ from django.utils import simplejson as json
 class Api(webapp.RequestHandler):
   
   def nameSearch(self,name_type,name,year,major, num_results, page_offset):
-    
     result = index = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
-    
     if result:
+      
+      if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, result, 86400):
+        logging.error("Memcache set failed.")
+        
       if len(result) > 0:
-        memcache.set(name_type + ":" + name + ":" + year + ":" + major, result, 86400)
         return result, True
       else:
-        memcache.set(name_type + ":" + name + ":" + year + ":" + major, result, 86400)
         results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
         return results, False
     
@@ -35,10 +35,7 @@ class Api(webapp.RequestHandler):
     
     query = query.filter(name_type + ' >= ', name)
     query = query.filter(name_type + ' <= ', name+u'\ufffd')
-    
     query = query.order(name_type)
-      
-    
     results = query.fetch(num_results)
     
     modded = False
@@ -46,8 +43,9 @@ class Api(webapp.RequestHandler):
     if len(results) == 0:
       modded = True
       results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
-    
-    memcache.set(name_type + ":" + name + ":" + year + ":" + major, results, 86400)
+    if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, results, 86400):
+      logging.error("Memcache set failed.")
+
     return results, modded
     
   def get(self):
