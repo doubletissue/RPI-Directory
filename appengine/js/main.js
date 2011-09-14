@@ -4,33 +4,7 @@
 var last_known_query = "";
 var keyword = "";
 var delay = 60;
-var padding = '15%';
-
-// If you have IE 8.0 or below, sorry for you
-checkVersion();
-
-function getInternetExplorerVersion(){
-// Returns the version of Internet Explorer or a -1
-// (indicating the use of another browser).
-  var rv = -1; // Return value assumes failure.
-  if (navigator.appName == 'Microsoft Internet Explorer'){
-    var ua = navigator.userAgent;
-    var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
-    if (re.exec(ua) != null)
-      rv = parseFloat( RegExp.$1 );
-  }
-  return rv;
-}
-
-function checkVersion(){
-  var ver = getInternetExplorerVersion();
-  if ( ver > -1 ){
-    if ( ver < 9.0 ){
-      msg = "You should upgrade your copy of Internet Explorer.  This application will not work without it.";
-      alert( msg );
-    }
-  }
-}
+var padding = '20%';
 
 function parseData(data){  
 	if (data !== [] && data.length > 0){		
