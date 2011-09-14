@@ -6,6 +6,31 @@ var keyword = "";
 var delay = 60;
 var padding = '15%';
 
+// If you have IE 8.0 or below, sorry for you
+checkVersion();
+
+function getInternetExplorerVersion(){
+// Returns the version of Internet Explorer or a -1
+// (indicating the use of another browser).
+  var rv = -1; // Return value assumes failure.
+  if (navigator.appName == 'Microsoft Internet Explorer'){
+    var ua = navigator.userAgent;
+    var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+    if (re.exec(ua) != null)
+      rv = parseFloat( RegExp.$1 );
+  }
+  return rv;
+}
+
+function checkVersion(){
+  var ver = getInternetExplorerVersion();
+  if ( ver > -1 ){
+    if ( ver < 9.0 ){
+      msg = "You should upgrade your copy of Internet Explorer.  This application will not work without it.";
+      alert( msg );
+    }
+  }
+}
 
 function parseData(data){  
 	if (data !== [] && data.length > 0){		
@@ -26,10 +51,8 @@ function parseData(data){
 	 $("#output").empty();
 	 last_known_query = keyword;
 	$("#results").trigger("update");
-	}else{
-		if (last_known_query != '')
-		$("#output").text("Nothing found for " + keyword + ", showing results for " + last_known_query);
-		else $("#output").text("Nothing found for " + keyword);
+	}else if (last_known_query != ''){
+	  $("#output").text("Nothing found for " + keyword + ", showing results for " + last_known_query);
 	}	
 }
 
@@ -63,8 +86,8 @@ $(document).ready(function() {
 		  $("#results").show();
 	  }else if (keyword == ''){ // Entry is blank
 	    $("#results").hide();
+	    // $("#output").text("Type something above!");
 	    if ( margin == "0%" || margin == "0px"){
-	      $("#output").text("Type something above!");
   		  $("#container").animate({
 		      marginTop: padding,
 		    }, delay*2);
