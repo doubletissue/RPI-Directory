@@ -48,8 +48,9 @@ class Api(webapp.RequestHandler):
       modded = False
       results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
     
-    memcache.set(name_type + ":" + name + ":" + year + ":" + major, results, 86400)
-    logging.error("Setting " + name_type + ":" + name + ":" + year + ":" + major)
+    if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, results, 86400):
+	  logging.error("Memcache set failed.")
+
     return results, modded
     
   def get(self):
