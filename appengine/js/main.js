@@ -3,9 +3,10 @@
 
 var last_known_query = "";
 var keyword = "";
+var delay = 60;
+var padding = '20%';
 
-
-function parseData(data){
+function parseData(data){  
 	if (data !== [] && data.length > 0){		
 	 $("#results").find("tbody").empty();	
 	 // Loop through JSON
@@ -24,23 +25,30 @@ function parseData(data){
 	 $("#output").empty();
 	 last_known_query = keyword;
 	$("#results").trigger("update");
-	}else{
-		if (last_known_query != '')
-		$("#output").text("Nothing found for " + keyword + ", showing results for " + last_known_query);
-		else $("#output").text("Nothing found for " + keyword);
-	}
+	}else if (last_known_query != ''){
+	  $("#output").text("Nothing found for " + keyword + ", showing results for " + last_known_query);
+	}	
 }
 
 $(document).ready(function() {
 	$("#keyword").keyup(function(event) {
-	  keyword = $("#keyword").val();
+	  var keyword = $("#keyword").val();
+	  var margin = $("#container").css("margin-top");
 	
 	  // Check for enter keypress
-	  if ( event.which == 13 ) {
+	  if (event.which == 13) {
 	     event.preventDefault();
+	     return;
 	  }
 	  
 	  if (keyword != ''){
+	    //Animate text box up
+   	  if ( margin != "0%" || margin != "0px" ){
+   	    $("#container").animate({
+   	      marginTop: '0%',
+   	    }, delay, function(){ $("#container").css("margin-top","0%"); });
+   	  }
+   	  
 		  $.ajax({
 		     type: "GET",
 		     url: "/api?name=" + encodeURI(keyword),
@@ -48,17 +56,22 @@ $(document).ready(function() {
 		 	 dataType: "json",
 			 success: parseData,
 		   });
+		   
 		  $("#results").show();
-	  }else{
-		  $("#output").text("Type something above!");
-		  $("#results").hide();
+	  }else if (keyword == ''){ // Entry is blank
+	    $("#results").hide();
+	    // $("#output").text("Type something above!");
+	    if ( margin == "0%" || margin == "0px"){
+  		  $("#container").animate({
+		      marginTop: padding,
+		    }, delay*2);
+	    }
 	  }
   });
+  
   //Make table sortable
-  $("#results").tablesorter({
-		//Force sort on name
-		//sortList: [0,0] 
-	});
+  $("#results").tablesorter();
+  
 	//Focus on textbox
 	$("#keyword").focus();
 });
