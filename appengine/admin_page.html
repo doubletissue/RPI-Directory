@@ -48,7 +48,7 @@
 		     async: true,
 		     dataType: "json",
 			 success: function(data){
-			     $("#stats").html("Cache Hits: " + data.hits + "<br>Cache Misses: " + data.misses + "<br>Number Items: " + data.items + "<br>Total bytes: " + data.bytes);
+			     $("#stats").html("Cache Hits: " + data.hits + "<br>Cache Misses: " + data.misses + "<br>Number Items: " + data.items + "<br>Total bytes: " + data.bytes + "<br>Index MC: " + data.indexmc + "<br>Index DS: " + data.indexds);
 		       },
 		    });
 			
