@@ -38,9 +38,6 @@
 		      // Load the Visualization API and the piechart package.
 		      google.load('visualization', '1.0', {'packages':['corechart']});
 
-		      // Set a callback to run when the Google Visualization API is loaded.
-		      google.setOnLoadCallback(drawChart);
-
 		      // Callback that creates and populates a data table, 
 		      // instantiates the pie chart, passes in the data and
 		      // draws it.
@@ -67,6 +64,19 @@
 		    }
 		    </script>
 		<script type="text/javascript">
+		  function reDrawMemCache(){
+			// MemCache stats
+			$.ajax({
+		     type: "GET",
+		     url: "/admin_page?getstats=hi",
+		     async: true,
+		     dataType: "json",
+			 success: function(data){
+			     $("#stats").html("Items in MemCache: " + data.items + "<br> Cache Size: " + (data.bytes/1000000) + " MB<br>Index MC: " + data.indexmc + "<br>Index DS: " + data.indexds);
+			     drawChart(data.hits, data.misses);
+		       },
+		    });
+		  }
 		  $(document).ready(function() {
 			$("#memcache").click(function(){
 				$.ajax({
@@ -85,19 +95,8 @@
 				 success: function(data){ alert("Position reset!"); },
 			    });
 			});
-			
-			// MemCache stats
-			$.ajax({
-		     type: "GET",
-		     url: "/admin_page?getstats=hi",
-		     async: true,
-		     dataType: "json",
-			 success: function(data){
-			     $("#stats").html("Number Items: " + data.items + "<br>Total Cache Size: " + (data.bytes/1000000) + " MB<br>Index MC: " + data.indexmc + "<br>Index DS: " + data.indexds);
-			     drawChart(data.hits, data.misses);
-		       },
-		    });
-			
+			// Redraw charts and refresh data every so often
+			setInterval("reDrawMemCache()", 1000);
 		  });
 		</script>
 		</head>
