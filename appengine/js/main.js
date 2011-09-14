@@ -2,15 +2,28 @@
 // RCOS RPI Directory JavaScript
 
 var last_known_query = "";
+var keyword = "";
+
 
 function parseData(data){
 	if (data !== [] && data.length > 0){		
-	 $("#results").empty();	
+	 $("#results").find("tbody").empty();	
+	 // Loop through JSON
 	 $.each(data, function(i, person){
-       $("#results").append("<li>" + person.name + " - " + person.class + " -  " + person.major +  "</li>");
+	   var table_row = "<tr>";
+       // Loop through each person and output their attributes
+       //$.each(person, function(key, value){
+		 //if (key in {'name':'', 'major':'','class':''}/* && value != undefined*/){
+		 //  table_row += ("<td>" + value + "</td>");	
+		 //}
+	   //});
+	   table_row += ("<td>"+person.name+"</td><td>"+ (person.major == undefined ? 'N/A' : person.major) +"</td><td>"+ (person.class == undefined ? 'N/A' : person.class) +"</td>");
+	   table_row += "</tr>"
+       $("#results").find("tbody").append(table_row);
 	 });
 	 $("#output").text("Results for: " + keyword);
 	 last_known_query = keyword;
+	$("#results").trigger("update");
 	}else{
 		if (last_known_query != '')
 		$("#output").text("Nothing found for " + keyword + ", showing results for " + last_known_query);
@@ -19,8 +32,9 @@ function parseData(data){
 }
 
 $(document).ready(function() {
+	$("#results").tablesorter(); 
 	$("#keyword").keyup(function(event) {
-	  var keyword = $("#keyword").val();
+	  keyword = $("#keyword").val();
 	
 	  // Check for enter keypress
 	  if ( event.which == 13 ) {
@@ -38,5 +52,5 @@ $(document).ready(function() {
 	  }else{
 		$("#output").text("Type something above!");
 	  }
-  });					
+  });				
 });
