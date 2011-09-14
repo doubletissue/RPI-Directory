@@ -35,7 +35,8 @@ function parseData(data){
 
 $(document).ready(function() {
 	$("#keyword").keyup(function(event) {
-	  keyword = $("#keyword").val();
+	  var keyword = $("#keyword").val();
+	  var margin = $("#container").css("margin-top");
 	
 	  // Check for enter keypress
 	  if (event.which == 13) {
@@ -44,8 +45,6 @@ $(document).ready(function() {
 	  }
 	  
 	  if (keyword != ''){
-	    var margin = $("#container").css("margin-top");
-	    
 	    //Animate text box up
    	  if ( margin != "0%" || margin != "0px" ){
    	    $("#container").animate({
