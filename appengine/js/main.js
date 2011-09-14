@@ -48,8 +48,10 @@ $(document).ready(function() {
 		 	 dataType: "json",
 			 success: parseData,
 		   });
+		  $("#results").show();
 	  }else{
-		$("#output").text("Type something above!");
+		  $("#output").text("Type something above!");
+		  $("#results").hide();
 	  }
   });
   //Make table sortable
