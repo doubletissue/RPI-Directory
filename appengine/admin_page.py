@@ -15,10 +15,10 @@ class AdminPage(webapp.RequestHandler):
     flush_cache  = urllib.unquote( cgi.escape(self.request.get('flushcache' )).lower()[:50] )
     reset_pos = urllib.unquote( cgi.escape(self.request.get('resetpos')).lower()[:50] )
     
-    if flush_cache != '':
+    if flush_cache:
       if not memcache.flush_all():
         logging.error("Error flushing memcache"
-    if reset_pos != '':
+    if reset_pos:
       memcache.set("index", 1, 86400)
       SearchPosition(key_name="index", position=1).put()
       
