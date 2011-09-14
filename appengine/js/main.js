@@ -3,9 +3,11 @@
 
 var last_known_query = "";
 var keyword = "";
+var delay = 60;
+var padding = '15%';
 
 
-function parseData(data){
+function parseData(data){  
 	if (data !== [] && data.length > 0){		
 	 $("#results").find("tbody").empty();	
 	 // Loop through JSON
@@ -28,7 +30,7 @@ function parseData(data){
 		if (last_known_query != '')
 		$("#output").text("Nothing found for " + keyword + ", showing results for " + last_known_query);
 		else $("#output").text("Nothing found for " + keyword);
-	}
+	}	
 }
 
 $(document).ready(function() {
@@ -36,11 +38,19 @@ $(document).ready(function() {
 	  keyword = $("#keyword").val();
 	
 	  // Check for enter keypress
-	  if ( event.which == 13 ) {
+	  if (event.which == 13) {
 	     event.preventDefault();
+	     return;
 	  }
 	  
 	  if (keyword != ''){
+	    //Animate text box up
+   	  if ( $("#container").css("margin-top") != "0%" ){
+   	    $("#container").animate({
+   	      marginTop: '0%',
+   	    }, delay);
+   	  }
+   	  
 		  $.ajax({
 		     type: "GET",
 		     url: "/api?name=" + encodeURI(keyword),
@@ -49,16 +59,20 @@ $(document).ready(function() {
 			 success: parseData,
 		   });
 		  $("#results").show();
-	  }else{
-		  $("#output").text("Type something above!");
-		  $("#results").hide();
+	  }else if (keyword == ''){ // Entry is blank
+	    if ($("#container").css("margin-top") == "0%"){
+	      $("#output").text("Type something above!");
+  		  $("#results").hide();
+  		  $("#container").animate({
+		      marginTop: padding,
+		    }, delay*2);
+	    }
 	  }
   });
+  
   //Make table sortable
-  $("#results").tablesorter({
-		//Force sort on name
-		//sortList: [0,0] 
-	});
+  $("#results").tablesorter();
+  
 	//Focus on textbox
 	$("#keyword").focus();
 });

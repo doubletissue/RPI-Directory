@@ -3,9 +3,13 @@
 }
 
 #inputBox input {
-	width: 30.0em; 
-	padding: .5em;
+	width: 39%; 
+	padding: .25em;
 	font-size: 150%;
+}
+
+#container {
+  margin-top: 15%;
 }
 
 #output {
