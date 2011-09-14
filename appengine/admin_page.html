@@ -39,8 +39,20 @@
 			     url: "/admin_page?resetpos=hi",
 			     async: false,
 				 success: function(data){ alert("Position reset!"); },
-			   });
+			    });
 			});
+			
+			// MemCache stats
+			$.ajax({
+		     type: "GET",
+		     url: "/admin_page?getstats=hi",
+		     async: true,
+		     dataType: "json",
+			 success: function(data){
+			     $("#stats").html("Cache Hits: " + data.hits + "<br>Cache Misses: " + data.misses);
+		       },
+		    });
+			
 		  });
 		</script>
 		</head>
@@ -48,5 +60,6 @@
 		  <div class="full_width big">RPI Directory</div>
 		  <div class="clearButton" id="memcache"><input type="button" name="keyword" id="keyword" value="Clear MemCache"/></div>
 		  <div class="clearButton" id="counter"><input type="button" name="keyword" id="keyword" value="Reset Counter"/></div>
+		  <div id="stats">MemCache Stats:</div>
 		</body>
 </html>
