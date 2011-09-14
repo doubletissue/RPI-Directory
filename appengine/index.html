@@ -4,9 +4,32 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<title>RPI Directory</title>
-		<style type="text/css" title="currentStyle">
+		<link href='http://fonts.googleapis.com/css?family=Puritan:700' rel='stylesheet' type='text/css'>
+		<style type="text/css">
 			@import "css/demo_page.css";
 			@import "css/demo_table.css";
+			
+			#inputBox {
+				text-align: center;
+			}
+			
+			#inputBox input {
+				width: 30.0em; 
+				padding: .5em;
+				font-size: 150%;
+			}
+			
+			#output {
+				margin-top: 40px; 
+				text-align: center;
+			}
+			
+			.full_width {
+				margin: 55px 5px 15px 5px;
+				font-size: 350%;
+				font-family: 'Puritan', 'Trebuchet MS', Helvetica, sans-serif;
+				text-align: center;
+			}
 		</style>
 		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript" charset="utf-8">
@@ -46,11 +69,11 @@
 		});
 	    </script>
 		</head>
-		<body id="dt_example">
+		<body id="body">
 			<div id="container">
 				<div class="full_width big">RPI Directory</div>
-				  <div style="text-align: center;"><input type="text" name="keyword" id="keyword" /></div>
-			      <div id="output" style="margin-top: 35px; text-align: center;">Type something above silly!</div>
+				  <div id="inputBox"><input type="text" name="keyword" id="keyword" /></div>
+			      <div id="output">Type something above silly!</div>
 				<ul id="results"></ul>	
 			</div>
 		</body>
