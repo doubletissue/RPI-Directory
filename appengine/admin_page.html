@@ -95,6 +95,9 @@
 				 success: function(data){ alert("Position reset!"); },
 			    });
 			});
+			
+			reDrawMemCache();
+			
 			// Redraw charts and refresh data every so often
 			setInterval("reDrawMemCache()", 30000);
 		  });
