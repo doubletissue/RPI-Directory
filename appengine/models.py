@@ -79,11 +79,11 @@ class Person(db.Model):
     
     name = ''
     if p.first_name is not None:
-      name += p.first_name
+      name += p.first_name.capitalize()
     if p.middle_name is not None:
-      name += ' ' + p.middle_name
+      name += ' ' + p.middle_name.capitalize()
     if p.last_name is not None:
-      name += ' ' + p.last_name
+      name += ' ' + p.last_name.capitalize()
     if name is not "":
       d['name'] = name
     
