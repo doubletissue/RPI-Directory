@@ -29,7 +29,16 @@ class AdminPage(webapp.RequestHandler):
     
     if get_stats:
       d = memcache.get_stats()
-      s = json.dumps(d)
+      index = memcache.get("index")
+      if index:
+        d['indexmc'] = index
+      else:
+        d['indexmc'] = -1
+      index_from_ds = SearchPosition.get_by_key_name("index")
+      if index_from_ds:
+        d['indexds'] = index_from_ds
+      else:
+        d['indexds'] = -1
       self.response.out.write(s)
     else:
       template_values = {}
