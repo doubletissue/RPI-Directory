@@ -34,7 +34,7 @@ function parseData(data){
 $(document).ready(function() {
 	$("#results").tablesorter({
 		//Force sort on name
-		sortForce: [[0,0]] 
+		sortList: [[0,0]] 
 	}); 
 	$("#keyword").keyup(function(event) {
 	  keyword = $("#keyword").val();
