@@ -29,11 +29,11 @@ class AdminPage(webapp.RequestHandler):
     
     if get_stats:
       d = memcache.get_stats()
-      index = memcache.get("index")
-      if index:
-        d['indexmc'] = index
-      else:
-        d['indexmc'] = -1
+      #index = memcache.get("index")
+      #if index:
+        #d['indexmc'] = index
+      #else:
+        #d['indexmc'] = -1
       index_from_ds = SearchPosition.get_by_key_name("index")
       if index_from_ds:
         d['indexds'] = index_from_ds.position
