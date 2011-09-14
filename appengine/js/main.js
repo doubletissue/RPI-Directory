@@ -32,10 +32,6 @@ function parseData(data){
 }
 
 $(document).ready(function() {
-	$("#results").tablesorter({
-		//Force sort on name
-		//sortList: [0,0] 
-	}); 
 	$("#keyword").keyup(function(event) {
 	  keyword = $("#keyword").val();
 	
@@ -55,5 +51,12 @@ $(document).ready(function() {
 	  }else{
 		$("#output").text("Type something above!");
 	  }
-  });				
+  });
+  //Make table sortable
+  $("#results").tablesorter({
+		//Force sort on name
+		//sortList: [0,0] 
+	});
+	//Focus on textbox
+	$("#keyword").focus();
 });

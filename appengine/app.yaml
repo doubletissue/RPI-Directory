@@ -9,8 +9,8 @@ inbound_services:
 
 handlers:
 - url: /favicon.ico
-  static_files: static/favicon.ico
-  upload: static/favicon.ico
+  static_files: favicon.ico
+  upload: favicon.ico
 
 - url: /css
   static_dir: css
@@ -23,9 +23,9 @@ handlers:
 
 - url: /api.*
   script: api/api.py
-
-- url: /tableApi.*
-  script: api/api.py
+  
+- url: /admin_page.*
+  script: admin_page.py
 
 - url: /.*
   script: main.py
