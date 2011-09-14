@@ -5,16 +5,17 @@ import string
 
 class Person(db.Model):
   """Models a person in the RPI directory."""
-  first_name = db.StringProperty()
-  middle_name = db.StringProperty()
-  last_name = db.StringProperty()
-  email = db.StringProperty()
-  year = db.StringProperty()
-  major = db.StringProperty()
-  title = db.StringProperty()
-  phone = db.StringProperty()
-  fax = db.StringProperty()
-  homepage = db.StringProperty()
+  first_name      = db.StringProperty()
+  middle_name     = db.StringProperty()
+  last_name       = db.StringProperty()
+  email           = db.StringProperty()
+  rcsid           = db.StringProperty()
+  year            = db.StringProperty()
+  major           = db.StringProperty()
+  title           = db.StringProperty()
+  phone           = db.StringProperty()
+  fax             = db.StringProperty()
+  homepage        = db.StringProperty()
   office_location = db.StringProperty(multiline=True)
   campus_mailstop = db.StringProperty(multiline=True)
   mailing_address = db.StringProperty(multiline=True)
@@ -24,7 +25,9 @@ class Person(db.Model):
     person = Person()
     
     if 'email' in d:
-      person = Person(key_name = string.rsplit(d['email'],'@',1)[0])
+      rcsid = string.rsplit(d['email'],'@',1)[0]
+      person = Person(key_name = rcsid)
+      person.rcsid = rcsid
     
     if 'name' in d:
       names = d['name'].split()[:3]
@@ -65,6 +68,8 @@ class Person(db.Model):
     
     if p.email is not None:
       d['email'] = p.email
+    if p.rcsid is not None:
+      d['rcsid'] = p.rcsid
     
     name = ''
     if p.first_name is not None:
