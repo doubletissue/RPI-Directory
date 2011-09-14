@@ -10,9 +10,7 @@ from django.utils import simplejson as json
 class Api(webapp.RequestHandler):
   
   def nameSearch(self,name_type,name,year,major, num_results, page_offset):
-    
     result = index = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
-    
     if result:
       if len(result) > 0:
         logging.error("have results!")
@@ -36,12 +34,8 @@ class Api(webapp.RequestHandler):
     
     query = query.filter(name_type + ' >= ', name)
     query = query.filter(name_type + ' <= ', name+u'\ufffd')
-    
     query = query.order(name_type)
-      
-    
     results = query.fetch(num_results)
-    
     modded = True
     
     if len(results) == 0:
