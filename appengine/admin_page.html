@@ -72,7 +72,7 @@
 		     async: true,
 		     dataType: "json",
 			 success: function(data){
-			     $("#stats").html("Items in MemCache: " + data.items + "<br> Cache Size: " + (data.bytes/1000000) + " MB<br>Index MC: " + data.indexmc + "<br>Index DS: " + data.indexds);
+			     $("#stats").html("Items in MemCache: " + data.items + "<br> Cache Size: " + (data.bytes/1000000) + " MB<br>Index DS: " + data.indexds);
 			     drawChart(data.hits, data.misses);
 		       },
 		    });
