@@ -13,8 +13,9 @@ class Api(webapp.RequestHandler):
     result = index = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
     if result:
       
-      if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, result, 86400):
-        logging.error("Memcache set failed.")
+      # Reset the timer
+      #if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, result, 86400):
+        #logging.error("Memcache set failed.")
         
       if len(result) > 0:
         return result, True
