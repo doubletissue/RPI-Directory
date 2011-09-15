@@ -2,4 +2,4 @@ backends:
 - name: backend
   class: B1
   instances: 1
-  options: dynamic
+  options: dynamic, public

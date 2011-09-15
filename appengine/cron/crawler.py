@@ -18,7 +18,9 @@ class Crawler(webapp.RequestHandler):
   
   def getPage( self, key ):
     url = "http://prod3.server.rpi.edu/peopledirectory/entry.do?datasetName=directory&key=" + str(key)
+    logging.debug(url)
     result = urlfetch.fetch(url)
+    logging.debug('got url')
     
     if result.status_code != 200:
       logging.error("Failed to fetch URL: " + url + "; Error code: " + str(result.status_code))
@@ -114,6 +116,7 @@ class Crawler(webapp.RequestHandler):
     string = string[string.find('id="singleDirectoryEntry"'):]
     string = string[:string.find('</table')]
     
+    logging.warn(string)
     if string is "":
       logging.warn("error reading data")
       return {'error':'page_not_found'}
