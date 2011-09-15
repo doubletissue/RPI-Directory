@@ -23,9 +23,10 @@ function parseData(data){
 	    table_row += "</tr>"
       $("#results").find("tbody").append(table_row);
 	  });
-
 	  $("#results").trigger("update");
-	  }	
+  }
+  // Cool idea, flickers though :-\
+  //$("#results").css("opacity", "1");
 }
 
 //Function to animate text box:
@@ -44,9 +45,6 @@ function animate(flag){
 
 $(document).ready(function() {
 	$("#keyword").bindWithDelay("keyup", function(event) {
-	    
-	    $("#results").css("filter", "alpha(opacity=40)");
-	    
 	    var keyword = $("#keyword").val();
   	  var margin = $("#container").css("margin-top");
 	
@@ -62,7 +60,10 @@ $(document).ready(function() {
      	  if ( margin != "0%" || margin != "0px" ){
      	    animate(true);
      	  }
-   	  
+   	   
+   	    // Cool idea, flickering for some reason though
+   	    //$("#results").css("opacity", ".25");
+   	    
   		  $.ajax({
 		      type: "GET",
 		      url: "/api?name=" + encodeURI(keyword),
