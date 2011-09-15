@@ -64,6 +64,7 @@
 		    }
 		    </script>
 		<script type="text/javascript">
+		
 		  function reDrawMemCache(){
 			// MemCache stats
 			$.ajax({
@@ -77,13 +78,18 @@
 		       },
 		    });
 		  }
+		
 		  $(document).ready(function() {
+			
 			$("#memcache").click(function(){
 				$.ajax({
 			     type: "GET",
 			     url: "/admin_page?flushcache=hi",
 			     async: false,
-				 success: function(data){ alert("Cache flushed!"); },
+				 success: function(data){ 
+					reDrawMemCache(); 
+					alert("Cache flushed!");
+				 },
 			   });
 			});
 			
@@ -92,14 +98,17 @@
 			     type: "GET",
 			     url: "/admin_page?resetpos=hi",
 			     async: false,
-				 success: function(data){ alert("Position reset!"); },
+				 success: function(data){ 
+					reDrawMemCache();
+					alert("Position reset!"); 	 
+				 },
 			    });
 			});
 			
 			reDrawMemCache();
 			
 			// Redraw charts and refresh data every so often
-			setInterval("reDrawMemCache()", 30000);
+			setInterval("reDrawMemCache()", 15000);
 		  });
 		</script>
 		</head>
