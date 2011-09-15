@@ -95,8 +95,11 @@
 				 success: function(data){ alert("Position reset!"); },
 			    });
 			});
+			
+			reDrawMemCache();
+			
 			// Redraw charts and refresh data every so often
-			setInterval("reDrawMemCache()", 5000);
+			setInterval("reDrawMemCache()", 30000);
 		  });
 		</script>
 		</head>
@@ -105,6 +108,6 @@
 		  <div class="clearButton" id="memcache"><input type="button" name="keyword" id="keyword" value="Clear MemCache"/></div>
 		  <div class="clearButton" id="counter"><input type="button" name="keyword" id="keyword" value="Reset Counter"/></div>
 		  <div id="chart"></div>
-		  <div id="stats">MemCache Stats:</div>
+		  <div id="stats"></div>
 		</body>
 </html>
