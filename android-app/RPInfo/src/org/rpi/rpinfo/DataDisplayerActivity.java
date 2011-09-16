@@ -12,17 +12,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
 
-public class DataDisplayerActivity extends ListActivity {
+public class DataDisplayerActivity extends Activity {
 	
 	/** 
 	 * @param in An input stream.
@@ -74,6 +72,8 @@ public class DataDisplayerActivity extends ListActivity {
 
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        setContentView(R.layout.data_view);
                 
         //Extract the search term
   		Bundle b = getIntent().getExtras();
@@ -99,20 +99,10 @@ public class DataDisplayerActivity extends ListActivity {
 
 		// This is the array of objects to be displayed
 		final ArrayList<QueryResultModel> list_items = parseApiResult(apiResult);
-
-  		/*
-        list_items.add(new QueryResultModel("1","Benoid Mandelbrot","mandeb@rpi.edu","Senior","MATH/CSCI"));
-        list_items.add(new QueryResultModel("2","Andre Weil","weila3@rpi.edu","Sophomore", "MATH"));
-        list_items.add(new QueryResultModel("3","Thomas Bayes","bayest4@rpi.edu","Junior", "MATH"));
-        list_items.add(new QueryResultModel("4","Edsger Dijkstra","dijkse2@rpi.edu","Senior", "CSCI"));
-        list_items.add(new QueryResultModel("5","Blaise Pascal","pascab@rpi.edu","Freshman", "MATH"));
-        list_items.add(new QueryResultModel("6","Rene Descartes","descar14@rpi.edu","Junior", "PHIL/MATH"));
-        list_items.add(new QueryResultModel("7","Edward Teller","tellee@rpi.edu","Freshman", "PHYS"));
-        list_items.add(new QueryResultModel("8","Raymond Smullyan","smullr@rpi.edu","Junior", "PHIL"));
-        */
-        setListAdapter(new QueryResultArrayAdapter(this, R.layout.query_result_list_item, list_items));
               
-        ListView lv = getListView();
+        ListView lv = (ListView)findViewById(R.id.data_list);
+        lv.setAdapter(new QueryResultArrayAdapter(this, R.layout.query_result_list_item, list_items));
+
         
         lv.setOnItemClickListener(new OnItemClickListener(){
         	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

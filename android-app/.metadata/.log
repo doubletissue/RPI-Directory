@@ -321,3 +321,35 @@ java.io.IOException: No space left on device
 	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2344)
 	at org.eclipse.ui.actions.WorkspaceModifyOperation.run(WorkspaceModifyOperation.java:118)
 	a
+!ENTRY org.eclipse.ui 4 4 2011-09-16 18:09:18.687
+!MESSAGE Invalid preference page path: XML Syntax
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-16 18:16:18.618
+!MESSAGE AndroidManifest: Ignoring unknown 'EditTextandroid:layout_width' XML element
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-16 18:16:19.059
+!MESSAGE AndroidManifest: Ignoring unknown 'EditTeandroid:layout_width' XML element
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-16 18:16:19.428
+!MESSAGE AndroidManifest: Ignoring unknown 'EditTextandroid:layout_width' XML element
+
+!ENTRY com.android.ide.eclipse.adt 4 0 2011-09-16 18:18:55.487
+!MESSAGE No command output when running: 'am start -n org.rpi.rpinfo/org.rpi.rpinfo.RPInfoActivity -a android.intent.action.MAIN -c android.intent.category.LAUNCHER' on device emulator-5554
+!STACK 0
+com.android.ddmlib.ShellCommandUnresponsiveException
+	at com.android.ddmlib.AdbHelper.executeRemoteCommand(AdbHelper.java:408)
+	at com.android.ddmlib.Device.executeShellCommand(Device.java:276)
+	at com.android.ide.eclipse.adt.internal.launch.ActivityLaunchAction.doLaunchAction(ActivityLaunchAction.java:74)
+	at com.android.ide.eclipse.adt.internal.launch.AndroidLaunchController.launchApp(AndroidLaunchController.java:1146)
+	at com.android.ide.eclipse.adt.internal.launch.AndroidLaunchController.simpleLaunch(AndroidLaunchController.java:823)
+	at com.android.ide.eclipse.adt.internal.launch.AndroidLaunchController.access$3(AndroidLaunchController.java:807)
+	at com.android.ide.eclipse.adt.internal.launch.AndroidLaunchController$3.run(AndroidLaunchController.java:655)
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-16 18:19:25.640
+!MESSAGE AndroidManifest: Ignoring unknown 'Li' XML element
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-16 18:19:25.915
+!MESSAGE AndroidManifest: Ignoring unknown 'List' XML element
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-16 18:19:26.272
+!MESSAGE AndroidManifest: Ignoring unknown 'ListVi' XML element
