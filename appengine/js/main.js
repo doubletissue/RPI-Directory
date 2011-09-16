@@ -82,7 +82,7 @@ $(document).ready(function() {
     		//  animate(false);
   	    //}
 	    }
-	  }, 250);
+	  }, 125);
   
   //Make table sortable
   $("#results").tablesorter();
