@@ -4,11 +4,10 @@
 var keyword = "";
 var delay = 60;
 var padding = '20%';
-var d = new Date();
 var last_token = 0;
 
-function parseData(data){  
-	if (data !== [] && data.length > 0 && last_token == data.token){
+function parseData(data){
+	if (data.data !== [] && data.data.length > 0 && last_token == data.token){
 	  // Get rid of current results		
 	  $("#results").find("tbody").empty();
 	 
@@ -65,7 +64,8 @@ $(document).ready(function() {
    	   
    	    // Cool idea, flickering for some reason though
    	    //$("#results").css("opacity", ".25");
-   	    last_token = d.getMilliseconds();
+   	    last_token = new Date().getMilliseconds() + "";
+   	    
   		  $.ajax({
 		      type: "GET",
 		      url: "/api?name=" + encodeURI(keyword) + "&token=" + last_token,
