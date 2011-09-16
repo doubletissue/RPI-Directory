@@ -4,7 +4,7 @@
 var keyword = "";
 var delay = 60;
 var padding = '20%';
-var last_token = 0;
+var last_token = 1;
 
 function parseData(data){
 	if (data.data !== [] && data.data.length > 0 && last_token == data.token){
@@ -64,8 +64,7 @@ $(document).ready(function() {
    	   
    	    // Cool idea, flickering for some reason though
    	    //$("#results").css("opacity", ".25");
-   	    last_token = new Date().getMilliseconds() + "";
-   	    
+   	    last_token += 1;
   		  $.ajax({
 		      type: "GET",
 		      url: "/api?name=" + encodeURI(keyword) + "&token=" + last_token,
@@ -82,7 +81,7 @@ $(document).ready(function() {
     		//  animate(false);
   	    //}
 	    }
-	  }, 125);
+	  }, 100);
   
   //Make table sortable
   $("#results").tablesorter();
