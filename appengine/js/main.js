@@ -27,7 +27,7 @@ function parseData(data){
 	  $("#results").trigger("update");
   }
   // Cool idea, flickers though :-\
-  //$("#results").css("opacity", "1");
+  $("#results").css("opacity", "1");
 }
 
 //Function to animate text box:
@@ -40,7 +40,7 @@ function animate(flag){
   }else{
     $("#container").animate({
       marginTop: padding,
-    }, delay * 2);
+    }, delay * 1.3);
   }
 }
 
@@ -63,7 +63,7 @@ $(document).ready(function() {
      	  }
    	   
    	    // Cool idea, flickering for some reason though
-   	    //$("#results").css("opacity", ".25");
+   	    $("#results").css("opacity", ".25");
    	    last_token += 1;
   		  $.ajax({
 		      type: "GET",
@@ -77,11 +77,11 @@ $(document).ready(function() {
   	  }else if (keyword == ''){ // Entry is blank
   	    $("#results").hide();
   	    // Animate box back down
-  	    //if ( margin == "0%" || margin == "0px"){
-    		//  animate(false);
-  	    //}
+  	    if ( margin == "0%" || margin == "0px"){
+    		  animate(false);
+  	    }
 	    }
-	  }, 100);
+	  }, 50);
   
   //Make table sortable
   $("#results").tablesorter();
