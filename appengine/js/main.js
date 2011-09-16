@@ -4,14 +4,16 @@
 var keyword = "";
 var delay = 60;
 var padding = '20%';
+var d = new Date();
+var last_token = 0;
 
 function parseData(data){  
-	if (data !== [] && data.length > 0){
+	if (data !== [] && data.length > 0 && last_token == data.token){
 	  // Get rid of current results		
 	  $("#results").find("tbody").empty();
 	 
 	  // Loop through JSON
-	  $.each(data, function(i, person){
+	  $.each(data.datas, function(i, person){
 	    var table_row = "<tr>";
       // Loop through each person and output their attributes
       //$.each(person, function(key, value){
@@ -63,10 +65,10 @@ $(document).ready(function() {
    	   
    	    // Cool idea, flickering for some reason though
    	    //$("#results").css("opacity", ".25");
-   	    
+   	    last_token = d.getMilliseconds();
   		  $.ajax({
 		      type: "GET",
-		      url: "/api?name=" + encodeURI(keyword),
+		      url: "/api?name=" + encodeURI(keyword) + "&token=" + last_token,
 		      async: true,
 		 	    dataType: "json",
 			    success: parseData,
