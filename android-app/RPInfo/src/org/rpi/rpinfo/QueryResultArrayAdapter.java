@@ -45,16 +45,16 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 			TextView department = (TextView)newView.findViewById(R.id.query_result_department);
 
 			if( name != null ){
-				name.setText(model.name);
+				name.setText((String)model.getElement("name","N/A"));
 			}
 			if( email != null ){
-				email.setText(model.email);
+				email.setText((String)model.getElement("email","N/A"));
 			}
 			if( year != null ){
-				year.setText(model.year);
+				year.setText((String)model.getElement("class","N/A"));
 			}
 			if( department != null ){
-				department.setText(model.department);
+				department.setText((String)model.getElement("major","N/A"));
 			}
 		}
 		

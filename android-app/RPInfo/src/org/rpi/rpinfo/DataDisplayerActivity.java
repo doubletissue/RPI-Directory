@@ -8,6 +8,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,35 +48,58 @@ public class DataDisplayerActivity extends ListActivity {
 		return null;
 	}
 
+	private ArrayList<QueryResultModel> parseApiResult(JSONObject apiResult) {
+		ArrayList<QueryResultModel> list_items = new ArrayList<QueryResultModel>();
+
+		JSONArray data_array;
+		try {
+			data_array = apiResult.getJSONArray("data");
+
+			// Extract the first 25 items from the list - more won't be helpful to display
+			for (int i = 0;
+					i < (data_array.length() < 25 ? data_array.length() : 25);
+					++i) {
+				JSONObject current;
+
+				// Get the current object in the array and add it to the list
+				current = data_array.getJSONObject(i);
+				list_items.add(new QueryResultModel(current));
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return list_items;
+	}
+
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        final ArrayList<QueryResultModel> list_items = new ArrayList<QueryResultModel>();
-        
+                
         //Extract the search term
   		Bundle b = getIntent().getExtras();
   		if( b == null ){
   			finish();
   		}
   		String searchTerm = (String)b.get("searchTerm");
-  		//Log.i("searchTerm", searchTerm);
 
   		//Get the JSON output from the api
-  		String json = null;
+  		JSONObject apiResult = null;
   		try {
   			URL apiURL = new URL("http://rpidirectory.appspot.com/api?name=" + searchTerm);
   			URLConnection connection = apiURL.openConnection();
   			InputStream in = new BufferedInputStream(connection.getInputStream());
-  			json = readInputStream(in);
-  	  		//Log.i("returnStuff", readInputStream(in));
+  			apiResult = new JSONObject(readInputStream(in));
   		} catch (MalformedURLException e) {
   			e.printStackTrace();
   		} catch (IOException e) {
   			e.printStackTrace();
-  		}
-  		
-  		
-        
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		// This is the array of objects to be displayed
+		final ArrayList<QueryResultModel> list_items = parseApiResult(apiResult);
+
   		/*
         list_items.add(new QueryResultModel("1","Benoid Mandelbrot","mandeb@rpi.edu","Senior","MATH/CSCI"));
         list_items.add(new QueryResultModel("2","Andre Weil","weila3@rpi.edu","Sophomore", "MATH"));

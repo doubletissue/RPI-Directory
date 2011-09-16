@@ -25,7 +25,7 @@ public class DetailedDataDisplayerActivity extends Activity {
 		/* Dummy functionality until something nice can be put here */
 		
 		TextView name = (TextView)this.findViewById(R.id.detailed_name);
-		name.setText(selectedPerson.name);
+		name.setText((String)selectedPerson.getElement("name","N/A"));
 	}
 
 }
