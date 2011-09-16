@@ -11,10 +11,11 @@ import org.json.JSONObject;
 public class QueryResultModel implements Serializable {
 	//A unique identifier for this class (for serialization)
 	private static final long serialVersionUID = -579697907972516780L;
-	private JSONObject data = null;
+	private String data = null;
 	
 	public QueryResultModel( JSONObject data ){
-		this.data = data;
+		//The question remains: why does JSONObject not implement Serializable?
+		this.data = data.toString();
 	}
 	
 	/**
@@ -25,8 +26,21 @@ public class QueryResultModel implements Serializable {
 	 * @return The value that the key maps to or the failure object
 	 */
 	public Object getElement(String key, Object failure){
+		JSONObject JSONData = null;
+		
+		//Convert the string into a JSONObject object.
 		try {
-			return this.data.get(key);
+			JSONData = new JSONObject(this.data);
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		
+		/*
+		 * Get the requested data from the JSONObject. If it does not exist,
+		 * return the failure value
+		 */
+		try {
+			return JSONData.get(key);
 		} catch (JSONException e) {
 			return failure;
 		}
