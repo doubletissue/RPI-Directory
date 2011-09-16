@@ -8,6 +8,7 @@
 		<link href='css/main.css' rel='stylesheet' type='text/css'>
 		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript" src="js/tblsrt.js"></script>
+		<script type="text/javascript" src="js/bindwithdelay.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
@@ -22,12 +23,15 @@
 		</script>
 		</head>
 		<body id="body">
-		  <div class="full_width big">RPI Directory</div>
-		  <div id="inputBox">
-			<input type="text" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
+		  <div id="container">
+		    <div class="full_width big">RPI Directory</div>
+		    <div id="inputBox">
+			  <input type="text" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
+		    </div>
 		  </div>
 		  <div id="output"></div>
-		  <table id="results" class="tablesorter">
+		  <div id="noscript"><noscript>You have JavaScript disabled.  This search will not work without it, please turn on JavaScript.</noscript></div>
+		  <table id="results" class="tablesorter" style="display:none">
 		    <thead>
 		      <tr>
 			    <th>Name</th>
