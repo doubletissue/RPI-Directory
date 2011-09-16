@@ -13,7 +13,7 @@ function parseData(data){
 	  $("#results").find("tbody").empty();
 	 
 	  // Loop through JSON
-	  $.each(data.datas, function(i, person){
+	  $.each(data.data, function(i, person){
 	    var table_row = "<tr>";
       // Loop through each person and output their attributes
       //$.each(person, function(key, value){
