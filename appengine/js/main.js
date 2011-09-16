@@ -80,7 +80,7 @@ $(document).ready(function() {
     		//  animate(false);
   	    //}
 	    }
-	  }, 175);
+	  }, 250);
   
   //Make table sortable
   $("#results").tablesorter();
