@@ -15,12 +15,14 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class DataDisplayerActivity extends Activity {
+	private static final String TAG = "DataDisplayerActivity";
 	
 	/** 
 	 * @param in An input stream.
@@ -89,6 +91,7 @@ public class DataDisplayerActivity extends Activity {
   			URLConnection connection = apiURL.openConnection();
   			InputStream in = new BufferedInputStream(connection.getInputStream());
   			apiResult = new JSONObject(readInputStream(in));
+  			Log.i(TAG, apiResult.toString());
   		} catch (MalformedURLException e) {
   			e.printStackTrace();
   		} catch (IOException e) {
