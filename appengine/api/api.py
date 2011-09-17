@@ -9,6 +9,7 @@ from django.utils import simplejson as json
 
 
 class NewApi(webapp.RequestHandler):
+  pass
 
 class Api(webapp.RequestHandler):
   
