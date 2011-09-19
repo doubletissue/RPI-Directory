@@ -1,13 +1,22 @@
 package org.rpi.rpinfo;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +37,7 @@ public class DataDisplayerActivity extends Activity {
 	 * @param in An input stream.
 	 * @return String containing everything that was in the input stream.
 	 */
+	/*
 	private String readInputStream(InputStream in){
 		try {
 			String result = "";
@@ -47,6 +57,7 @@ public class DataDisplayerActivity extends Activity {
 		
 		return null;
 	}
+	*/
 
 	private ArrayList<QueryResultModel> parseApiResult(JSONObject apiResult) {
 		ArrayList<QueryResultModel> list_items = new ArrayList<QueryResultModel>();
@@ -82,10 +93,27 @@ public class DataDisplayerActivity extends Activity {
   		if( b == null ){
   			finish();
   		}
+  		
   		String searchTerm = (String)b.get("searchTerm");
 
   		//Get the JSON output from the api
   		JSONObject apiResult = null;
+		try {
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpContext localContext = new BasicHttpContext();
+			HttpGet httpGet = new HttpGet("http://www.rpidirectory.appspot.com/api?name=" + searchTerm);
+			HttpResponse response = httpClient.execute( httpGet, localContext );
+			BufferedReader in = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
+			apiResult = new JSONObject(in.readLine());
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+  		/*
   		try {
   			URL apiURL = new URL("http://rpidirectory.appspot.com/api?name=" + searchTerm);
   			URLConnection connection = apiURL.openConnection();
@@ -99,6 +127,7 @@ public class DataDisplayerActivity extends Activity {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		*/
 
 		// This is the array of objects to be displayed
 		final ArrayList<QueryResultModel> list_items = parseApiResult(apiResult);
