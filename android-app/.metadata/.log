@@ -362,3 +362,24 @@ Command-line arguments:  -os linux -ws gtk -arch x86
 
 !ENTRY org.eclipse.ui 4 4 2011-09-18 21:31:53.152
 !MESSAGE Invalid preference page path: XML Syntax
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-18 22:29:07.323
+!MESSAGE AndroidManifest: Ignoring unknown 'te' XML element
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-18 22:29:10.504
+!MESSAGE AndroidManifest: Ignoring unknown 'ed' XML element
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-18 22:29:22.710
+!MESSAGE AndroidManifest: Ignoring unknown 'Te' XML element
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-18 22:29:23.051
+!MESSAGE AndroidManifest: Ignoring unknown 'Text' XML element
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-18 22:29:23.366
+!MESSAGE AndroidManifest: Ignoring unknown 'TextVi' XML element
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-18 22:29:54.566
+!MESSAGE detailed_data_view.xml: You must supply a layout_width attribute.
+
+!ENTRY com.android.ide.eclipse.adt 2 0 2011-09-18 22:29:54.572
+!MESSAGE detailed_data_view.xml: You must supply a layout_height attribute.
