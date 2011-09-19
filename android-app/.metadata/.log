@@ -353,3 +353,12 @@ com.android.ddmlib.ShellCommandUnresponsiveException
 
 !ENTRY com.android.ide.eclipse.adt 2 0 2011-09-16 18:19:26.272
 !MESSAGE AndroidManifest: Ignoring unknown 'ListVi' XML element
+!SESSION 2011-09-17 00:52:57.492 -----------------------------------------------
+eclipse.buildId=I20110613-1736
+java.version=1.6.0_22
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.ui 4 4 2011-09-18 21:31:53.152
+!MESSAGE Invalid preference page path: XML Syntax

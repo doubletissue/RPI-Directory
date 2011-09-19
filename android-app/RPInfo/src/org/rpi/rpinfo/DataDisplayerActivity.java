@@ -1,13 +1,8 @@
 package org.rpi.rpinfo;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
@@ -24,40 +19,20 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 public class DataDisplayerActivity extends Activity {
 	private static final String TAG = "DataDisplayerActivity";
-	
-	/** 
-	 * @param in An input stream.
-	 * @return String containing everything that was in the input stream.
-	 */
-	/*
-	private String readInputStream(InputStream in){
-		try {
-			String result = "";
-			byte[] buffer = new byte[1024];
-			
-			//Loop until there is nothing left in the stream
-			while( in.available() > 0 ){
-				//Only write to the string the number of bytes read
-				int num_read = in.read(buffer, 0, buffer.length);
-				result = result + new String(buffer, 0, num_read);
-			}
-			
-			return result;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-	*/
 
 	private ArrayList<QueryResultModel> parseApiResult(JSONObject apiResult) {
 		ArrayList<QueryResultModel> list_items = new ArrayList<QueryResultModel>();
@@ -82,21 +57,12 @@ public class DataDisplayerActivity extends Activity {
 
 		return list_items;
 	}
-
-	public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        setContentView(R.layout.data_view);
-                
-        //Extract the search term
-  		Bundle b = getIntent().getExtras();
-  		if( b == null ){
-  			finish();
-  		}
-  		
-  		String searchTerm = (String)b.get("searchTerm");
-
-  		//Get the JSON output from the api
+	
+	private void updateList(String searchTerm){
+		//No spaces in a proper URL
+		searchTerm = searchTerm.replace(" ", "+");
+		
+		//Get the JSON output from the api
   		JSONObject apiResult = null;
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
@@ -113,39 +79,59 @@ public class DataDisplayerActivity extends Activity {
 			e.printStackTrace();
 		}
 		
-  		/*
-  		try {
-  			URL apiURL = new URL("http://rpidirectory.appspot.com/api?name=" + searchTerm);
-  			URLConnection connection = apiURL.openConnection();
-  			InputStream in = new BufferedInputStream(connection.getInputStream());
-  			apiResult = new JSONObject(readInputStream(in));
-  			Log.i(TAG, apiResult.toString());
-  		} catch (MalformedURLException e) {
-  			e.printStackTrace();
-  		} catch (IOException e) {
-  			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		*/
-
 		// This is the array of objects to be displayed
 		final ArrayList<QueryResultModel> list_items = parseApiResult(apiResult);
               
+		//Set up the list view (where the results are displayed)
         ListView lv = (ListView)findViewById(R.id.data_list);
         lv.setAdapter(new QueryResultArrayAdapter(this, R.layout.query_result_list_item, list_items));
 
-        
         lv.setOnItemClickListener(new OnItemClickListener(){
-        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				//TextView name = (TextView) view.findViewById(R.id.query_result_name);
-				
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {			
 				Intent i = new Intent(DataDisplayerActivity.this, DetailedDataDisplayerActivity.class);
 				i.putExtra("selectedPerson", list_items.get((int) id));
 				startActivity(i);
-				
-				//Toast.makeText(getApplicationContext(), name.getText(), Toast.LENGTH_SHORT).show();
 			}
         });
+	}
+
+	public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        setContentView(R.layout.data_view);
+                
+        final Button submitButton = (Button)findViewById(R.id.submit);
+        final EditText searchBox = (EditText)findViewById(R.id.searchBox);
+        
+        /* 
+         * Automatically populate the results while the user types
+         * (but only if the user has typed 3 or more characters)
+         */
+        searchBox.addTextChangedListener(new TextWatcher() {
+			
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if( searchBox.getText().length() >= 3 ){
+					updateList( searchBox.getText().toString() );
+				}
+			}
+			
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				//Nothing
+			}
+			
+			public void afterTextChanged(Editable s) {
+				//Nothing
+			}
+		});
+        
+        /*
+         * Manually populate the results when the user requests it
+         */
+        submitButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v){
+				updateList( searchBox.getText().toString() );
+			}
+		});
 	}
 }
