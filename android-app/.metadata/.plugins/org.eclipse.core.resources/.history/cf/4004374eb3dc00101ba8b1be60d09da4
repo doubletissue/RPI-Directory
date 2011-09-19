@@ -1,7 +1,0 @@
-package org.rpi.rpinfo;
-
-import android.app.Activity;
-
-public class DetailedDataDisplayerActivity extends Activity {
-
-}
