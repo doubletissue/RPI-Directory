@@ -1,6 +1,9 @@
 package org.rpi.rpinfo;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +28,7 @@ public class QueryResultModel implements Serializable {
 	 * @param failure the object to return if the key is not found
 	 * @return The value that the key maps to or the failure object
 	 */
-	public Object getElement(String key, Object failure){
+	public String getElement(String key, String failure){
 		JSONObject JSONData = null;
 		
 		//Convert the string into a JSONObject object.
@@ -40,10 +43,35 @@ public class QueryResultModel implements Serializable {
 		 * return the failure value
 		 */
 		try {
-			return JSONData.get(key);
+			return (String)JSONData.get(key);
 		} catch (JSONException e) {
 			return failure;
 		}
+	}
+	
+	public Map<String, String> getAllElements(){
+		JSONObject JSONData = null;
+		
+		//Convert the string into a JSONObject object.
+		try {
+			JSONData = new JSONObject(this.data);
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		
+		HashMap<String, String> results = new HashMap<String, String>();
+		Iterator keys = JSONData.keys();
+		for( String key : JSONData.keys() ){
+			
+		}
+		while( keys.hasNext() ){
+			
+		}
+		for( String key : JSONData.keys() ){
+			results.put(JSONData., value)
+		}
+		
+		return results;
 	}
 	
 }
