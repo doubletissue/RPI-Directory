@@ -7,6 +7,10 @@ import urllib
 from models import Person
 from django.utils import simplejson as json
 
+
+class NewApi(webapp.RequestHandler):
+  pass
+
 class Api(webapp.RequestHandler):
   
   def nameSearch(self,name_type,name,year,major, num_results, page_offset):
