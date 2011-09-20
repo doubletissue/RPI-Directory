@@ -1,5 +1,9 @@
 package org.rpi.rpinfo;
 
+import java.util.Map;
+
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +27,7 @@ public class DetailedDataDisplayerActivity extends Activity {
 			finish();
 		}
 		
-		JSONObject data = selectedPerson.getAllElements();
+		Map<String, String> data = selectedPerson.getAllElements();
 		
 		//Put the person's name in
 		TextView name = (TextView)this.findViewById(R.id.person_name);
