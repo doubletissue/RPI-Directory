@@ -22,6 +22,29 @@ public class QueryResultModel implements Serializable {
 	}
 	
 	/**
+	 * Parse a JSONObject into a HashMap<String, String>
+	 * 
+	 * @param data A JSONObject that maps Strings to Strings
+	 * @return A map that is identical to the JSONObject
+	 */
+	private HashMap<String, String> getMap( JSONObject data ){
+		HashMap<String, String> results = new HashMap<String, String>();
+		
+		Iterator<String> keys = data.keys();
+		
+		while( keys.hasNext() ){
+			String currentKey = keys.next();
+			try {
+				results.put( currentKey, data.getString(currentKey) );
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return results;
+	}
+	
+	/**
 	 * Get an element of the JSONObject that the QueryResultModel holds.
 	 * 
 	 * @param key The key to find
@@ -59,17 +82,7 @@ public class QueryResultModel implements Serializable {
 			e1.printStackTrace();
 		}
 		
-		HashMap<String, String> results = new HashMap<String, String>();
-		Iterator keys = JSONData.keys();
-		for( String key : JSONData.keys() ){
-			
-		}
-		while( keys.hasNext() ){
-			
-		}
-		for( String key : JSONData.keys() ){
-			results.put(JSONData., value)
-		}
+		HashMap<String, String> results = getMap( JSONData );
 		
 		return results;
 	}
