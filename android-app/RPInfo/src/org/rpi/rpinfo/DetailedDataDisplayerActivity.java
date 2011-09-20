@@ -3,6 +3,7 @@ package org.rpi.rpinfo;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class DetailedDataDisplayerActivity extends Activity {
@@ -22,10 +23,13 @@ public class DetailedDataDisplayerActivity extends Activity {
 			finish();
 		}
 		
-		/* Dummy functionality until something nice can be put here */
+		JSONObject data = selectedPerson.getAllElements();
 		
-		TextView name = (TextView)this.findViewById(R.id.detailed_name);
-		name.setText((String)selectedPerson.getElement("name", "N/A"));
+		//Put the person's name in
+		TextView name = (TextView)this.findViewById(R.id.person_name);
+		name.setText(selectedPerson.getElement("name", "N/A"));
+		
+		ListView lv = (ListView)this.findViewById(R.id.data_list);
 	}
 
 }

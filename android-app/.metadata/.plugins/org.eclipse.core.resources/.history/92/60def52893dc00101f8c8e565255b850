@@ -1,8 +1,0 @@
-package org.rpi.rpinfo;
-
-public class QueryResultModel {
-	public String uid;
-	public String name;
-	public String email;
-	public String department;
-}
