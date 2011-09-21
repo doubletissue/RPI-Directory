@@ -3,6 +3,9 @@ package org.rpi.rpinfo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -29,14 +32,14 @@ public class RPInfoAPI {
 		return singleton;
 	}
 	
-	public JSONObject request( String searchTerm ){
-		//No spaces in a proper URL
-		searchTerm = searchTerm.replace(" ", "+");
-		
+	public JSONObject request( String searchTerm ){	
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpContext localContext = new BasicHttpContext();
-			HttpGet httpGet = new HttpGet(URLBASE + searchTerm);
+			
+			//URLEncoder sanitize the input
+			HttpGet httpGet = new HttpGet( URLBASE + URLEncoder.encode(searchTerm) );
+			
 			HttpResponse response = httpClient.execute( httpGet, localContext );
 			BufferedReader in = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
 			return new JSONObject(in.readLine());
