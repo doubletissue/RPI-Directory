@@ -17,68 +17,57 @@ import android.widget.ListView;
 
 public class ResultsListManager {
 	private Date currentUpdate = new Date();
+	private static final Object currentUpdateLock = new Object();
 	private Activity context = null;
 	
 	public ResultsListManager(Activity context){
 		this.context = context;
 	}
-
-	private ArrayList<QueryResultModel> parseApiResult(JSONObject apiResult) {
-		ArrayList<QueryResultModel> list_items = new ArrayList<QueryResultModel>();
-
-		JSONArray data_array;
-		try {
-			data_array = apiResult.getJSONArray("data");
-
-			// Extract the first 25 items from the list - more won't be helpful to display
-			for (int i = 0;
-					i < (data_array.length() < 25 ? data_array.length() : 25);
-					++i) {
-				JSONObject current;
-
-				// Get the current object in the array and add it to the list
-				current = data_array.getJSONObject(i);
-				list_items.add(new QueryResultModel(current));
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+	
+	private void setCurrentUpdate( Date newCurrentUpdate ){
+		synchronized(currentUpdateLock){
+			currentUpdate = newCurrentUpdate;
 		}
-
-		return list_items;
+	}
+	
+	private Date getCurrentUpdate(){
+		synchronized(currentUpdateLock){
+			return this.currentUpdate;
+		}
 	}
 	
 	/*
 	 * Perform the actual update asynchronously
 	 */
-	private class DoUpdate extends AsyncTask<String, Void, JSONObject>{
+	private class DoUpdate extends AsyncTask<String, Void, ArrayList<QueryResultModel> > {
 		private Date updateStart = null;
 		
 		protected void onPreExecute() {
 			//Keep track of when the update was started
 			updateStart = new Date();
-			currentUpdate = updateStart;
+			setCurrentUpdate( updateStart );
 		}
 		
-		protected JSONObject doInBackground(String... params) {
+		protected ArrayList<QueryResultModel> doInBackground(String... params) {
 			String searchTerm = params[0];
 			
 			//Get the JSON output from the api
-	  		JSONObject apiResult = RPInfoAPI.getInstance().request(searchTerm);
+			ArrayList<QueryResultModel> apiResult = RPInfoAPI.getInstance().request(searchTerm);
 			
 			return apiResult;
  		}
 		
-		protected void onPostExecute(JSONObject apiResult) {
+		protected void onPostExecute(ArrayList<QueryResultModel> apiResult) {
 			/*
-			 * f this was not the most recently started update, there
+			 * If this was not the most recently started update, there
 			 * isn't much to do...
 			 */
-			if( currentUpdate != updateStart ){
+			if( getCurrentUpdate() != updateStart ){
 				return;
 			}
 			
-			//This is the array of objects to be displayed
-			final ArrayList<QueryResultModel> list_items = parseApiResult(apiResult);
+			//No need to display more than 25 elements
+			final ArrayList<QueryResultModel> list_items = (ArrayList<QueryResultModel>)apiResult.subList(0, 25);
 			
 			//Set up the list view (where the results are displayed)
 	        ListView lv = (ListView)context.findViewById(R.id.data_list);
