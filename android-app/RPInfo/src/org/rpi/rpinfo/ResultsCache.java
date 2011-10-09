@@ -41,9 +41,12 @@ public class ResultsCache {
 	}
 
 	public ArrayList<QueryResultModel> extract(String searchTerm) {
+		ArrayList<QueryResultModel> rv;
 		for( CacheEntry entry : representation ){
 			if( matchSearchTerm(entry.key, searchTerm) ){
-				return pruneResults( searchTerm, entry.value );
+				rv = pruneResults( searchTerm, entry.value );
+				insert( searchTerm, rv );
+				return rv;
 			}
 		}
 		
