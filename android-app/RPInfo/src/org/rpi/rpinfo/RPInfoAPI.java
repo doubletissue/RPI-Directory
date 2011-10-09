@@ -18,9 +18,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RPInfoAPI {
+	private static final String TAG = "RPInfoAPI";
 	private static RPInfoAPI singleton = null;
 	private static final String URLBASE = "http://www.rpidirectory.appspot.com/api?name=";
 	private static final ResultsCache cache = new ResultsCache();
+	private Object requestLock = new Object();
 	
 	private RPInfoAPI(){
 	}
@@ -40,7 +42,7 @@ public class RPInfoAPI {
 		try {
 			data_array = apiResult.getJSONArray("data");
 
-			//Fill the arrayl
+			// No need to display more than MAX_DISPLAY_ELEMENTS (25) elements
 			for( int i = 0; i < data_array.length(); ++i ){
 				JSONObject current;
 
@@ -55,33 +57,45 @@ public class RPInfoAPI {
 		return list_items;
 	}
 	
-	private JSONObject webRequest( String searchTerm ){
-		try {
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpContext localContext = new BasicHttpContext();
-			
-			//URLEncoder sanitize the input
-			HttpGet httpGet = new HttpGet( URLBASE + URLEncoder.encode(searchTerm) );
-			
-			HttpResponse response = httpClient.execute( httpGet, localContext );
-			BufferedReader in = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
-			return new JSONObject(in.readLine());
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
+	private ArrayList<QueryResultModel> doRequest( String searchTerm ){
+		/**
+		 * Do only one request at a time - reduce server load, but also
+		 * allow requests to take advantage of cached results by previous
+		 * requests.
+		 */
+		synchronized( requestLock ){
+			try {
+				ArrayList<QueryResultModel> rv = cache.extract( searchTerm );
+				
+				if( rv == null ){
+					HttpClient httpClient = new DefaultHttpClient();
+					HttpContext localContext = new BasicHttpContext();
+					
+					//URLEncoder sanitize the input
+					HttpGet httpGet = new HttpGet( URLBASE + URLEncoder.encode(searchTerm) );
+					
+					HttpResponse response = httpClient.execute( httpGet, localContext );
+					BufferedReader in = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
+					
+					rv = parseApiResult( new JSONObject(in.readLine()) );
+					cache.insert( searchTerm, rv );
+				}
+				
+				return rv;
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return null;
 	}
 	
-	private JSONObject localRequest( String searchTerm ){
-		return null;
-	}
 	
 	public ArrayList<QueryResultModel> request( String searchTerm ){	
-		return null;
+		return doRequest( searchTerm );
 	}
 }

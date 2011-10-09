@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;

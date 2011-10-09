@@ -3,10 +3,6 @@ package org.rpi.rpinfo;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -15,7 +11,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+//(data_array.length() < MAX_DISPLAY_ELEMENTS ? data_array.length() : MAX_DISPLAY_ELEMENTS)
+
 public class ResultsListManager {
+	private static final int MAX_DISPLAY_ELEMENTS = 25;
 	private Date currentUpdate = new Date();
 	private static final Object currentUpdateLock = new Object();
 	private Activity context = null;
@@ -36,6 +35,20 @@ public class ResultsListManager {
 		}
 	}
 	
+	/**
+	 * Extract the first MAX_DISPLAY_ELEMENTS (25) from the result of
+	 * the API call. More is unnecessary. 
+	 */
+	private ArrayList<QueryResultModel> extractDisplayList( ArrayList<QueryResultModel> x ){
+		ArrayList<QueryResultModel> rv = new ArrayList<QueryResultModel>(); 
+		
+		for( int i = 0; i < (x.size() < MAX_DISPLAY_ELEMENTS ? x.size(): MAX_DISPLAY_ELEMENTS ); ++i ){
+			rv.add( x.get(i) );
+		}
+		
+		return rv;
+	}
+	
 	/*
 	 * Perform the actual update asynchronously
 	 */
@@ -52,12 +65,12 @@ public class ResultsListManager {
 			String searchTerm = params[0];
 			
 			//Get the JSON output from the api
-			ArrayList<QueryResultModel> apiResult = RPInfoAPI.getInstance().request(searchTerm);
+			ArrayList<QueryResultModel> apiResult = extractDisplayList(RPInfoAPI.getInstance().request(searchTerm));
 			
 			return apiResult;
  		}
 		
-		protected void onPostExecute(ArrayList<QueryResultModel> apiResult) {
+		protected void onPostExecute(final ArrayList<QueryResultModel> apiResult) {
 			/*
 			 * If this was not the most recently started update, there
 			 * isn't much to do...
@@ -65,25 +78,22 @@ public class ResultsListManager {
 			if( getCurrentUpdate() != updateStart ){
 				return;
 			}
-			
-			//No need to display more than 25 elements
-			final ArrayList<QueryResultModel> list_items = (ArrayList<QueryResultModel>)apiResult.subList(0, 25);
-			
+						
 			//Set up the list view (where the results are displayed)
 	        ListView lv = (ListView)context.findViewById(R.id.data_list);
-	        lv.setAdapter(new QueryResultArrayAdapter(context, R.layout.query_result_list_item, list_items));
+	        lv.setAdapter(new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult));
 
 	        lv.setOnItemClickListener(new OnItemClickListener(){
 	        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {			
 					Intent i = new Intent(context, DetailedDataDisplayerActivity.class);
-					i.putExtra("selectedPerson", list_items.get((int) id));
+					i.putExtra("selectedPerson", apiResult.get((int) id));
 					context.startActivity(i);
 				}
 	        });
 		}
 	}
 	
-	/*
+	/**
 	 * Wrapper for AsyncTask DoUpdate
 	 */
 	public void update(String searchTerm){
