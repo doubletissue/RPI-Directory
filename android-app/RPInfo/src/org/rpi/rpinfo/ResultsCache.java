@@ -3,7 +3,11 @@ package org.rpi.rpinfo;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import android.util.Log;
+
 public class ResultsCache {	
+	private static final String TAG = "ResultsCache";
+	
 	private class CacheEntry {
 		public String key;
 		public ArrayList<QueryResultModel> value;
@@ -40,22 +44,9 @@ public class ResultsCache {
 		return false;
 	}
 
-	public ArrayList<QueryResultModel> extract(String searchTerm) {
-		ArrayList<QueryResultModel> rv;
-		for( CacheEntry entry : representation ){
-			if( matchSearchTerm(entry.key, searchTerm) ){
-				rv = pruneResults( searchTerm, entry.value );
-				insert( searchTerm, rv );
-				return rv;
-			}
-		}
-		
-		return null;
-	}
-
-	private int fillSearchSpace( int top, int left, int topLeft, char c1, char c2 ){
+	private int fillSearchSpace( int top, int left, int topLeft, Character c1, Character c2 ){
 		int topOrLeft = Math.min( top, left );
-		int result = Math.min( topOrLeft, topLeft + (c1 == c2 ? 0 : 1) );
+		int result = Math.min( topOrLeft, topLeft + (Character.toUpperCase(c1) == Character.toUpperCase(c2) ? 0 : 1) );
 		return result;
 	}
 	
@@ -79,19 +70,28 @@ public class ResultsCache {
 			searchSpace[0][i] = i;
 		}
 		
+		//String debugString = "";
+		
 		//Fill in the rest of the matrix
 		for( int i = 1; i <= s.length(); ++i ){
-			for( int j = 1; j < matching.length(); ++j ){
+			for( int j = 1; j <= matching.length(); ++j ){
 				searchSpace[i][j] = fillSearchSpace( 
-						searchSpace[i-1][j], 
-						searchSpace[i][j-1], 
+						1+searchSpace[i-1][j], 
+						1+searchSpace[i][j-1], 
 						searchSpace[i-1][j-1],
 						s.charAt(i-1), 
 						matching.charAt(j-1) );
+				//debugString += searchSpace[i][j];
 			}
+			//debugString += "\n";
 		}
+
+		//Log.i(TAG, debugString);
 		
 		int distance = searchSpace[s.length()][matching.length()];
+		
+		//Log.i(TAG, "Distance: " + distance + " ML: " + matching.length() + " NL: " + s.length() );
+		
 		if( distance == Math.abs( matching.length() - s.length() ) ){
 			return true;
 		} else {
@@ -109,10 +109,35 @@ public class ResultsCache {
 			}
 		}
 		
-		return null;
+		return rv;
 	}
 
+	public ArrayList<QueryResultModel> extract(String searchTerm){
+		/*
+		Log.i( TAG, "Input: " + searchTerm );
+		
+		for( CacheEntry element : representation ){
+			Log.i( TAG, "Key: " + element.key );
+		}
+		*/
+		
+		ArrayList<QueryResultModel> rv;
+		for( CacheEntry entry : representation ){
+			if( matchSearchTerm(entry.key, searchTerm) ){
+				//Log.i( TAG, "Matched: " + searchTerm );
+				rv = pruneResults( searchTerm, entry.value );
+				//Log.i( TAG, "Insert: " + searchTerm );
+				insert( searchTerm, rv );
+				return rv;
+			}
+		}
+		
+		return null;
+	}
+	
 	public void insert(String searchTerm, ArrayList<QueryResultModel> searchResults ) {
+		//Log.i( TAG, "Insert Happening: " + searchTerm );
+		
 		CacheEntry entry = new CacheEntry( searchTerm, searchResults );
 		representation.addFirst( entry );
 		if( representation.size() > MAX_CACHE_SIZE ){

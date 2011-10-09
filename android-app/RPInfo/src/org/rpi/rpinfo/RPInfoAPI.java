@@ -17,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 public class RPInfoAPI {
 	private static final String TAG = "RPInfoAPI";
 	private static RPInfoAPI singleton = null;
@@ -63,6 +65,8 @@ public class RPInfoAPI {
 		 * allow requests to take advantage of cached results by previous
 		 * requests.
 		 */
+		Log.i( TAG, "Search: " + searchTerm );
+		
 		synchronized( requestLock ){
 			try {
 				ArrayList<QueryResultModel> rv = cache.extract( searchTerm );
@@ -78,6 +82,7 @@ public class RPInfoAPI {
 					BufferedReader in = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
 					
 					rv = parseApiResult( new JSONObject(in.readLine()) );
+					//Log.i( TAG, "Insert: " + searchTerm );
 					cache.insert( searchTerm, rv );
 				}
 				
