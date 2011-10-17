@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C82BC00144CCCAF00968426 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C82BBFF144CCCAF00968426 /* DetailViewController.m */; };
 		5CA6A80D1423FEB8001E20E6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CA6A80C1423FEB8001E20E6 /* UIKit.framework */; };
 		5CA6A80F1423FEB8001E20E6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CA6A80E1423FEB8001E20E6 /* Foundation.framework */; };
 		5CA6A8111423FEB8001E20E6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CA6A8101423FEB8001E20E6 /* CoreGraphics.framework */; };
@@ -27,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5C82BBFE144CCCAF00968426 /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DetailViewController.h; path = iPhone/DetailViewController.h; sourceTree = "<group>"; };
+		5C82BBFF144CCCAF00968426 /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DetailViewController.m; path = iPhone/DetailViewController.m; sourceTree = "<group>"; };
 		5CA6A8081423FEB8001E20E6 /* RPI Directory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RPI Directory.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CA6A80C1423FEB8001E20E6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5CA6A80E1423FEB8001E20E6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -130,6 +133,8 @@
 			children = (
 				5CA6A81F1423FEB9001E20E6 /* RPI_DirectoryAppDelegate_iPhone.h */,
 				5CA6A8201423FEB9001E20E6 /* RPI_DirectoryAppDelegate_iPhone.m */,
+				5C82BBFE144CCCAF00968426 /* DetailViewController.h */,
+				5C82BBFF144CCCAF00968426 /* DetailViewController.m */,
 				5CA6A836142405B3001E20E6 /* SearchViewController_iPhone.h */,
 				5CA6A837142405B3001E20E6 /* SearchViewController_iPhone.m */,
 				5CA6A838142405B3001E20E6 /* SearchViewController_iPhone.xib */,
@@ -234,6 +239,7 @@
 				5CA6A87C14240964001E20E6 /* JSONKit.m in Sources */,
 				5CC2A930142513C500D4B2D0 /* DataManager.m in Sources */,
 				5CC2A9371425319500D4B2D0 /* Person.m in Sources */,
+				5C82BC00144CCCAF00968426 /* DetailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,11 +288,11 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -300,11 +306,11 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -318,6 +324,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RPI Directory/RPI Directory-Prefix.pch";
 				INFOPLIST_FILE = "RPI Directory/RPI Directory-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -329,6 +336,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RPI Directory/RPI Directory-Prefix.pch";
 				INFOPLIST_FILE = "RPI Directory/RPI Directory-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
