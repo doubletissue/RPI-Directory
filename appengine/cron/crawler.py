@@ -97,7 +97,7 @@ class Crawler(webapp.RequestHandler):
     full_string = string
     
     attributes = {
-                    'Class:'           : 'class',
+                    'Class:'           : 'year',
                     'Curriculum:'      : 'major',
                     'Title:'           : 'title',
                     'Telephone:'       : 'phone',

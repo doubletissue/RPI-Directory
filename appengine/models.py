@@ -46,8 +46,8 @@ class Person(db.Model):
     if 'email' in d:
       person.email = d['email']
       person.key_name = d['email']
-    if 'class' in d:
-      person.year = d['class']
+    if 'year' in d:
+      person.year = d['year']
     if 'major' in d:
       person.major = d['major']
     if 'title' in d:
@@ -88,7 +88,7 @@ class Person(db.Model):
       d['name'] = name
     
     if p.year is not None:
-      d['class'] = p.year.capitalize()
+      d['year'] = p.year.capitalize()
     
     if p.major is not None:
       d['major'] = p.major.capitalize()
