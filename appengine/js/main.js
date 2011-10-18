@@ -70,7 +70,7 @@ $(document).ready(function() {
 		      url: "/api?name=" + encodeURI(keyword) + "&token=" + last_token,
 		      async: true,
 		 	    dataType: "json",
-			    success: parseData,
+			    success: parseData
 		    });
 		   
   		  $("#results").show();
