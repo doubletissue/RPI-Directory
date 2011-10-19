@@ -25,22 +25,22 @@
 		<body id="body">
 		  <div id="container" class="container_12">
 		    <div class="full_width big">RPI Directory - Alpha!</div>
-		    <div id="inputBox">
+		    <div id="noscript" style="text-align: center; margin: auto;"><noscript>You have JavaScript disabled.  This search will not work without it, please turn on JavaScript.</noscript></div>
+		    <div id="inputBox" class="grid_6 prefix_3 suffix_3">
 			  <input type="text" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
 		    </div>
-		  </div>
-		  <div id="output"></div>
-		  <div id="noscript" style="text-align: center; margin: auto;"><noscript>You have JavaScript disabled.  This search will not work without it, please turn on JavaScript.</noscript></div>
-		  <table id="results" class="tablesorter" style="display:none">
-		    <thead>
-		      <tr>
-			    <th>Name</th>
-			    <th>Major</th>
-			    <th>Class</th>
-			  </tr>
-			</thead>
-			<tbody>
-			</tbody>
-		  </table>	
+		    <div id="output" class="grid_10 prefix_10 suffix_10"></div>
+	  	  <table id="results" class="tablesorter grid_10 prefix_1 suffix_1" style="display:none">
+  		    <thead>
+  		      <tr>
+  			      <th>Name</th>
+  			      <th>Major</th>
+  			      <th>Year</th>
+  			    </tr>
+  			  </thead>
+  			  <tbody>
+  			  </tbody>
+  		  </table>
+		  </div>	
 		</body>
 </html>
