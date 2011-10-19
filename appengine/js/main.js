@@ -35,7 +35,7 @@ function parseData(data){
 function animate(flag){
   if (flag){
     $("#container").animate({
-      marginTop: '0%',
+      marginTop: '0%'
     }, delay, function(){ $("#container").css("margin-top","0%"); });
   }else{
     $("#container").animate({
