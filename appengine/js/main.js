@@ -38,7 +38,7 @@ function AddResultsToTable(data){
 	   //  table_row += ("<td>" + value + "</td>");	
 	   //}
     //});
-    table_row += ("<td>" + person.name + "</td><td>" + (person.major == undefined ? 'N/A' : person.major) + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" + person.email + "</td>");
+    table_row += ("<td>" + person.name + "</td><td>" + (person.major == undefined ? 'N/A' : person.major) + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" + (person.email == undefined ? 'N/A' : person.email) + "</td>");
     table_row += "</tr>";
     $("#results").find("tbody").append(table_row);
   });
