@@ -5,6 +5,7 @@ var delay = 60;
 var padding = '20%';
 var last_token = 1;
 var cached_results = {};
+var local_storage_supported = DetectLocalStorage();
 
 function parseServerData(data){
 	if (data.data !== [] && data.data.length > 0 && last_token == data.token){
@@ -14,10 +15,23 @@ function parseServerData(data){
   $("#results").css("opacity", "1");
   // Cache the results
   cached_results[data.name] = data;
+  if (local_storage_supported){
+    localStorage.setItem(data.name, JSON.stringify(data));
+  }
 }
 
 function parseCachedData(keyword){
-  data = cached_results[keyword];
+  var data;
+  if (cached_results[keyword]){
+    data = cached_results[keyword];
+    $("#output").text("JS Cached Keyword: " + keyword);
+  }else if (local_storage_supported && localStorage.getItem(keyword)){
+    data = JSON.parse(localStorage.getItem(keyword));
+    $("#output").text("HTML5 Cached Keyword: " + keyword);
+  }
+  
+  // TODO: Add an else to make a server call or something.
+	
 	if (data.data !== []){
 	  AddResultsToTable(data);
   }
@@ -59,6 +73,17 @@ function animate(flag){
   }
 }
 
+//Detect HTML5 Local Storage
+function DetectLocalStorage(){
+  try{
+    if (window['localStorage'] !== null){
+      return true;
+    }
+  }catch(e){
+    return false;
+  }
+}
+
 $(document).ready(function() {
 	$("#keyword").bindWithDelay("keyup", function(event) {
 	    var keyword = $("#keyword").val();
@@ -82,9 +107,8 @@ $(document).ready(function() {
    	    last_token += 1;
    	    
    	    // Check cache
-   	    if (cached_results[keyword]){
+   	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
    	      parseCachedData(keyword);
-   	      $("#output").text("Cached Keyword: " + keyword);
    	    }else{
    	      $.ajax({
   		      type: "GET",
