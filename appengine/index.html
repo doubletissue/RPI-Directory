@@ -4,8 +4,8 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<title>RPI Directory</title>
 		<link href='http://fonts.googleapis.com/css?family=Puritan:700' rel='stylesheet' type='text/css'>
-		<link href='css/960.css' rel='stylesheet' type='text/css'>
 		<link href='css/main.css' rel='stylesheet' type='text/css'>
+		<link href='css/960.css' rel='stylesheet' type='text/css'>
 		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript" src="js/tblsrt.js"></script>
 		<script type="text/javascript" src="js/bindwithdelay.js"></script>
@@ -23,24 +23,24 @@
 		</script>
 		</head>
 		<body id="body">
-		  <div id="container" class="container_12">
-		    <div class="full_width big">RPI Directory - Alpha!</div>
-		    <div id="noscript" style="text-align: center; margin: auto;"><noscript>You have JavaScript disabled.  This search will not work without it, please turn on JavaScript.</noscript></div>
-		    <div id="inputBox" class="grid_6 prefix_3 suffix_3">
+		  <div id="container">
+		    <div class="full_width big">RPI Directory</div>
+		    <div id="inputBox">
 			  <input type="text" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
 		    </div>
-		    <div id="output" class="grid_10 prefix_10 suffix_10"></div>
-	  	  <table id="results" class="tablesorter grid_10 prefix_1 suffix_1" style="display:none">
-  		    <thead>
-  		      <tr>
-  			      <th>Name</th>
-  			      <th>Major</th>
-  			      <th>Year</th>
-  			    </tr>
-  			  </thead>
-  			  <tbody>
-  			  </tbody>
-  		  </table>
-		  </div>	
+		  </div>
+		  <div id="output"></div>
+		  <div id="noscript"><noscript>You have JavaScript disabled.  This search will not work without it, please turn on JavaScript.</noscript></div>
+		  <table id="results" class="tablesorter" style="display:none">
+		    <thead>
+		      <tr>
+			    <th>Name</th>
+			    <th>Major</th>
+			    <th>Class</th>
+			  </tr>
+			</thead>
+			<tbody>
+			</tbody>
+		  </table>	
 		</body>
 </html>
