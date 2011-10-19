@@ -24,10 +24,10 @@ function parseCachedData(keyword){
   var data;
   if (cached_results[keyword]){
     data = cached_results[keyword];
-    $("#output").text("JS Cached Keyword: " + keyword);
+    //$("#output").text("JS Cached Keyword: " + keyword);
   }else if (local_storage_supported && localStorage.getItem(keyword)){
     data = JSON.parse(localStorage.getItem(keyword));
-    $("#output").text("HTML5 Cached Keyword: " + keyword);
+    //$("#output").text("HTML5 Cached Keyword: " + keyword);
   }
   
   // TODO: Add an else to make a server call or something.
