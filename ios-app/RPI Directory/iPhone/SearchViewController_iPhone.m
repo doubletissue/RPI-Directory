@@ -9,6 +9,8 @@
 #import "SearchViewController_iPhone.h"
 #import "Person.h"
 
+#define SEARCH_TIME_INTERVAL 2
+
 @implementation SearchViewController_iPhone
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -17,6 +19,7 @@
     if (self) {
         // Custom initialization
         self.view.frame = [[UIScreen mainScreen] applicationFrame];
+        searchTimeInterval = SEARCH_TIME_INTERVAL;
     }
     return self;
 }
@@ -168,7 +171,23 @@
         if ([m_searchArray count] == 0) {
             m_searchInfo = @"Searching...";
         }
-        [self searchWithString:searchString];
+        
+        //  Wait for a set interval between searches, to not hammer the server
+        if (lastSearchTime == nil) {
+            lastSearchTime = [NSDate dateWithTimeIntervalSinceNow:0];
+            [lastSearchTime retain];
+            
+            [self searchWithString:searchString];
+        } else {
+            if ([lastSearchTime timeIntervalSinceNow] < -searchTimeInterval) {
+                [self searchWithString:searchString];
+                
+                [lastSearchTime release];
+                lastSearchTime = [NSDate dateWithTimeIntervalSinceNow:0];
+                [lastSearchTime retain];
+            }
+        }
+        
         
         return YES;
     } else {

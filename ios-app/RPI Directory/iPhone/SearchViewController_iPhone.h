@@ -17,6 +17,9 @@
     
     NSString *m_searchInfo;
     NSArray *m_searchArray;
+    
+    NSDate *lastSearchTime;
+    NSTimeInterval searchTimeInterval;
 }
 
 - (IBAction)switchInstantSearch:(id)sender;
