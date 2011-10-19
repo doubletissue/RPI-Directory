@@ -104,26 +104,27 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *personCellID = @"personCell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:personCellID];
-	if (cell == nil)
-	{
-		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:personCellID] autorelease];
+    //  If no people have been found (or searched for yet)
+    if ([m_searchArray count] == 0) {
+        UITableViewCell *cell = [[UITableViewCell alloc] init];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.textLabel.text = m_searchInfo;
         
-        if ([m_searchArray count] == 0) {
-            cell.accessoryType = UITableViewCellAccessoryNone;
-        } else {
+        return cell;
+    } else {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:personCellID];
+        if (cell == nil)
+        {
+            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:personCellID] autorelease];
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
-	}
-	
-    if ([m_searchArray count] == 0) {
-        cell.textLabel.text = m_searchInfo;
-    } else {
+        
         Person *person = [m_searchArray objectAtIndex:indexPath.row];
         cell.textLabel.text = person.name;
+        cell.detailTextLabel.text = person.email;
+        
+        return cell;
     }
-    
-    return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

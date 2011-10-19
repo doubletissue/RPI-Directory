@@ -59,6 +59,10 @@
         
 //        return NO;
     } else {
+        for (id key in dataDict) {
+            NSLog(@"key: %@, value: %@", key, [dataDict objectForKey:key]);
+        }
+        
         if (jsonString) {
             for (NSDictionary *individual in [dataDict objectForKey:@"data"]) {
                 Person *person = [[Person alloc] init];
