@@ -24,6 +24,9 @@ handlers:
 - url: /api.*
   script: api/api.py
   
+- url: /_ah/xmpp/message/chat/
+  script: api/chatbot.py
+  
 - url: /admin_page.*
   script: admin_page.py
   login: admin
