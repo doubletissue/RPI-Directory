@@ -1,33 +1,48 @@
 // Christian Johnson
 // RCOS RPI Directory JavaScript
 
-var keyword = "";
 var delay = 60;
 var padding = '20%';
 var last_token = 1;
+var cached_results = {};
 
-function parseData(data){
+function parseServerData(data){
 	if (data.data !== [] && data.data.length > 0 && last_token == data.token){
-	  // Get rid of current results		
-	  $("#results").find("tbody").empty();
-	 
-	  // Loop through JSON
-	  $.each(data.data, function(i, person){
-	    var table_row = "<tr>";
-      // Loop through each person and output their attributes
-      //$.each(person, function(key, value){
-		   //if (key in {'name':'', 'major':'','class':''}/* && value != undefined*/){
-		   //  table_row += ("<td>" + value + "</td>");	
-		   //}
-	    //});
-	    table_row += ("<td>"+ person.name + "</td><td>" + (person.major == undefined ? 'N/A' : person.major) + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td>");
-	    table_row += "</tr>";
-      $("#results").find("tbody").append(table_row);
-	  });
-	  $("#results").trigger("update");
+	  AddResultsToTable(data)
   }
-  // Cool idea, flickers though :-\
+  // Undo the opacity
   $("#results").css("opacity", "1");
+  // Cache the results
+  cached_results[data.name] = data;
+}
+
+function parseCachedData(keyword){
+  data = cached_results[keyword];
+	if (data.data !== []){
+	  AddResultsToTable(data);
+  }
+  // Undo the opacity
+  $("#results").css("opacity", "1");
+}
+
+function AddResultsToTable(data){
+  // Get rid of current results		
+  $("#results").find("tbody").empty();
+  
+  // Loop through JSON
+  $.each(data.data, function(i, person){
+    var table_row = "<tr>";
+    // Loop through each person and output their attributes
+    //$.each(person, function(key, value){
+	   //if (key in {'name':'', 'major':'','class':''}/* && value != undefined*/){
+	   //  table_row += ("<td>" + value + "</td>");	
+	   //}
+    //});
+    table_row += ("<td>" + person.name + "</td><td>" + (person.major == undefined ? 'N/A' : person.major) + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" + person.email + "</td>");
+    table_row += "</tr>";
+    $("#results").find("tbody").append(table_row);
+  });
+  $("#results").trigger("update");
 }
 
 //Function to animate text box:
@@ -65,14 +80,20 @@ $(document).ready(function() {
    	    // Cool idea, flickering for some reason though
    	    $("#results").css("opacity", ".25");
    	    last_token += 1;
-  		  $.ajax({
-		      type: "GET",
-		      url: "/api?name=" + encodeURI(keyword) + "&token=" + last_token,
-		      async: true,
-		 	    dataType: "json",
-			    success: parseData
-		    });
-		   
+   	    
+   	    // Check cache
+   	    if (cached_results[keyword]){
+   	      parseCachedData(keyword);
+   	      $("#output").text("Cached Keyword: " + keyword);
+   	    }else{
+   	      $.ajax({
+  		      type: "GET",
+  		      url: "/api?name=" + encodeURI(keyword) + "&token=" + last_token,
+  		      async: true,
+  		 	    dataType: "json",
+  			    success: parseServerData
+  		    }); 
+   	    }
   		  $("#results").show();
   	  }else if (keyword == ''){ // Entry is blank
   	    $("#results").hide();
@@ -81,7 +102,7 @@ $(document).ready(function() {
     		  animate(false);
   	    }
 	    }
-	  }, 50);
+	  }, 100);
   
   //Make table sortable
   $("#results").tablesorter();

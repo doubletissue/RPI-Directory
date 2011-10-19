@@ -66,10 +66,10 @@ class Api(webapp.RequestHandler):
     
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
-    year  = urllib.unquote( cgi.escape(self.request.get('year' )).lower()[:50] )
-    major = urllib.unquote( cgi.escape(self.request.get('major')).lower()[:50] )
-    name  = urllib.unquote( cgi.escape(self.request.get('name' )).lower()[:50] )
-    token = urllib.unquote( cgi.escape(self.request.get('token'))              )
+    year  = urllib.unquote(cgi.escape(self.request.get('year')).lower()[:50])
+    major = urllib.unquote(cgi.escape(self.request.get('major')).lower()[:50])
+    name  = urllib.unquote(cgi.escape(self.request.get('name')).lower()[:50])
+    token = urllib.unquote(cgi.escape(self.request.get('token')))
     
     names = name.split()[:3]
     
@@ -101,6 +101,7 @@ class Api(webapp.RequestHandler):
     d = {}
     d['data'] = l
     d['token'] = token
+    d['name'] = name
     s = json.dumps(d)
     self.response.out.write(s)
     
