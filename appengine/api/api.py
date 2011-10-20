@@ -90,6 +90,17 @@ class Api(webapp.RequestHandler):
         l2.append(Person.buildMap(p))
       
       # Combine in some special way
+      
+      first_name_quantity = 20*len(first_name_results)/(len(first_name_results)+len(last_name_results))
+      last_name_quantity = 20*len(last_name_results)/(len(first_name_results)+len(last_name_results))
+      if first_name_recur == last_name_recur:
+        l1 = l1[:first_name_quantity]
+        l2 = l2[:last_name_quantity]
+      elif first_name_recur < last_name_recur:
+        l2 = []
+      elif first_name_recur > last_name_recur:
+        l1 = []
+        
       l = l1
       l.extend(l2)
       l = sorted(l, key=lambda person: person['name'])[:20]
