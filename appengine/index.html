@@ -23,25 +23,27 @@
 		</script>
 		</head>
 		<body id="body">
-		  <div id="container">
-		    <div class="full_width big">RPI Directory</div>
-		    <div id="inputBox">
-			  <input type="text" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
+		  <div id="container" class="container_12">
+		    <div class="full_width grid_12">RPI Directory</div>
+		    <div id="inputBox" class="grid_8 prefix_2 suffix_2">
+			    <input type="text" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
 		    </div>
+		    <div id="output" class="grid_10 prefix_1 suffix_1"></div>
+		    <div id="noscript" class="grid_10 prefix_1 suffix_1"><noscript>You have JavaScript disabled.  This search will not work without it, please turn on JavaScript and refresh your browser.</noscript></div>
+		    <div class="grid_10 prefix_1 suffix_1">
+		      <table id="results" class="tablesorter" style="display:none">
+    		    <thead>
+    		      <tr>
+    			      <th>Name</th>
+      			    <th>Major</th>
+      			    <th>Class</th>
+      			    <th>Email</th>
+    			    </tr>
+    			  </thead>
+    			  <tbody>
+    			  </tbody>
+    		  </table>
+    		</div>
 		  </div>
-		  <div id="output"></div>
-		  <div id="noscript"><noscript>You have JavaScript disabled.  This search will not work without it, please turn on JavaScript.</noscript></div>
-		  <table id="results" class="tablesorter" style="display:none">
-		    <thead>
-		      <tr>
-			    <th>Name</th>
-			    <th>Major</th>
-			    <th>Class</th>
-			    <th>Email</th>
-			  </tr>
-			</thead>
-			<tbody>
-			</tbody>
-		  </table>	
 		</body>
 </html>

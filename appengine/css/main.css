@@ -3,9 +3,9 @@
 }
 
 #inputBox input {
-	width: 39%; 
+	width: 100%; 
 	padding: .25em;
-	font-size: 150%;
+	font-size: 130%;
 }
 
 #container {
@@ -28,6 +28,7 @@
 #results {
 	margin-left: auto;
 	margin-right:auto;
+	width: 100%;
 }
 
 #output {
