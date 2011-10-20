@@ -13,6 +13,7 @@ function parseServerData(data){
   }
   // Undo the opacity
   $("#results").css("opacity", "1");
+  
   // Cache the results
   cached_results[data.name] = data;
   if (local_storage_supported){
@@ -101,7 +102,7 @@ function callServer(keyword){
 
 $(document).ready(function() {
 	$("#keyword").bindWithDelay("keyup", function(event) {
-	  var keyword = $("#keyword").val();
+	  var keyword = $("#keyword").val().toLowerCase();
 	  var margin = $("#container").css("margin-top");
 
 	  // Check for enter keypress
@@ -122,11 +123,11 @@ $(document).ready(function() {
  	    // Check cache
  	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
  	      parseCachedData(keyword);
- 	    }else{
+ 	    }else{  // Dim results and call the API
  	      $("#results").css("opacity", ".25");
  	      callServer(keyword);
  	    }
-		  $("#results").show();
+ 	    $("#results").show();
 	  }else if (keyword == ''){ // Entry is blank
 	    $("#results").hide();
 	    // Animate box back down
