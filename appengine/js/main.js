@@ -16,7 +16,14 @@ function parseServerData(data){
   // Cache the results
   cached_results[data.name] = data;
   if (local_storage_supported){
-    localStorage.setItem(data.name, JSON.stringify(data));
+    try {
+      localStorage.setItem(data.name, JSON.stringify(data));
+    }catch (e){
+      if (e == QUOTA_EXCEEDED_ERR) {
+        // oh noes, out of 5 MB of localstorage...clear it out!
+        localStorage.clear();
+      }
+    }
   }
 }
 
