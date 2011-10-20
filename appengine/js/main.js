@@ -2,7 +2,7 @@
 // RCOS RPI Directory JavaScript
 
 var delay = 60;
-var padding = '20%';
+var padding = '15%';
 var last_token = 1;
 var cached_results = {};
 var local_storage_supported;

@@ -41,8 +41,6 @@ table.tablesorter {
 	background-color: #CDCDCD;
 	margin: 10px 0px 15px;
 	text-align: left;
-	max-width: 70%;
-	min-width: 50%;
 }
 
 table.tablesorter thead tr th, table.tablesorter tfoot tr th {
