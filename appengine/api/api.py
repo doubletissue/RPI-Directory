@@ -73,6 +73,10 @@ class Api(webapp.RequestHandler):
     
     names = name.split()[:3]
     
+    
+    
+    quick_person = Person.get_by_key_name(names[0])
+    
     l = []
     
     if len(names) == 1:
@@ -98,6 +102,15 @@ class Api(webapp.RequestHandler):
     
     l = sorted(l, key=lambda person: person['name'])
     l = l[:20]
+    
+    if quick_person:
+      newL = []
+      for i in l:
+        if 'rcsid' in i and i['rcsid'] == quick_person.key().name():
+          continue
+        newL.append(i)
+      l = newL
+      l.insert(0,Person.buildMap(quick_person))
     d = {}
     d['data'] = l
     d['token'] = token
