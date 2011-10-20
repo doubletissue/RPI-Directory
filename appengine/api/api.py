@@ -17,6 +17,7 @@ class Api(webapp.RequestHandler):
     logging.debug("Searching for " + name_type + " of " + name)
     cache = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
     if cache:
+      logging.debug("Number of items from cache: " + str(cache))
       result,recursion_level = cache
       if result:
         logging.debug("cache hit, recur level ofs " + str(recursion_level))

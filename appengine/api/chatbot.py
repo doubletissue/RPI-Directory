@@ -25,8 +25,8 @@ class ChatHandler(xmpp_handlers.CommandHandler):
     
     s = ''
     d = eval(result.content)
-    for person in d['data']:
-      s += person['name'] + "\n"
+    for person in d['data'][:3]:
+      s += '*' + person['name'] + "*\n"
       if 'major' in person and 'year' in person:
         s += '(' + person['major'] + ", " + person['year'] + ')\n'
     message.reply(s)
