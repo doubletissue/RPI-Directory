@@ -46,11 +46,11 @@ class Api(webapp.RequestHandler):
     query = query.order(name_type)
     results = query.fetch(num_results)
     
-    modded = False
+    recursion_level = 0
     
     if len(results) == 0:
-      modded = True
-      results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
+      results,recursion_level = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
+      recursion_level += 1
     if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, results, 86400):
       logging.error("Memcache set failed.")
     else:
@@ -62,7 +62,7 @@ class Api(webapp.RequestHandler):
       else:
         logging.debug("FAILED")
 
-    return results, modded
+    return results, recursion_level
     
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
@@ -77,21 +77,40 @@ class Api(webapp.RequestHandler):
     
     quick_person = Person.get_by_key_name(names[0])
     
+    l1 = []
+    l2 = []
     l = []
     
     if len(names) == 1:
-      first_name_results, modded = self.nameSearch('first_name',names[0],year,major, 1000, 0)
-      for p in first_name_results:
-        l.append(Person.buildMap(p))
-      last_name_results, modded  = self.nameSearch('last_name',names[0],year,major, 1000, 0)
-      for p in last_name_results:
-        l.append(Person.buildMap(p))
+      first_name_results, first_name_recur = self.nameSearch('first_name',names[0],year,major, 1000, 0)
+      for p in first_name_results[:20]:
+        l1.append(Person.buildMap(p))
+      last_name_results, last_name_recur  = self.nameSearch('last_name',names[0],year,major, 1000, 0)
+      for p in last_name_results[:20]:
+        l2.append(Person.buildMap(p))
+      
+      # Combine in some special way
+      
+      first_name_quantity = 20*len(first_name_results)/(len(first_name_results)+len(last_name_results))
+      last_name_quantity = 20*len(last_name_results)/(len(first_name_results)+len(last_name_results))
+      if first_name_recur == last_name_recur:
+        l1 = l1[:first_name_quantity]
+        l2 = l2[:last_name_quantity]
+      elif first_name_recur < last_name_recur:
+        l2 = []
+      elif first_name_recur > last_name_recur:
+        l1 = []
+        
+      l = l1
+      l.extend(l2)
+      l = sorted(l, key=lambda person: person['name'])[:20]
+      
     elif len(names) > 1:
       d = set()
-      last_name_results, modded = self.nameSearch('last_name',names[-1],year,major, 1000, 0)
+      last_name_results, first_name_recur = self.nameSearch('last_name',names[-1],year,major, 1000, 0)
       for p in last_name_results:
         d.add(p.key().name())
-      first_name_results, modded  = self.nameSearch('first_name',names[0],year,major, 1000, 0)
+      first_name_results, last_name_recur  = self.nameSearch('first_name',names[0],year,major, 1000, 0)
       i = 0
       for p in first_name_results:
         if p.key().name() in d:
@@ -99,9 +118,7 @@ class Api(webapp.RequestHandler):
           i += 1
           if i > 20:
             break
-    
-    l = sorted(l, key=lambda person: person['name'])
-    l = l[:20]
+      l = sorted(l, key=lambda person: person['name'])
     
     if quick_person:
       newL = []
