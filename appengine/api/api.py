@@ -15,24 +15,21 @@ class Api(webapp.RequestHandler):
   
   def nameSearch(self,name_type,name,year,major, num_results, page_offset):
     logging.debug("Searching for " + name_type + " of " + name)
-    result = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
-    if result:
-      logging.debug("cache hit")
-      # Reset the timer
-      #if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, result, 86400):
-        #logging.error("Memcache set failed.")
-        
-      if len(result) > 0:
+    cache = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
+    if cache:
+      result,recursion_level = cache
+      if result:
+        logging.debug("cache hit, recur level ofs " + str(recursion_level))
+        # Reset the timer
+        #if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, result, 86400):
+          #logging.error("Memcache set failed.")
+          
         logging.debug("Got " + str(len(result)) + " results, returning")
-        return result, True
-      else:
-        logging.debug("Got " + str(len(result)) + " results, recurring to " + name[:-1])
-        results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
-        return results, False
+        return result, recursion_level
     
     
     if name == '':
-      return [], True
+      return [], 0
     
     query = Person.all()
     
@@ -51,16 +48,8 @@ class Api(webapp.RequestHandler):
     if len(results) == 0:
       results,recursion_level = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
       recursion_level += 1
-    if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, results, 86400):
+    if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, (results,recursion_level), 86400):
       logging.error("Memcache set failed.")
-    else:
-      logging.debug("Memcache success with " + str(len(results)))
-      
-      result = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
-      if result:
-        logging.debug("Got " + str(len(results)))
-      else:
-        logging.debug("FAILED")
 
     return results, recursion_level
     
@@ -88,8 +77,6 @@ class Api(webapp.RequestHandler):
       last_name_results, last_name_recur  = self.nameSearch('last_name',names[0],year,major, 1000, 0)
       for p in last_name_results[:20]:
         l2.append(Person.buildMap(p))
-      
-      # Combine in some special way
       
       first_name_quantity = 20*len(first_name_results)/(len(first_name_results)+len(last_name_results))
       last_name_quantity = 20*len(last_name_results)/(len(first_name_results)+len(last_name_results))
