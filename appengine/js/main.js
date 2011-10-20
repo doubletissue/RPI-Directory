@@ -5,11 +5,11 @@ var delay = 60;
 var padding = '20%';
 var last_token = 1;
 var cached_results = {};
-var local_storage_supported = DetectLocalStorage();
+var local_storage_supported;
 
 function parseServerData(data){
 	if (data.data !== [] && data.data.length > 0 && last_token == data.token){
-	  AddResultsToTable(data)
+	  AddResultsToTable(data);
   }
   // Undo the opacity
   $("#results").css("opacity", "1");
@@ -28,7 +28,7 @@ function parseServerData(data){
 }
 
 function parseCachedData(keyword){
-  var data;
+  var data = null;
   if (cached_results[keyword]){
     data = cached_results[keyword];
     //$("#output").text("JS Cached Keyword: " + keyword);
@@ -37,13 +37,11 @@ function parseCachedData(keyword){
     //$("#output").text("HTML5 Cached Keyword: " + keyword);
   }
   
-  // TODO: Add an else to make a server call or something.
-	
-	if (data.data !== []){
+	if (data !== null && data.data !== []){
 	  AddResultsToTable(data);
-  }
-  // Undo the opacity
-  $("#results").css("opacity", "1");
+	}else{
+	  callServer(keyword);
+	}
 }
 
 function AddResultsToTable(data){
@@ -91,53 +89,59 @@ function DetectLocalStorage(){
   }
 }
 
+function callServer(keyword){
+  $.ajax({
+    type: "GET",
+    url: "/api?name=" + encodeURI(keyword) + "&token=" + last_token,
+    async: true,
+    dataType: "json",
+    success: parseServerData
+  });
+}
+
 $(document).ready(function() {
 	$("#keyword").bindWithDelay("keyup", function(event) {
-	    var keyword = $("#keyword").val();
-  	  var margin = $("#container").css("margin-top");
-	
-  	  // Check for enter keypress
-  	  if (event.which == 13) {
-  	     event.preventDefault();
-  	     return;
-  	  }
-	    
-	    // If a non-blank entry
-  	  if (keyword != ''){
-  	    //Animate text box up
-     	  if ( margin != "0%" || margin != "0px" ){
-     	    animate(true);
-     	  }
-   	   
-   	    // Cool idea, flickering for some reason though
-   	    $("#results").css("opacity", ".25");
-   	    last_token += 1;
-   	    
-   	    // Check cache
-   	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
-   	      parseCachedData(keyword);
-   	    }else{
-   	      $.ajax({
-  		      type: "GET",
-  		      url: "/api?name=" + encodeURI(keyword) + "&token=" + last_token,
-  		      async: true,
-  		 	    dataType: "json",
-  			    success: parseServerData
-  		    }); 
-   	    }
-  		  $("#results").show();
-  	  }else if (keyword == ''){ // Entry is blank
-  	    $("#results").hide();
-  	    // Animate box back down
-  	    if ( margin == "0%" || margin == "0px"){
-    		  animate(false);
-  	    }
+	  var keyword = $("#keyword").val();
+	  var margin = $("#container").css("margin-top");
+
+	  // Check for enter keypress
+	  if (event.which == 13) {
+	     event.preventDefault();
+	     return;
+	  }
+    
+    // If a non-blank entry
+	  if (keyword != ''){
+	    //Animate text box up
+   	  if ( margin != "0%" || margin != "0px" ){
+   	    animate(true);
+   	  }
+ 	   
+ 	    last_token += 1;
+ 	    
+ 	    // Check cache
+ 	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
+ 	      parseCachedData(keyword);
+ 	    }else{
+ 	      $("#results").css("opacity", ".25");
+ 	      callServer(keyword);
+ 	    }
+		  $("#results").show();
+	  }else if (keyword == ''){ // Entry is blank
+	    $("#results").hide();
+	    // Animate box back down
+	    if ( margin == "0%" || margin == "0px"){
+  		  animate(false);
 	    }
-	  }, 100);
+    }
+  }, 100);
   
   //Make table sortable
   $("#results").tablesorter();
   
 	//Focus on textbox
 	$("#keyword").focus();
+	
+	//Detect LocalStorage (HTML5 Cache)
+	local_storage_supported = DetectLocalStorage();
 });
