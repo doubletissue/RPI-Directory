@@ -106,7 +106,7 @@ public class RPInfoAPI {
 					HashMap<String, String> params = new HashMap<String, String>();
 					params.put(PARAM_NAME, searchTerm);
 					params.put(PARAM_PAGE, Integer.toString(page));
-					params.put(PARAM_NUM_RESULTS, Integer.toString(page));
+					params.put(PARAM_NUM_RESULTS, Integer.toString(numResults));
 					
 					String url = decorateUrl( params );
 					//Log.i(TAG, url);

@@ -38,7 +38,7 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 				
 		//If we're at the end of the list, better start getting more data!
 		if( position == this.getCount() - 1 ){
-			
+			//Load the next page
 		}
 		
 		//Get the current from the array
