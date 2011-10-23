@@ -20,7 +20,7 @@ public class DataDisplayerActivity extends Activity {
         
         setContentView(R.layout.data_view);
                 
-        final Button submitButton = (Button)findViewById(R.id.submit);
+        //final Button submitButton = (Button)findViewById(R.id.submit);
         final EditText searchBox = (EditText)findViewById(R.id.searchBox);
         
         /* 
@@ -48,10 +48,12 @@ public class DataDisplayerActivity extends Activity {
         /*
          * Manually populate the results when the user requests it
          */
+        /*
         submitButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v){
 				resultsList.update( searchBox.getText().toString() );
 			}
 		});
+		*/
 	}
 }

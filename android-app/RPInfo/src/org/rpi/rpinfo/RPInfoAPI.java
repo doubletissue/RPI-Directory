@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -22,11 +24,32 @@ import android.util.Log;
 public class RPInfoAPI {
 	private static final String TAG = "RPInfoAPI";
 	private static RPInfoAPI singleton = null;
-	private static final String URLBASE = "http://www.rpidirectory.appspot.com/api?name=";
+	//private static final String URLBASE = "http://www.rpidirectory.appspot.com/api?name=";
+	private static final String URLBASE = "http://www.rpidirectory.appspot.com/api";
 	private static final ResultsCache cache = new ResultsCache();
 	private Object requestLock = new Object();
+	private static final String PARAM_NAME = "name";
 	
 	private RPInfoAPI(){
+	}
+	
+	/**
+	 * Add the GET parameters to the URL, also perform any sanitization
+	 * 
+	 * @param params The GET parameters
+	 * @return The encoded URL
+	 */
+	private String decorateUrl( HashMap<String, String> params ){
+		String url = URLBASE;
+
+		boolean first = true;
+		for( Entry<String, String> entry : params.entrySet() ){
+			//URLEncoder sanitize the input
+			url += (first ? "?" : "&" ) + URLEncoder.encode(entry.getKey()) + "=" + URLEncoder.encode(entry.getValue());
+			first = false;
+		}
+		
+		return url;
 	}
 	
 	public static RPInfoAPI getInstance(){
@@ -75,9 +98,16 @@ public class RPInfoAPI {
 					HttpClient httpClient = new DefaultHttpClient();
 					HttpContext localContext = new BasicHttpContext();
 					
-					//URLEncoder sanitize the input
-					HttpGet httpGet = new HttpGet( URLBASE + URLEncoder.encode(searchTerm) );
+					//Prepare the URL parameters
+					HashMap<String, String> params = new HashMap<String, String>();
+					params.put(PARAM_NAME, searchTerm);
 					
+					String url = decorateUrl( params );
+					//Log.i(TAG, url);
+					HttpGet httpGet = new HttpGet( url );
+					//HttpGet httpGet = new HttpGet( URLBASE + URLEncoder.encode(searchTerm) );
+					//httpGet.addHeader(HEADER_NAME, searchTerm);
+										
 					HttpResponse response = httpClient.execute( httpGet, localContext );
 					BufferedReader in = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
 					
