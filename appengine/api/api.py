@@ -63,8 +63,6 @@ class Api(webapp.RequestHandler):
     
     names = name.split()[:3]
     
-    
-    
     quick_person = Person.get_by_key_name(names[0])
     
     l1 = []
@@ -124,8 +122,7 @@ class Api(webapp.RequestHandler):
     self.response.out.write(s)
     
 
-application = webapp.WSGIApplication(
-  [
+application = webapp.WSGIApplication([
     ("/api", Api)
   ])
    

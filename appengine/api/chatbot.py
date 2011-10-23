@@ -17,7 +17,7 @@ class ChatHandler(xmpp_handlers.CommandHandler):
     query = message.body.lower()
     search_string = urllib.quote(query)
     message.reply("Searching...try again in a few seconds if I don't get back to you :)")
-    url = 'http://www.2.rpidirectory.appspot.com/api?name='+search_string
+    url = 'http://rpidirectory.appspot.com/api?name=' + search_string
     result = urlfetch.fetch(url)
     if result.status_code != 200:
       message.reply("bad url...")
@@ -33,8 +33,7 @@ class ChatHandler(xmpp_handlers.CommandHandler):
 
 
 
-application = webapp.WSGIApplication(
-  [
+application = webapp.WSGIApplication([
     ("/_ah/xmpp/message/chat/", ChatHandler)
   ])
    
