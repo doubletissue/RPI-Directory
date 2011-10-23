@@ -41,8 +41,8 @@ class Person(db.Model):
         person.first_name = names[0]
       if len(names) > 1:
         person.last_name = names[-1]
-      if len(names) > 2:
-        person.middle_name = names[1]
+      #if len(names) > 2:
+        #person.middle_name = names[1]
     if 'email' in d:
       person.email = d['email']
       person.key_name = d['email']
@@ -80,8 +80,8 @@ class Person(db.Model):
     name = ''
     if p.first_name is not None:
       name += p.first_name.capitalize()
-    if p.middle_name is not None:
-      name += ' ' + p.middle_name.capitalize()
+    #if p.middle_name is not None:
+      #name += ' ' + p.middle_name.capitalize()
     if p.last_name is not None:
       name += ' ' + p.last_name.capitalize()
     if name is not "":
