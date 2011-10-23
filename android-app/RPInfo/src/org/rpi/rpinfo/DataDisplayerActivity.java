@@ -23,18 +23,15 @@ public class DataDisplayerActivity extends Activity {
         //final Button submitButton = (Button)findViewById(R.id.submit);
         final EditText searchBox = (EditText)findViewById(R.id.searchBox);
         
-        /* 
-         * Automatically populate the results while the user types
-         * (but only if the user has typed 3 or more characters)
-         */
+        //Automatically populate the results while the user types 
         searchBox.addTextChangedListener(new TextWatcher() {
 			
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				if( searchBox.getText().length() >= 3 ){
+				if( searchBox.getText().length() > 0 ){
 					resultsList.update( searchBox.getText().toString() );
 				}
 			}
-			
+						
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
 				//Nothing
@@ -44,7 +41,7 @@ public class DataDisplayerActivity extends Activity {
 				//Nothing
 			}
 		});
-        
+                
         /*
          * Manually populate the results when the user requests it
          */

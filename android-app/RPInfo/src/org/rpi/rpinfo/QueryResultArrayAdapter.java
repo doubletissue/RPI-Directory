@@ -3,6 +3,7 @@ package org.rpi.rpinfo;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
+	private static final String TAG = "QueryResultArrayAdapter";
 	private List<QueryResultModel> models; 
 	private Context context;
 	
@@ -21,7 +23,7 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 		this.models = objects;
 		this.context = context;
 	}
-	
+		
 	public View getView(int position, View oldView, ViewGroup parent) {
 		View newView = oldView;
 		
@@ -33,6 +35,8 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			newView = inflater.inflate(R.layout.query_result_list_item, null);
 		}
+		
+		//Log.i(TAG, "Position:" + position);
 		
 		//Get the current from the array
 		QueryResultModel model = this.models.get(position);

@@ -24,12 +24,17 @@ public class DetailedDataDisplayerActivity extends Activity {
 			return field;
 		}
 		
+		rv = field.replaceAll("_", " ");
+		rv = field.toUpperCase();
+		
+		/*
 		//The return value should contain everything after the first character
 		if( field.length() > 1 ){
 			rv = field.substring(1);
 		}
 				
 		rv = Character.toUpperCase(field.charAt(0)) + rv;
+		*/
 		
 		return rv;
 	}

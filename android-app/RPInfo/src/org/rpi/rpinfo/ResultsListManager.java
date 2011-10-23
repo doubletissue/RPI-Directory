@@ -90,6 +90,7 @@ public class ResultsListManager {
 					context.startActivity(i);
 				}
 	        });
+	        
 		}
 	}
 	
