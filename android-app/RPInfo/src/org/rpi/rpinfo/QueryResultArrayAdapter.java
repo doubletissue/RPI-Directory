@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 	private static final String TAG = "QueryResultArrayAdapter";
-	private List<QueryResultModel> models; 
+	//private List<QueryResultModel> models; 
 	private Context context;
 	
 	public QueryResultArrayAdapter(Context context, int textViewResourceId,
@@ -20,7 +20,7 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 		super(context, textViewResourceId, objects);
 				
 		//Hold on to these for later
-		this.models = objects;
+		//this.models = objects;
 		this.context = context;
 	}
 		
@@ -35,11 +35,15 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			newView = inflater.inflate(R.layout.query_result_list_item, null);
 		}
-		
-		//Log.i(TAG, "Position:" + position);
+				
+		//If we're at the end of the list, better start getting more data!
+		if( position == this.getCount() - 1 ){
+			
+		}
 		
 		//Get the current from the array
-		QueryResultModel model = this.models.get(position);
+		//QueryResultModel model = this.models.get(position);
+		QueryResultModel model = this.getItem(position);
 		
 		//Fill the view with all of the data
 		if(model != null){

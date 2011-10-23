@@ -22,6 +22,8 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class RPInfoAPI {
+	public static final int FIRST_PAGE = 1;
+	public static final int DEFAULT_NUM_RESULTS = 20;	
 	private static final String TAG = "RPInfoAPI";
 	private static RPInfoAPI singleton = null;
 	//private static final String URLBASE = "http://www.rpidirectory.appspot.com/api?name=";
@@ -29,7 +31,9 @@ public class RPInfoAPI {
 	private static final ResultsCache cache = new ResultsCache();
 	private Object requestLock = new Object();
 	private static final String PARAM_NAME = "name";
-	
+	private static final String PARAM_PAGE = "page_num";
+	private static final String PARAM_NUM_RESULTS = "page_size";
+
 	private RPInfoAPI(){
 	}
 	
@@ -82,7 +86,7 @@ public class RPInfoAPI {
 		return list_items;
 	}
 	
-	private ArrayList<QueryResultModel> doRequest( String searchTerm ){
+	private ArrayList<QueryResultModel> doRequest( String searchTerm, int page, int numResults ){
 		/**
 		 * Do only one request at a time - reduce server load, but also
 		 * allow requests to take advantage of cached results by previous
@@ -101,6 +105,8 @@ public class RPInfoAPI {
 					//Prepare the URL parameters
 					HashMap<String, String> params = new HashMap<String, String>();
 					params.put(PARAM_NAME, searchTerm);
+					params.put(PARAM_PAGE, Integer.toString(page));
+					params.put(PARAM_NUM_RESULTS, Integer.toString(page));
 					
 					String url = decorateUrl( params );
 					//Log.i(TAG, url);
@@ -130,7 +136,7 @@ public class RPInfoAPI {
 	}
 	
 	
-	public ArrayList<QueryResultModel> request( String searchTerm ){	
-		return doRequest( searchTerm );
+	public ArrayList<QueryResultModel> request( String searchTerm, int page, int numResults ){	
+		return doRequest( searchTerm, page, numResults );
 	}
 }

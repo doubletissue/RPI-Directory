@@ -7,6 +7,8 @@ import android.util.Log;
 
 public class ResultsCache {	
 	private static final String TAG = "ResultsCache";
+	//Enable searching the cache. Not quite ready.
+	private static boolean SEARCH_CACHE = false;
 	
 	private class CacheEntry {
 		public String key;
@@ -20,7 +22,7 @@ public class ResultsCache {
 	
 	// Represents the cache - the linked list is being used as a queue
 	private LinkedList< CacheEntry > representation = new LinkedList< CacheEntry >();
-	private static final int MAX_CACHE_SIZE = 5;
+	private static final int MAX_CACHE_SIZE = 100;
 	
 	public ResultsCache(){
 	}
@@ -123,12 +125,18 @@ public class ResultsCache {
 		
 		ArrayList<QueryResultModel> rv;
 		for( CacheEntry entry : representation ){
-			if( matchSearchTerm(entry.key, searchTerm) ){
-				//Log.i( TAG, "Matched: " + searchTerm );
-				rv = pruneResults( searchTerm, entry.value );
-				//Log.i( TAG, "Insert: " + searchTerm );
-				insert( searchTerm, rv );
-				return rv;
+			if( SEARCH_CACHE == true ){
+				if( matchSearchTerm(entry.key, searchTerm) ){
+					//Log.i( TAG, "Matched: " + searchTerm );
+					rv = pruneResults( searchTerm, entry.value );
+					//Log.i( TAG, "Insert: " + searchTerm );
+					insert( searchTerm, rv );
+					return rv;
+				}
+			} else {
+				if( entry.key.compareToIgnoreCase(searchTerm) == 0 ){
+					return entry.value;
+				}
 			}
 		}
 		

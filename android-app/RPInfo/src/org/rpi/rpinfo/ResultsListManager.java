@@ -14,7 +14,7 @@ import android.widget.ListView;
 //(data_array.length() < MAX_DISPLAY_ELEMENTS ? data_array.length() : MAX_DISPLAY_ELEMENTS)
 
 public class ResultsListManager {
-	private static final int MAX_DISPLAY_ELEMENTS = 25;
+	//private static final int MAX_DISPLAY_ELEMENTS = 25;
 	private Date currentUpdate = new Date();
 	private static final Object currentUpdateLock = new Object();
 	private Activity context = null;
@@ -34,21 +34,7 @@ public class ResultsListManager {
 			return this.currentUpdate;
 		}
 	}
-	
-	/**
-	 * Extract the first MAX_DISPLAY_ELEMENTS (25) from the result of
-	 * the API call. More is unnecessary. 
-	 */
-	private ArrayList<QueryResultModel> extractDisplayList( ArrayList<QueryResultModel> x ){
-		ArrayList<QueryResultModel> rv = new ArrayList<QueryResultModel>(); 
 		
-		for( int i = 0; i < (x.size() < MAX_DISPLAY_ELEMENTS ? x.size(): MAX_DISPLAY_ELEMENTS ); ++i ){
-			rv.add( x.get(i) );
-		}
-		
-		return rv;
-	}
-	
 	/*
 	 * Perform the actual update asynchronously
 	 */
@@ -65,7 +51,7 @@ public class ResultsListManager {
 			String searchTerm = params[0];
 			
 			//Get the JSON output from the api
-			ArrayList<QueryResultModel> apiResult = extractDisplayList(RPInfoAPI.getInstance().request(searchTerm));
+			ArrayList<QueryResultModel> apiResult = RPInfoAPI.getInstance().request(searchTerm, RPInfoAPI.FIRST_PAGE, RPInfoAPI.DEFAULT_NUM_RESULTS);
 			
 			return apiResult;
  		}
