@@ -8,6 +8,7 @@
 
 #import "SearchViewController_iPhone.h"
 #import "Person.h"
+#import "DetailViewController.h"
 
 #define SEARCH_TIME_INTERVAL 2
 
@@ -19,6 +20,7 @@
     if (self) {
         // Custom initialization
         self.view.frame = [[UIScreen mainScreen] applicationFrame];
+        self.title = @"RPI Directory";
         searchTimeInterval = SEARCH_TIME_INTERVAL;
     }
     return self;
@@ -132,7 +134,10 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    DetailViewController *detailViewController = [[DetailViewController alloc] init];
     
+    detailViewController.person = [m_searchArray objectAtIndex:indexPath.row];
+    [self.navigationController pushViewController:detailViewController animated:YES];
 }
 
 #pragma mark -
@@ -144,16 +149,14 @@
 #pragma mark - Search bar button interaction
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    if (!m_instantSearch) {
-        [m_searchArray release];
-        m_searchInfo = @"Searching...";
-        
-        if (self.searchDisplayController.active) {
-            [self.searchDisplayController.searchResultsTableView reloadData];
-        }
-        
-        [self searchWithString:searchBar.text];
+    [m_searchArray release];
+    m_searchInfo = @"Searching...";
+    
+    if (self.searchDisplayController.active) {
+        [self.searchDisplayController.searchResultsTableView reloadData];
     }
+    
+    [self searchWithString:searchBar.text];
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {

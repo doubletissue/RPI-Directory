@@ -22,6 +22,12 @@
     return self;
 }
 
+- (id)init {
+    self = [self initWithStyle:UITableViewStyleGrouped];
+    
+    return self;
+}
+
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
@@ -78,18 +84,20 @@
 
 #pragma mark - Table view data source
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    return m_person.name;
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    return 3;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -98,10 +106,26 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        //  Cell style with a primary label (small, blue) and a detail label (normal, black)
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:CellIdentifier] autorelease];
     }
     
     // Configure the cell...
+    if (indexPath.row == 0) {
+        cell.textLabel.text = @"Email";
+        cell.detailTextLabel.text = m_person.email;
+    } else if (indexPath.row == 1) {
+        cell.textLabel.text = @"Year";
+        cell.detailTextLabel.text = m_person.year;
+    } else if (indexPath.row == 2) {
+        cell.textLabel.text = @"Major";
+        cell.detailTextLabel.text = m_person.major;
+        
+    }
+    
+    //  Allow multiple lines for e.g. long majors
+    cell.detailTextLabel.numberOfLines = 0;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
 }

@@ -15,7 +15,7 @@
 @synthesize rcsid;
 @synthesize email;
 @synthesize homepage;
-@synthesize class;
+@synthesize year;
 
 
 - (id)init

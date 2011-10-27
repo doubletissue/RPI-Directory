@@ -12,6 +12,6 @@
 
 @interface RPI_DirectoryAppDelegate_iPhone : RPI_DirectoryAppDelegate
 
-@property (nonatomic, retain) SearchViewController_iPhone *mainViewController;
+@property (nonatomic, retain) UINavigationController *navController;
 
 @end

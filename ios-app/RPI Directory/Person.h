@@ -15,6 +15,6 @@
 @property (nonatomic, retain) NSString *rcsid;
 @property (nonatomic, retain) NSString *email;
 @property (nonatomic, retain) NSURL *homepage;
-@property (nonatomic, retain) NSString *class;
+@property (nonatomic, retain) NSString *year;
 
 @end

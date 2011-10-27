@@ -95,9 +95,9 @@
                     person.homepage = [NSURL URLWithString:holdingString];
                 }
                 
-                if ([individual objectForKey:@"class"] != nil) {
-                    holdingString = [individual objectForKey:@"class"];
-                    person.class = holdingString;
+                if ([individual objectForKey:@"year"] != nil) {
+                    holdingString = [individual objectForKey:@"year"];
+                    person.year = holdingString;
                 }
                 
                 [m_people addObject:person];
