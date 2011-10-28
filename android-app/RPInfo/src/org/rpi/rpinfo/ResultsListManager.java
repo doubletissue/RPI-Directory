@@ -9,20 +9,29 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-//(data_array.length() < MAX_DISPLAY_ELEMENTS ? data_array.length() : MAX_DISPLAY_ELEMENTS)
-
 public class ResultsListManager {
-	//private static final int MAX_DISPLAY_ELEMENTS = 25;
+	private class SearchTermData {
+		public SearchTermData(String searchTerm, Date searchDate){
+			this.searchTerm = searchTerm;
+			this.searchDate = searchDate;
+		}
+		
+		public String searchTerm;
+		public Date searchDate;
+	}
+	
+	private static final String TAG = "ResultsListManager";
 	private Date currentUpdate = new Date();
 	private static final Object currentUpdateLock = new Object();
 	private Activity context = null;
 	//Keep track of search terms so that they can be buffered
-	private LinkedList<String> searchTerms = new LinkedList<String>();
+	private LinkedList<SearchTermData> searchTerms = new LinkedList<SearchTermData>();
 	//Lock for the searchTerms list
 	private Object searchTermsLock = new Object();
 	//Lock for searching
@@ -44,36 +53,33 @@ public class ResultsListManager {
 		}
 	}
 	
-	private String getNextSearchTerm(){
+	private SearchTermData getNextSearchTerm(){
 		synchronized(searchTermsLock){
 			return searchTerms.removeFirst();
 		}
 	}
-		
-	/*
-	 * Perform the actual update asynchronously
-	 */
+	
+	//Perform the actual update asynchronously
 	private class DoUpdate extends AsyncTask<Void, Void, ArrayList<QueryResultModel> > {
 		private Date updateStart = null;
 		
 		protected void onPreExecute() {
-			//Keep track of when the update was started
-			updateStart = new Date();
-			setCurrentUpdate( updateStart );
+			return;
 		}
 		
 		protected ArrayList<QueryResultModel> doInBackground(Void... params){
-			//Get
 			if( searchTerms.size() == 0 ){
 				return null;
 			}
 			
 			ArrayList<QueryResultModel> apiResult = null;			
 			synchronized(searchLock){
-				String searchTerm = getNextSearchTerm();
+				SearchTermData searchTermData = getNextSearchTerm();
+				
+				updateStart = searchTermData.searchDate;
 						
 				//Get the JSON output from the api
-				apiResult = RPInfoAPI.getInstance().request(searchTerm, RPInfoAPI.FIRST_PAGE, RPInfoAPI.DEFAULT_NUM_RESULTS);
+				apiResult = RPInfoAPI.getInstance().request(searchTermData.searchTerm, RPInfoAPI.FIRST_PAGE, RPInfoAPI.DEFAULT_NUM_RESULTS);
 			}
 			
 			return apiResult;
@@ -84,6 +90,7 @@ public class ResultsListManager {
 			 * If this was not the most recently started update or there is no api result,
 			 * there isn't much that we can do.
 			 */
+			//Log.i(TAG, "" + getCurrentUpdate().getTime() + " " + updateStart.getTime() );
 			if( getCurrentUpdate() != updateStart || apiResult == null ){
 				return;
 			}
@@ -108,7 +115,9 @@ public class ResultsListManager {
 	 */
 	public void update(String searchTerm){
 		synchronized(searchTermsLock){
-			searchTerms.addFirst(searchTerm);
+			Date thisUpdate = new Date();
+			searchTerms.addFirst( new SearchTermData( searchTerm, thisUpdate ) );
+			setCurrentUpdate(thisUpdate);
 		}
 		new DoUpdate().execute();
 	}
