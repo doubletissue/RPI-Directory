@@ -113,7 +113,7 @@ public class RPInfoAPI {
 					HttpGet httpGet = new HttpGet( url );
 					//HttpGet httpGet = new HttpGet( URLBASE + URLEncoder.encode(searchTerm) );
 					//httpGet.addHeader(HEADER_NAME, searchTerm);
-										
+															
 					HttpResponse response = httpClient.execute( httpGet, localContext );
 					BufferedReader in = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
 					

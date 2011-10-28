@@ -1,7 +1,10 @@
 package org.rpi.rpinfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,7 +21,13 @@ public class ResultsListManager {
 	private Date currentUpdate = new Date();
 	private static final Object currentUpdateLock = new Object();
 	private Activity context = null;
-	
+	//Keep track of search terms so that they can be buffered
+	private LinkedList<String> searchTerms = new LinkedList<String>();
+	//Lock for the searchTerms list
+	private Object searchTermsLock = new Object();
+	//Lock for searching
+	private Object searchLock = new Object();
+
 	public ResultsListManager(Activity context){
 		this.context = context;
 	}
@@ -34,11 +43,17 @@ public class ResultsListManager {
 			return this.currentUpdate;
 		}
 	}
+	
+	private String getNextSearchTerm(){
+		synchronized(searchTermsLock){
+			return searchTerms.removeFirst();
+		}
+	}
 		
 	/*
 	 * Perform the actual update asynchronously
 	 */
-	private class DoUpdate extends AsyncTask<String, Void, ArrayList<QueryResultModel> > {
+	private class DoUpdate extends AsyncTask<Void, Void, ArrayList<QueryResultModel> > {
 		private Date updateStart = null;
 		
 		protected void onPreExecute() {
@@ -47,21 +62,29 @@ public class ResultsListManager {
 			setCurrentUpdate( updateStart );
 		}
 		
-		protected ArrayList<QueryResultModel> doInBackground(String... params) {
-			String searchTerm = params[0];
+		protected ArrayList<QueryResultModel> doInBackground(Void... params){
+			//Get
+			if( searchTerms.size() == 0 ){
+				return null;
+			}
 			
-			//Get the JSON output from the api
-			ArrayList<QueryResultModel> apiResult = RPInfoAPI.getInstance().request(searchTerm, RPInfoAPI.FIRST_PAGE, RPInfoAPI.DEFAULT_NUM_RESULTS);
+			ArrayList<QueryResultModel> apiResult = null;			
+			synchronized(searchLock){
+				String searchTerm = getNextSearchTerm();
+						
+				//Get the JSON output from the api
+				apiResult = RPInfoAPI.getInstance().request(searchTerm, RPInfoAPI.FIRST_PAGE, RPInfoAPI.DEFAULT_NUM_RESULTS);
+			}
 			
 			return apiResult;
  		}
 		
 		protected void onPostExecute(final ArrayList<QueryResultModel> apiResult) {
 			/*
-			 * If this was not the most recently started update, there
-			 * isn't much to do...
+			 * If this was not the most recently started update or there is no api result,
+			 * there isn't much that we can do.
 			 */
-			if( getCurrentUpdate() != updateStart ){
+			if( getCurrentUpdate() != updateStart || apiResult == null ){
 				return;
 			}
 						
@@ -84,6 +107,9 @@ public class ResultsListManager {
 	 * Wrapper for AsyncTask DoUpdate
 	 */
 	public void update(String searchTerm){
-		new DoUpdate().execute(searchTerm);
+		synchronized(searchTermsLock){
+			searchTerms.addFirst(searchTerm);
+		}
+		new DoUpdate().execute();
 	}
 }
