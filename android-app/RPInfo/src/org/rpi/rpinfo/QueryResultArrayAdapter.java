@@ -1,5 +1,6 @@
 package org.rpi.rpinfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -14,19 +15,30 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 	private static final String TAG = "QueryResultArrayAdapter";
 	//private List<QueryResultModel> models; 
 	private Context context;
+	private String searchTerm;
+	private int page = 1;
 	
 	public QueryResultArrayAdapter(Context context, int textViewResourceId,
-			List<QueryResultModel> objects) {
+			List<QueryResultModel> objects, String searchTerm ) {
 		super(context, textViewResourceId, objects);
 				
 		//Hold on to these for later
-		//this.models = objects;
 		this.context = context;
+		this.searchTerm = searchTerm;
 	}
-		
+	
+	public void loadNextPage(){
+		//Load the next page
+		page += 1;
+		ArrayList<QueryResultModel> newResults = RPInfoAPI.getInstance().request(searchTerm, page, RPInfoAPI.DEFAULT_NUM_RESULTS);
+		for( QueryResultModel result : newResults ){						
+			add(result);
+		}
+	}
+	
 	public View getView(int position, View oldView, ViewGroup parent) {
 		View newView = oldView;
-		
+				
 		/*
 		 * OldView is the previously displayed view - if possible, re-use it for efficiency.
 		 * If it doesn't exist, make a new one.
@@ -35,12 +47,7 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			newView = inflater.inflate(R.layout.query_result_list_item, null);
 		}
-				
-		//If we're at the end of the list, better start getting more data!
-		if( position == this.getCount() - 1 ){
-			//Load the next page
-		}
-		
+						
 		//Get the current from the array
 		//QueryResultModel model = this.models.get(position);
 		QueryResultModel model = this.getItem(position);

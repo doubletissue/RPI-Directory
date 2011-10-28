@@ -7,12 +7,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 public class ResultsListManager {
@@ -61,7 +68,7 @@ public class ResultsListManager {
 	
 	//Perform the actual update asynchronously
 	private class DoUpdate extends AsyncTask<Void, Void, ArrayList<QueryResultModel> > {
-		private Date updateStart = null;
+		private SearchTermData searchTermData = null;
 		
 		protected void onPreExecute() {
 			return;
@@ -74,10 +81,8 @@ public class ResultsListManager {
 			
 			ArrayList<QueryResultModel> apiResult = null;			
 			synchronized(searchLock){
-				SearchTermData searchTermData = getNextSearchTerm();
-				
-				updateStart = searchTermData.searchDate;
-						
+				searchTermData = getNextSearchTerm();
+										
 				//Get the JSON output from the api
 				apiResult = RPInfoAPI.getInstance().request(searchTermData.searchTerm, RPInfoAPI.FIRST_PAGE, RPInfoAPI.DEFAULT_NUM_RESULTS);
 			}
@@ -91,14 +96,26 @@ public class ResultsListManager {
 			 * there isn't much that we can do.
 			 */
 			//Log.i(TAG, "" + getCurrentUpdate().getTime() + " " + updateStart.getTime() );
-			if( getCurrentUpdate() != updateStart || apiResult == null ){
+			if( getCurrentUpdate() != searchTermData.searchDate || apiResult == null ){
 				return;
 			}
 						
 			//Set up the list view (where the results are displayed)
-	        ListView lv = (ListView)context.findViewById(R.id.data_list);
-	        lv.setAdapter(new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult));
+	        final ListView lv = (ListView)context.findViewById(R.id.data_list);
 
+	        //Set up the botton at the end of the list (must be done before setAdapter)
+	        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+	        LinearLayout ll = (LinearLayout)layoutInflater.inflate(R.layout.query_result_list_more_button, null, false);
+	        Button b = (Button)ll.findViewById(R.id.more_button);
+	        b.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					((QueryResultArrayAdapter) lv.getAdapter()).loadNextPage();
+				}
+			});
+	        //lv.addFooterView(ll);
+	        
+	        lv.setAdapter(new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult, searchTermData.searchTerm));
+	        
 	        lv.setOnItemClickListener(new OnItemClickListener(){
 	        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {			
 					Intent i = new Intent(context, DetailedDataDisplayerActivity.class);
@@ -106,7 +123,6 @@ public class ResultsListManager {
 					context.startActivity(i);
 				}
 	        });
-	        
 		}
 	}
 	
