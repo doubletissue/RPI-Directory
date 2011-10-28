@@ -102,6 +102,7 @@ public class ResultsListManager {
 						
 			//Set up the list view (where the results are displayed)
 	        final ListView lv = (ListView)context.findViewById(R.id.data_list);
+	        final QueryResultArrayAdapter a = new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult, searchTermData.searchTerm);
 
 	        //Set up the botton at the end of the list (must be done before setAdapter)
 	        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
@@ -109,12 +110,23 @@ public class ResultsListManager {
 	        Button b = (Button)ll.findViewById(R.id.more_button);
 	        b.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					((QueryResultArrayAdapter) lv.getAdapter()).loadNextPage();
+					new AsyncTask<Void, Void, ArrayList<QueryResultModel>>() {
+						protected ArrayList<QueryResultModel> doInBackground(Void... arg0) {
+							ArrayList<QueryResultModel> newResults = RPInfoAPI.getInstance().request(a.getSearchTerm(), a.getPage(), RPInfoAPI.DEFAULT_NUM_RESULTS);
+							return newResults;
+						}
+						
+						protected void onPostExecute(ArrayList<QueryResultModel> newResults) {
+							a.loadNextPage( newResults );
+						}
+					}.execute();
 				}
 			});
+	        
+	        //Soon!
 	        //lv.addFooterView(ll);
 	        
-	        lv.setAdapter(new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult, searchTermData.searchTerm));
+	        lv.setAdapter(a);
 	        
 	        lv.setOnItemClickListener(new OnItemClickListener(){
 	        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {			

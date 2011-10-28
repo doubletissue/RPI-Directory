@@ -8,7 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
@@ -27,14 +30,27 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 		this.searchTerm = searchTerm;
 	}
 	
-	public void loadNextPage(){
+	public String getSearchTerm(){
+		return searchTerm;
+	}
+	
+	public int getPage(){
+		return page;
+	}
+	
+	public void loadNextPage(ArrayList<QueryResultModel> newResults){
 		//Load the next page
 		page += 1;
-		ArrayList<QueryResultModel> newResults = RPInfoAPI.getInstance().request(searchTerm, page, RPInfoAPI.DEFAULT_NUM_RESULTS);
 		for( QueryResultModel result : newResults ){						
 			add(result);
 		}
 	}
+	
+	/*
+	public int getCount() {
+		return super.getCount() + 1;
+	}
+	*/
 	
 	public View getView(int position, View oldView, ViewGroup parent) {
 		View newView = oldView;
@@ -47,7 +63,14 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			newView = inflater.inflate(R.layout.query_result_list_item, null);
 		}
-						
+		
+		/*
+		if( position == getCount() - 1 ){
+
+	        return ll;
+		}
+		*/
+			
 		//Get the current from the array
 		//QueryResultModel model = this.models.get(position);
 		QueryResultModel model = this.getItem(position);
@@ -66,7 +89,7 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 				email.setText((String)model.getElement("email","N/A"));
 			}
 			if( year != null ){
-				year.setText((String)model.getElement("class","N/A"));
+				year.setText((String)model.getElement("year","N/A"));
 			}
 			if( department != null ){
 				department.setText((String)model.getElement("major","N/A"));
