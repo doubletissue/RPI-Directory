@@ -35,6 +35,7 @@ public class ResultsListManager {
 	}
 	
 	private static final String TAG = "ResultsListManager";
+	private static View moreButton = null;
 	private Date currentUpdate = new Date();
 	private static final Object currentUpdateLock = new Object();
 	private Activity context = null;
@@ -91,20 +92,12 @@ public class ResultsListManager {
 			return apiResult;
  		}
 		
-		protected void onPostExecute(final ArrayList<QueryResultModel> apiResult) {
-			/*
-			 * If this was not the most recently started update or there is no api result,
-			 * there isn't much that we can do.
-			 */
-			//Log.i(TAG, "" + getCurrentUpdate().getTime() + " " + updateStart.getTime() );
-			if( getCurrentUpdate() != searchTermData.searchDate || apiResult == null ){
-				return;
-			}
-						
-			//Set up the list view (where the results are displayed)
-	        final ListView lv = (ListView)context.findViewById(R.id.data_list);
-	        final QueryResultArrayAdapter a = new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult, searchTermData.searchTerm);
-	      
+		protected void addMoreButton( final ListView lv, final QueryResultArrayAdapter a ){
+	        //Remove the more button from the footer if it has already been place
+	        if( moreButton != null ){
+	        	lv.removeFooterView(moreButton);
+	        }
+	        
 	        //Set up the bottom at the end of the list (must be done before setAdapter)
 	        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 	        LinearLayout ll = (LinearLayout)layoutInflater.inflate(R.layout.query_result_list_more_button, null, false);
@@ -131,7 +124,26 @@ public class ResultsListManager {
 				}
 			});
 	        
+	        moreButton = ll;
 	        lv.addFooterView(ll);
+		}
+		
+		protected void onPostExecute(final ArrayList<QueryResultModel> apiResult) {
+			/*
+			 * If this was not the most recently started update or there is no api result,
+			 * there isn't much that we can do.
+			 */
+			//Log.i(TAG, "" + getCurrentUpdate().getTime() + " " + updateStart.getTime() );
+			if( getCurrentUpdate() != searchTermData.searchDate || apiResult == null ){
+				return;
+			}
+						
+			//Set up the list view (where the results are displayed)
+	        final ListView lv = (ListView)context.findViewById(R.id.data_list);
+	        final QueryResultArrayAdapter a = new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult, searchTermData.searchTerm);
+	      
+	        addMoreButton( lv, a );
+	        
 	        lv.setAdapter(a);
 	        
 	        lv.setOnItemClickListener(new OnItemClickListener(){
