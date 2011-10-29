@@ -119,7 +119,11 @@ public class RPInfoAPI {
 					
 					rv = parseApiResult( new JSONObject(in.readLine()) );
 					//Log.i( TAG, "Insert: " + searchTerm );
-					cache.insert( searchTerm, rv );
+					
+					//Don't cache results for other pages... yet
+					if( page == FIRST_PAGE ){
+						cache.insert( searchTerm, rv );
+					}
 				}
 				
 				return rv;

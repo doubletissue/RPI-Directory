@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -111,6 +112,12 @@ public class ResultsListManager {
 	        b.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					new AsyncTask<Void, Void, ArrayList<QueryResultModel>>() {
+						private ProgressDialog pd;
+
+						protected void onPreExecute() {
+							pd = ProgressDialog.show(context, "", "Fetching more results...");
+						};
+						
 						protected ArrayList<QueryResultModel> doInBackground(Void... arg0) {
 							ArrayList<QueryResultModel> newResults = RPInfoAPI.getInstance().request(a.getSearchTerm(), a.getPage(), RPInfoAPI.DEFAULT_NUM_RESULTS);
 							return newResults;
@@ -118,6 +125,7 @@ public class ResultsListManager {
 						
 						protected void onPostExecute(ArrayList<QueryResultModel> newResults) {
 							a.loadNextPage( newResults );
+							pd.dismiss();
 						}
 					}.execute();
 				}
