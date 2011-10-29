@@ -96,7 +96,10 @@ public class RPInfoAPI {
 		
 		synchronized( requestLock ){
 			try {
-				ArrayList<QueryResultModel> rv = cache.extract( searchTerm );
+				ArrayList<QueryResultModel> rv = null;
+				if( page == FIRST_PAGE ){
+					rv = cache.extract( searchTerm );
+				}
 				
 				if( rv == null ){
 					HttpClient httpClient = new DefaultHttpClient();

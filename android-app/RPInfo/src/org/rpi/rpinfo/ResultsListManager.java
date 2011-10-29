@@ -104,34 +104,8 @@ public class ResultsListManager {
 			//Set up the list view (where the results are displayed)
 	        final ListView lv = (ListView)context.findViewById(R.id.data_list);
 	        final QueryResultArrayAdapter a = new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult, searchTermData.searchTerm);
-
-	        //Set up the bottom at the end of the list (must be done before setAdapter)
-	        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-	        LinearLayout ll = (LinearLayout)layoutInflater.inflate(R.layout.query_result_list_more_button, null, false);
-	        Button b = (Button)ll.findViewById(R.id.more_button);
-	        b.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					new AsyncTask<Void, Void, ArrayList<QueryResultModel>>() {
-						private ProgressDialog pd;
-
-						protected void onPreExecute() {
-							pd = ProgressDialog.show(context, "", "Fetching more results...");
-						};
-						
-						protected ArrayList<QueryResultModel> doInBackground(Void... arg0) {
-							ArrayList<QueryResultModel> newResults = RPInfoAPI.getInstance().request(a.getSearchTerm(), a.getPage(), RPInfoAPI.DEFAULT_NUM_RESULTS);
-							return newResults;
-						}
-						
-						protected void onPostExecute(ArrayList<QueryResultModel> newResults) {
-							a.loadNextPage( newResults );
-							pd.dismiss();
-						}
-					}.execute();
-				}
-			});
 	      
-	        lv.addFooterView(ll);
+	        //lv.addFooterView(ll);
 	        lv.setAdapter(a);
 	        
 	        lv.setOnItemClickListener(new OnItemClickListener(){
