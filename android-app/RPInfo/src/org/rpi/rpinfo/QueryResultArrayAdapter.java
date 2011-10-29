@@ -3,31 +3,30 @@ package org.rpi.rpinfo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 	private static final String TAG = "QueryResultArrayAdapter";
 	//private List<QueryResultModel> models; 
-	private Context context;
 	private String searchTerm;
+	private List<QueryResultModel> representation;
 	private int page = 1;
 	
 	public QueryResultArrayAdapter(Context context, int textViewResourceId,
 			List<QueryResultModel> objects, String searchTerm ) {
 		super(context, textViewResourceId, objects);
 				
-		//Hold on to these for later
-		this.context = context;
+		//Hold on to this for later
 		this.searchTerm = searchTerm;
+		this.representation = objects;	
 	}
 	
 	public String getSearchTerm(){
@@ -37,20 +36,22 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 	public int getPage(){
 		return page;
 	}
-	
+
 	public void loadNextPage(ArrayList<QueryResultModel> newResults){
 		//Load the next page
 		page += 1;
-		for( QueryResultModel result : newResults ){						
-			add(result);
+		//for( int i = 0; i < newResults.size(); ++i ){
+		/*
+		for( QueryResultModel result : newResults ){
+			Log.i(TAG, "Adding");
+			this.add(result);
+			Log.i(TAG, "Added");
 		}
+		*/
+		//This is hacky and terrible, and it should work the proper way but it doesn't!
+		this.representation.addAll(newResults);
+		this.notifyDataSetChanged();
 	}
-	
-	/*
-	public int getCount() {
-		return super.getCount() + 1;
-	}
-	*/
 	
 	public View getView(int position, View oldView, ViewGroup parent) {
 		View newView = oldView;
@@ -60,16 +61,9 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 		 * If it doesn't exist, make a new one.
 		 */
 		if(newView == null){
-			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			newView = inflater.inflate(R.layout.query_result_list_item, null);
 		}
-		
-		/*
-		if( position == getCount() - 1 ){
-
-	        return ll;
-		}
-		*/
 			
 		//Get the current from the array
 		//QueryResultModel model = this.models.get(position);

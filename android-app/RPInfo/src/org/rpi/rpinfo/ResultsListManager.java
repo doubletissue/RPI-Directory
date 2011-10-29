@@ -104,7 +104,7 @@ public class ResultsListManager {
 	        final ListView lv = (ListView)context.findViewById(R.id.data_list);
 	        final QueryResultArrayAdapter a = new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult, searchTermData.searchTerm);
 
-	        //Set up the botton at the end of the list (must be done before setAdapter)
+	        //Set up the bottom at the end of the list (must be done before setAdapter)
 	        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 	        LinearLayout ll = (LinearLayout)layoutInflater.inflate(R.layout.query_result_list_more_button, null, false);
 	        Button b = (Button)ll.findViewById(R.id.more_button);
@@ -122,10 +122,8 @@ public class ResultsListManager {
 					}.execute();
 				}
 			});
-	        
-	        //Soon!
-	        //lv.addFooterView(ll);
-	        
+	      
+	        lv.addFooterView(ll);
 	        lv.setAdapter(a);
 	        
 	        lv.setOnItemClickListener(new OnItemClickListener(){
