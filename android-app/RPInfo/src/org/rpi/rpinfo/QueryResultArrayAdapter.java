@@ -24,7 +24,6 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 	private String searchTerm;
 	private List<QueryResultModel> representation;
 	private int page = RPInfoAPI.FIRST_PAGE;
-	private View moreButton = null;
 	
 	public QueryResultArrayAdapter(Context context, int textViewResourceId,
 			List<QueryResultModel> objects, String searchTerm ) {
@@ -33,32 +32,6 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 		//Hold on to this for later
 		this.searchTerm = searchTerm;
 		this.representation = objects;	
-		
-        //Set up the bottom at the end of the list (must be done before setAdapter)
-        LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        moreButton = (LinearLayout)layoutInflater.inflate(R.layout.query_result_list_more_button, null, false);
-        Button b = (Button)moreButton.findViewById(R.id.more_button);
-        b.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				new AsyncTask<Void, Void, ArrayList<QueryResultModel>>() {
-					private ProgressDialog pd;
-
-					protected void onPreExecute() {
-						pd = ProgressDialog.show(getContext(), "", "Fetching more results...");
-					};
-					
-					protected ArrayList<QueryResultModel> doInBackground(Void... arg0) {
-						ArrayList<QueryResultModel> newResults = RPInfoAPI.getInstance().request(getSearchTerm(), nextPage(), RPInfoAPI.DEFAULT_NUM_RESULTS);
-						return newResults;
-					}
-					
-					protected void onPostExecute(ArrayList<QueryResultModel> newResults) {
-						addData( newResults );
-						pd.dismiss();
-					}
-				}.execute();
-			}
-		});
 	}
 	
 	public String getSearchTerm(){
@@ -84,19 +57,10 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 		this.notifyDataSetChanged();
 		this.notifyDataSetInvalidated();
 	}
-	
-	public int getCount() {
-		return super.getCount() + 1;
-	}
-	
+		
 	public View getView(int position, View oldView, ViewGroup parent) {
 		View newView = oldView;
-		
-		if( position == getCount() - 1){
-			Log.i(TAG, "Position: " + position);
-			return moreButton;
-		}
-				
+						
 		/*
 		 * OldView is the previously displayed view - if possible, re-use it for efficiency.
 		 * If it doesn't exist, make a new one.
