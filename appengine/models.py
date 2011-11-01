@@ -8,6 +8,7 @@ class Person(db.Model):
   first_name      = db.StringProperty()
   middle_name     = db.StringProperty()
   last_name       = db.StringProperty()
+  department      = db.StringProperty()
   email           = db.StringProperty()
   rcsid           = db.StringProperty()
   year            = db.StringProperty()
@@ -50,6 +51,8 @@ class Person(db.Model):
       person.year = d['year']
     if 'major' in d:
       person.major = d['major']
+    if 'department' in d:
+      person.department = d['department']
     if 'title' in d:
       person.title = d['title']
     if 'phone' in d:
@@ -92,6 +95,9 @@ class Person(db.Model):
     
     if p.major is not None:
       d['major'] = p.major.capitalize()
+    
+    if p.department is not None:
+      d['department'] = p.department.capitalize()
     
     if p.title is not None:
       d['title'] = p.title.capitalize()

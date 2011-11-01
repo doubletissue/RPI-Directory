@@ -17,6 +17,7 @@ class Crawler(webapp.RequestHandler):
     return self.parseData(key)
   
   def getPage( self, key ):
+    url = "http://prod3.server.rpi.edu/peopledirectory/entry.do?datasetName=directory&key=" + str(key)
     logging.debug(url)
     result = urlfetch.fetch(url)
     
@@ -43,6 +44,8 @@ class Crawler(webapp.RequestHandler):
       r = r.replace("<br />","\n")
       p = re.compile(' *\n *')
       r = p.sub('\n',r)
+      p = re.compile('<.*?>')
+      r = p.sub('',r)
       return r.lower()
       
   def findName(self,string):
@@ -100,6 +103,7 @@ class Crawler(webapp.RequestHandler):
                     'Class:'           : 'year',
                     'Curriculum:'      : 'major',
                     'Title:'           : 'title',
+                    "Department"       : 'department',
                     'Telephone:'       : 'phone',
                     'Fax:'             : 'fax',
                     'Office Location:' : 'office_location',
@@ -148,7 +152,8 @@ class Crawler(webapp.RequestHandler):
 
 application = webapp.WSGIApplication(
   [
-    ("/crawl/.*", Crawler)
+    ("/crawl/.*", Crawler),
+    ("/debugcrawl.*", Crawler)
   ])
    
 def main():
