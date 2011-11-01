@@ -74,7 +74,7 @@ class Crawler(webapp.RequestHandler):
       endIndex   = string.find(".gif", startIndex)
       
       letterID = int(string[startIndex:endIndex].strip())
-      # Stop at an @ or at @rpi.edu
+      # Stop at @rpi.edu
       if letterID == 99:
         email += "@rpi.edu"
         break
@@ -90,7 +90,10 @@ class Crawler(webapp.RequestHandler):
           letterID -= 1
         email += chr(letterID+96)
       else:
-        email += str(letterID-27)
+        num = letterID-27
+        if num == 10:
+          num = 0
+        email += str(num)
     return email
     
   def findStuff( self,string ):
@@ -138,10 +141,7 @@ class Crawler(webapp.RequestHandler):
       v = self.findAttribute(string,k)
       if v is not "":
         d[attributes[k]] = v
-    
-    #for k in d.keys():
-      #print k,"-->",d[k]
-    #print "-------------------------"
+        
     return d
     
     

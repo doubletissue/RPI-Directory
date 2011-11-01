@@ -20,41 +20,6 @@ NUM_THREADS = 100
 
 #Creates a person and stores it
 def putResult(d):
-  #person = Person()
-  
-  ## If we have the RCSID, use it as the key
-  #if 'email' in d:
-    #person = Person(key_name = string.rsplit(d['email'],'@',1)[0])
-  
-  #if 'name' in d:
-    #names = d['name'].split()[:3]
-    #if len(names) > 0:
-      #person.first_name = names[0]
-    #if len(names) > 1:
-      #person.last_name = names[-1]
-    #if len(names) > 2:
-      #person.middle_name = names[1]
-  #if 'email' in d:
-    #person.email = d['email']
-    #person.key_name = d['email']
-  #if 'class' in d:
-    #person.year = d['class']
-  #if 'major' in d:
-    #person.major = d['major']
-  #if 'title' in d:
-    #person.title = d['title']
-  #if 'phone' in d:
-    #person.phone = d['phone']
-  #if 'fax' in d:
-    #person.fax = d['fax']
-  #if 'homepage' in d:
-    #person.homepage = d['homepage']
-  #if 'office_location' in d:
-    #person.office_location = d['office_location']
-  #if 'campus_mailstop' in d:
-    #person.campus_mailstop = d['campus_mailstop']
-  #if 'mailing_address' in d:
-    #person.mailing_address = d['mailing_address']
   person = Person.buildPerson(d)
   person.put()
 
@@ -90,6 +55,21 @@ class Driver(webapp.RequestHandler):
 
 
 class DriverWorker(webapp.RequestHandler):
+  def get(self):
+    index = cgi.escape(self.request.get('index'))
+    result = Crawler().getMap(index)
+    if 'error' in result.keys():
+      logging.error("error at index" + index + ", error is " + result['error'])
+      if result['error'] == 'page_not_found':
+        logging.error("Invalid index: " + index)
+        raise Exception()
+      if result['error'] == 'end of database':
+        logging.error("Index out of range: " + index)
+        memcache.set("index", 1, 86400)
+        SearchPosition(key_name="index", position=1).put()
+    else:
+      putResult(result)
+      self.response.out.write(result)
   def post(self):
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
@@ -104,6 +84,7 @@ class DriverWorker(webapp.RequestHandler):
         SearchPosition(key_name="index", position=1).put()
     else:
       putResult(result)
+      self.response.out.write("-------------------------")
 	
 application = webapp.WSGIApplication([
   ("/crawl/main", Driver),
