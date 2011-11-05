@@ -1,6 +1,7 @@
 from cron.crawler import Crawler
 from models import SearchPosition
 from models import Person
+from models import DepartmentKeyword
 
 import cgi
 import datetime
@@ -16,11 +17,14 @@ from google.appengine.api import taskqueue
 from google.appengine.api import memcache
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+
 NUM_THREADS = 100
 
 #Creates a person and stores it
 def putResult(d):
   person = Person.buildPerson(d)
+  if person.department:
+    DepartmentKeyword.buildKeywords(person.department)
   person.put()
 
 class Driver(webapp.RequestHandler):
@@ -40,7 +44,6 @@ class Driver(webapp.RequestHandler):
     #Spawn 5 tasks and do them
     for i in range(index, index + NUM_THREADS):
       taskqueue.add(url='/crawl/worker', params={'index': i}, target='backend')
-      logging.debug(i)
 
       #Update Memcache
       if not memcache.incr("index"):
@@ -53,11 +56,12 @@ class Driver(webapp.RequestHandler):
     else:
       index_from_ds = SearchPosition(key_name="index", position=index)
     index_from_ds.put()
+    self.response.headers['Content-Type'] = 'text/plain'
+    self.response.out.write(index)
 
 
 class DriverWorker(webapp.RequestHandler):
   def get(self):
-    logging.debug("GET")
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
     if 'error' in result.keys():
@@ -71,10 +75,8 @@ class DriverWorker(webapp.RequestHandler):
         SearchPosition(key_name="index", position=1).put()
     else:
       putResult(result)
-      logging.debug("get" + str(result))
       self.response.out.write(result)
   def post(self):
-    logging.debug("POST")
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
     if 'error' in result.keys():

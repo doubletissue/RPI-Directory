@@ -127,3 +127,19 @@ class Person(db.Model):
 class SearchPosition(db.Model):
   """Model to store Crawler position."""
   position = db.IntegerProperty()
+
+class DepartmentKeyword(db.Model):
+  """Model to store a single work from a major, for searching purposes"""
+  departments = db.ListProperty
+  
+  @staticmethod
+  def buildKeywords(s):
+    for word in s.split():
+      d = DepartmentKeyword.get_by_key_name(word)
+      if not d:
+        w = DepartmentKeyword(key_name = word)
+        w.department = [s]
+        w.put()
+      elif s not in d.departments:
+        d.departments.append(s)
+        d.put()
