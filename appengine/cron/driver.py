@@ -40,6 +40,7 @@ class Driver(webapp.RequestHandler):
     #Spawn 5 tasks and do them
     for i in range(index, index + NUM_THREADS):
       taskqueue.add(url='/crawl/worker', params={'index': i}, target='backend')
+      logging.debug(i)
 
       #Update Memcache
       if not memcache.incr("index"):
@@ -56,6 +57,7 @@ class Driver(webapp.RequestHandler):
 
 class DriverWorker(webapp.RequestHandler):
   def get(self):
+    logging.debug("GET")
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
     if 'error' in result.keys():
@@ -69,8 +71,10 @@ class DriverWorker(webapp.RequestHandler):
         SearchPosition(key_name="index", position=1).put()
     else:
       putResult(result)
+      logging.debug("get" + str(result))
       self.response.out.write(result)
   def post(self):
+    logging.debug("POST")
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
     if 'error' in result.keys():
@@ -84,7 +88,6 @@ class DriverWorker(webapp.RequestHandler):
         SearchPosition(key_name="index", position=1).put()
     else:
       putResult(result)
-      self.response.out.write("-------------------------")
 	
 application = webapp.WSGIApplication([
   ("/crawl/main", Driver),
