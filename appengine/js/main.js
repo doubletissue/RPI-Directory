@@ -65,9 +65,11 @@ function AddResultsToTable(data){
     }else if (person.department != undefined){
       person.major = person.department;
     }
-    
+
     //Faculty Check
-    if (person.year == undefined && person.department != undefined){
+    if (person.year == undefined && person.title != undefined){
+      person.year = person.title;
+    }else if (person.year == undefined && person.department != undefined){
       person.year = "Faculty";
     }
     
