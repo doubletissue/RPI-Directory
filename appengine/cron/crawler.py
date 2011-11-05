@@ -101,8 +101,7 @@ class Crawler(webapp.RequestHandler):
     
     full_string = string
     
-    attributes = {
-                    'Class:'           : 'year',
+    attributes = {  'Class:'           : 'year',
                     'Curriculum:'      : 'major',
                     'Title:'           : 'title',
                     "Department"       : 'department',
@@ -110,8 +109,7 @@ class Crawler(webapp.RequestHandler):
                     'Fax:'             : 'fax',
                     'Office Location:' : 'office_location',
                     'Campus Mailstop:' : 'campus_mailstop',
-                    'Mailing Address:' : 'mailing_address'
-                  }
+                    'Mailing Address:' : 'mailing_address'}
     
     if full_string.find('wrong state') >= 0:
       logging.warn("end of database!")
