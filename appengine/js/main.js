@@ -58,7 +58,22 @@ function AddResultsToTable(data){
 	   //  table_row += ("<td>" + value + "</td>");	
 	   //}
     //});
-    table_row += ("<td>" + person.name + "</td><td>" + (person.major == undefined ? 'N/A' : person.major) + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" + (person.email == undefined ? 'N/A' : person.email) + "</td>");
+    
+    //Professor Check
+    if (person.major == undefined && person.department == undefined){
+      person.major = "N/A";
+    }else if (person.department != undefined){
+      person.major = person.department;
+    }
+
+    //Faculty Check
+    if (person.year == undefined && person.title != undefined){
+      person.year = person.title;
+    }else if (person.year == undefined && person.department != undefined){
+      person.year = "Faculty";
+    }
+    
+    table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" + (person.email == undefined ? 'N/A' : person.email) + "</td>");
     table_row += "</tr>";
     $("#results").find("tbody").append(table_row);
   });

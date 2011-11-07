@@ -17,7 +17,7 @@ class Crawler(webapp.RequestHandler):
     return self.parseData(key)
   
   def getPage( self, key ):
-    logging.debug(url)
+    url = "http://prod3.server.rpi.edu/peopledirectory/entry.do?datasetName=directory&key=" + str(key)
     result = urlfetch.fetch(url)
     
     if result.status_code != 200:
@@ -43,6 +43,8 @@ class Crawler(webapp.RequestHandler):
       r = r.replace("<br />","\n")
       p = re.compile(' *\n *')
       r = p.sub('\n',r)
+      p = re.compile('<.*?>')
+      r = p.sub('',r)
       return r.lower()
       
   def findName(self,string):
@@ -71,7 +73,7 @@ class Crawler(webapp.RequestHandler):
       endIndex   = string.find(".gif", startIndex)
       
       letterID = int(string[startIndex:endIndex].strip())
-      # Stop at an @ or at @rpi.edu
+      # Stop at @rpi.edu
       if letterID == 99:
         email += "@rpi.edu"
         break
@@ -87,7 +89,10 @@ class Crawler(webapp.RequestHandler):
           letterID -= 1
         email += chr(letterID+96)
       else:
-        email += str(letterID-27)
+        num = letterID-27
+        if num == 10:
+          num = 0
+        email += str(num)
     return email
     
   def findStuff( self,string ):
@@ -96,16 +101,15 @@ class Crawler(webapp.RequestHandler):
     
     full_string = string
     
-    attributes = {
-                    'Class:'           : 'year',
+    attributes = {  'Class:'           : 'year',
                     'Curriculum:'      : 'major',
                     'Title:'           : 'title',
+                    "Department"       : 'department',
                     'Telephone:'       : 'phone',
                     'Fax:'             : 'fax',
                     'Office Location:' : 'office_location',
                     'Campus Mailstop:' : 'campus_mailstop',
-                    'Mailing Address:' : 'mailing_address'
-                  }
+                    'Mailing Address:' : 'mailing_address'}
     
     if full_string.find('wrong state') >= 0:
       logging.warn("end of database!")
@@ -134,10 +138,7 @@ class Crawler(webapp.RequestHandler):
       v = self.findAttribute(string,k)
       if v is not "":
         d[attributes[k]] = v
-    
-    #for k in d.keys():
-      #print k,"-->",d[k]
-    #print "-------------------------"
+        
     return d
     
     
@@ -148,7 +149,7 @@ class Crawler(webapp.RequestHandler):
 
 application = webapp.WSGIApplication(
   [
-    ("/crawl/.*", Crawler)
+    ("/debugcrawl.*", Crawler)
   ])
    
 def main():
