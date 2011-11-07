@@ -24,7 +24,11 @@ public class ResultsCache {
 	private LinkedList< CacheEntry > representation = new LinkedList< CacheEntry >();
 	private static final int MAX_CACHE_SIZE = 100;
 	
+	/**
+	 * Nothing to see here...
+	 */
 	public ResultsCache(){
+		return;
 	}
 	
 	/**
@@ -46,6 +50,16 @@ public class ResultsCache {
 		return false;
 	}
 
+	/**
+	 * Generate the value for the current element in the matrix
+	 * 
+	 * @param top The elenment above the current element of the matrix
+	 * @param left The element to the left of the current element of the matrix
+	 * @param topLeft The element to the top-left of the current element in the matrix
+	 * @param c1 The character from the first string
+	 * @param c2 The character from the second string
+	 * @return The value for the current element in the matrix
+	 */
 	private int fillSearchSpace( int top, int left, int topLeft, Character c1, Character c2 ){
 		int topOrLeft = Math.min( top, left );
 		int result = Math.min( topOrLeft, topLeft + (Character.toUpperCase(c1) == Character.toUpperCase(c2) ? 0 : 1) );
@@ -101,6 +115,13 @@ public class ResultsCache {
 		}
 	}
 
+	/**
+	 * Prune results that don't match the search term from the results 
+	 * 
+	 * @param searchTerm The search term
+	 * @param models The models to prune
+	 * @return The pruned models
+	 */
 	private ArrayList<QueryResultModel> pruneResults(String searchTerm,
 			ArrayList<QueryResultModel> models){
 		ArrayList<QueryResultModel> rv = new ArrayList<QueryResultModel>();
@@ -113,16 +134,14 @@ public class ResultsCache {
 		
 		return rv;
 	}
-
-	public ArrayList<QueryResultModel> extract(String searchTerm){
-		/*
-		Log.i( TAG, "Input: " + searchTerm );
-		
-		for( CacheEntry element : representation ){
-			Log.i( TAG, "Key: " + element.key );
-		}
-		*/
-		
+	
+	/**
+	 * Extract data from the cache
+	 * 
+	 * @param searchTerm The string to search
+	 * @return The matching results
+	 */
+	public ArrayList<QueryResultModel> extract(String searchTerm){		
 		ArrayList<QueryResultModel> rv;
 		for( CacheEntry entry : representation ){
 			if( SEARCH_CACHE == true ){
@@ -143,11 +162,19 @@ public class ResultsCache {
 		return null;
 	}
 	
+	/**
+	 * Insert something new in to the cache
+	 * 
+	 * @param searchTerm What was searched for to get the results
+	 * @param searchResults A list of the results
+	 */
 	public void insert(String searchTerm, ArrayList<QueryResultModel> searchResults ) {
 		//Log.i( TAG, "Insert Happening: " + searchTerm );
 		
 		CacheEntry entry = new CacheEntry( searchTerm, searchResults );
 		representation.addFirst( entry );
+		
+		//If the cache exceeds the MAX_CACHE_SIZE, remove the first element that was added
 		if( representation.size() > MAX_CACHE_SIZE ){
 			representation.removeLast();
 		}

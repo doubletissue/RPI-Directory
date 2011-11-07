@@ -8,13 +8,19 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class DetailedDataDisplayerActivity extends Activity {
-	/*
-	 * Format the field name to display correctly
+	private static final String TAG = "DetailedDataDisplayerActivity"; 
+	
+	/**
+	 * Format the field to display correctly
+	 * 
+	 * @param field The field key
+	 * @return The formatted field name
 	 */
 	private String formatField( String field ){
 		String rv = "";
@@ -24,23 +30,18 @@ public class DetailedDataDisplayerActivity extends Activity {
 			return field;
 		}
 		
-		rv = field.replaceAll("_", " ");
-		rv = field.toUpperCase();
-		
-		/*
-		//The return value should contain everything after the first character
-		if( field.length() > 1 ){
-			rv = field.substring(1);
-		}
-				
-		rv = Character.toUpperCase(field.charAt(0)) + rv;
-		*/
+		rv = field.replaceAll("_", " ");		
+		rv = rv.toUpperCase();
 		
 		return rv;
 	}
-	
-	/*
+
+	/**
 	 * Format the value to display correctly
+	 * 
+	 * @param field The field (so we know how to format the value)
+	 * @param value The value to format
+	 * @return The formatted value
 	 */
 	private String formatValue( String field, String value ){
 		return value;
@@ -64,6 +65,7 @@ public class DetailedDataDisplayerActivity extends Activity {
 				
 		//Extract the data from the selected person and prepare to put it into a nice list view
 		Map<String, String> raw_data = selectedPerson.getAllElements();
+		
 		//Spanned is like a string but it can contain formatting data and such
 		ArrayList<Spanned> parsed_data = new ArrayList<Spanned>();
 		for( Entry<String, String> entry : raw_data.entrySet() ){

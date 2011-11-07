@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 	private static final String TAG = "QueryResultArrayAdapter";
-	//private List<QueryResultModel> models; 
 	private String searchTerm;
 	private List<QueryResultModel> representation;
 	private int page = RPInfoAPI.FIRST_PAGE;
@@ -38,21 +37,27 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 		return searchTerm;
 	}
 	
+	/**
+	 * Increment the page and return the new page 
+	 * 
+	 * @return The next page
+	 */
 	public int nextPage(){
 		page += 1;
 		return page;
 	}
 
+	/**
+	 * Add some more results to the list
+	 * 
+	 * @param newResults An ArrayList of QueryResultModels 
+	 */
 	public void addData(ArrayList<QueryResultModel> newResults){
-		//for( int i = 0; i < newResults.size(); ++i ){
 		/*
-		for( QueryResultModel result : newResults ){
-			Log.i(TAG, "Adding");
-			this.add(result);
-			Log.i(TAG, "Added");
-		}
-		*/
-		//This is hacky and terrible, and it should work the proper way but it doesn't!
+		 * This is hacky and terrible, and it should work the proper way but it doesn't!
+		 * The proper way would be to use the add function that is inherited from the parent class,
+		 * rather than change the underlying data structure.
+		 */
 		this.representation.addAll(newResults);
 		this.notifyDataSetChanged();
 		this.notifyDataSetInvalidated();
@@ -79,19 +84,31 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 			TextView name = (TextView)newView.findViewById(R.id.query_result_name);
 			TextView email = (TextView)newView.findViewById(R.id.query_result_email);
 			TextView year = (TextView)newView.findViewById(R.id.query_result_year);
-			TextView department = (TextView)newView.findViewById(R.id.query_result_department);
+			TextView major = (TextView)newView.findViewById(R.id.query_result_department);
 
 			if( name != null ){
-				name.setText((String)model.getElement("name","N/A"));
+				String nameData = (String)model.getElement("name","N/A");
+				name.setText(nameData);
 			}
 			if( email != null ){
-				email.setText((String)model.getElement("email","N/A"));
+				String emailData = (String)model.getElement("email","N/A");
+				email.setText(emailData);
 			}
 			if( year != null ){
-				year.setText((String)model.getElement("year","N/A"));
+				String yearData = (String)model.getElement("year",null);
+				//If the person doesn't have a year, is probably faculty or staff and therefore has a title
+				if( yearData == null ){
+					yearData = (String)model.getElement("title", "N/A");
+				}
+				year.setText(yearData);
 			}
-			if( department != null ){
-				department.setText((String)model.getElement("major","N/A"));
+			if( major != null ){
+				String majorData = (String)model.getElement("major",null);
+				//If the person doesn't have a major, is probably faculty or staff and therefore has a department
+				if( majorData == null ){
+					majorData = (String)model.getElement("department","N/A");
+				}
+				major.setText(majorData);
 			}
 		}
 		

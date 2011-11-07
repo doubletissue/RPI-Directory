@@ -24,6 +24,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 public class ResultsListManager {
+	/**
+	 * Relate a search term to the time when it was searched
+	 */
 	private class SearchTermData {
 		public SearchTermData(String searchTerm, Date searchDate){
 			this.searchTerm = searchTerm;
@@ -37,7 +40,6 @@ public class ResultsListManager {
 	private static final String TAG = "ResultsListManager";
 	private static View moreButton = null;
 	private Date currentUpdate = new Date();
-	private static final Object currentUpdateLock = new Object();
 	private Activity context = null;
 	//Keep track of search terms so that they can be buffered
 	private LinkedList<SearchTermData> searchTerms = new LinkedList<SearchTermData>();
@@ -45,6 +47,8 @@ public class ResultsListManager {
 	private Object searchTermsLock = new Object();
 	//Lock for searching
 	private Object searchLock = new Object();
+	//Lock for updating
+	private static final Object currentUpdateLock = new Object();
 
 	public ResultsListManager(Activity context){
 		this.context = context;
@@ -104,6 +108,7 @@ public class ResultsListManager {
 	        Button b = (Button)ll.findViewById(R.id.more_button);
 	        b.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
+					//Most of what's going on here is to display the progress dialog
 					new AsyncTask<Void, Void, ArrayList<QueryResultModel>>() {
 						private ProgressDialog pd;
 
@@ -112,11 +117,13 @@ public class ResultsListManager {
 						};
 						
 						protected ArrayList<QueryResultModel> doInBackground(Void... arg0) {
+							//Get the new data
 							ArrayList<QueryResultModel> newResults = RPInfoAPI.getInstance().request(a.getSearchTerm(), a.nextPage(), RPInfoAPI.DEFAULT_NUM_RESULTS);
 							return newResults;
 						}
 						
 						protected void onPostExecute(ArrayList<QueryResultModel> newResults) {
+							//Store the new data
 							a.addData( newResults );
 							pd.dismiss();
 						}
@@ -142,10 +149,12 @@ public class ResultsListManager {
 	        final ListView lv = (ListView)context.findViewById(R.id.data_list);
 	        final QueryResultArrayAdapter a = new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult, searchTermData.searchTerm);
 	      
+	        //Add the more button to the bottom of the list
 	        addMoreButton( lv, a );
 	        
 	        lv.setAdapter(a);
 	        
+	        //If a list element is pressed
 	        lv.setOnItemClickListener(new OnItemClickListener(){
 	        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {			
 					Intent i = new Intent(context, DetailedDataDisplayerActivity.class);
@@ -162,7 +171,9 @@ public class ResultsListManager {
 	public void update(String searchTerm){
 		synchronized(searchTermsLock){
 			Date thisUpdate = new Date();
+			//Set the current item as the next search (for speed)
 			searchTerms.addFirst( new SearchTermData( searchTerm, thisUpdate ) );
+			//Set the current update time to be the one that is actually rendered
 			setCurrentUpdate(thisUpdate);
 		}
 		new DoUpdate().execute();

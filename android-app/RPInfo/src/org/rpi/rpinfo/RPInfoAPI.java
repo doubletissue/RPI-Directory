@@ -22,17 +22,16 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class RPInfoAPI {
+	private static RPInfoAPI singleton = null;
 	public static final int FIRST_PAGE = 1;
 	public static final int DEFAULT_NUM_RESULTS = 20;	
 	private static final String TAG = "RPInfoAPI";
-	private static RPInfoAPI singleton = null;
-	//private static final String URLBASE = "http://www.rpidirectory.appspot.com/api?name=";
 	private static final String URLBASE = "http://www.rpidirectory.appspot.com/api";
-	private static final ResultsCache cache = new ResultsCache();
-	private Object requestLock = new Object();
 	private static final String PARAM_NAME = "name";
 	private static final String PARAM_PAGE = "page_num";
 	private static final String PARAM_NUM_RESULTS = "page_size";
+	private static final ResultsCache cache = new ResultsCache();
+	private Object requestLock = new Object();
 
 	private RPInfoAPI(){
 	}
@@ -64,6 +63,12 @@ public class RPInfoAPI {
 		return singleton;
 	}
 	
+	/**
+	 * Parse the result of an API transaction to a list of QueryResultModel
+	 * 
+	 * @param apiResult The result of the API transaction
+	 * @return The ArrayList<QueryResultModel> that corresponds to the data
+	 */
 	private ArrayList<QueryResultModel> parseApiResult(JSONObject apiResult){
 		ArrayList<QueryResultModel> list_items = new ArrayList<QueryResultModel>();
 
@@ -86,6 +91,12 @@ public class RPInfoAPI {
 		return list_items;
 	}
 	
+	/**
+	 * @param searchTerm The term to search for
+	 * @param page The page to return
+	 * @param numResults The number of results per page
+	 * @return The results of the query
+	 */
 	private ArrayList<QueryResultModel> doRequest( String searchTerm, int page, int numResults ){
 		/**
 		 * Do only one request at a time - reduce server load, but also
@@ -112,16 +123,12 @@ public class RPInfoAPI {
 					params.put(PARAM_NUM_RESULTS, Integer.toString(numResults));
 					
 					String url = decorateUrl( params );
-					//Log.i(TAG, url);
 					HttpGet httpGet = new HttpGet( url );
-					//HttpGet httpGet = new HttpGet( URLBASE + URLEncoder.encode(searchTerm) );
-					//httpGet.addHeader(HEADER_NAME, searchTerm);
 															
 					HttpResponse response = httpClient.execute( httpGet, localContext );
 					BufferedReader in = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
 					
 					rv = parseApiResult( new JSONObject(in.readLine()) );
-					//Log.i( TAG, "Insert: " + searchTerm );
 					
 					//Don't cache results for other pages... yet
 					if( page == FIRST_PAGE ){
@@ -142,7 +149,14 @@ public class RPInfoAPI {
 		return null;
 	}
 	
-	
+	/**
+	 * Wrapper for doRequest
+	 * 
+	 * @param searchTerm The term to search for
+	 * @param page The page to return
+	 * @param numResults The number of results per page
+	 * @return The results of the query
+	 */
 	public ArrayList<QueryResultModel> request( String searchTerm, int page, int numResults ){	
 		return doRequest( searchTerm, page, numResults );
 	}
