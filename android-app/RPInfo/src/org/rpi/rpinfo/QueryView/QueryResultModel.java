@@ -1,4 +1,4 @@
-package org.rpi.rpinfo;
+package org.rpi.rpinfo.QueryView;
 
 import java.io.Serializable;
 import java.util.HashMap;

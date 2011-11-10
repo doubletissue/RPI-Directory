@@ -1,9 +1,12 @@
-package org.rpi.rpinfo;
+package org.rpi.rpinfo.QueryView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
+import org.rpi.rpinfo.R;
+import org.rpi.rpinfo.R.id;
+import org.rpi.rpinfo.R.layout;
 
 import android.app.ProgressDialog;
 import android.content.Context;

@@ -1,4 +1,9 @@
-package org.rpi.rpinfo;
+package org.rpi.rpinfo.DetailedView;
+
+import org.rpi.rpinfo.R;
+import org.rpi.rpinfo.QueryView.ResultsListManager;
+import org.rpi.rpinfo.R.id;
+import org.rpi.rpinfo.R.layout;
 
 import android.app.Activity;
 import android.os.Bundle;

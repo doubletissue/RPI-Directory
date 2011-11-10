@@ -1,10 +1,15 @@
-package org.rpi.rpinfo;
+package org.rpi.rpinfo.QueryView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.rpi.rpinfo.R;
+import org.rpi.rpinfo.DetailedView.DetailedDataDisplayerActivity;
+import org.rpi.rpinfo.R.id;
+import org.rpi.rpinfo.R.layout;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
