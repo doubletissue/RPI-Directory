@@ -12,9 +12,9 @@ public class ResultsCache {
 	
 	private class CacheEntry {
 		public String key;
-		public ArrayList<QueryResultModel> value;
+		public ArrayList<PersonModel> value;
 		
-		CacheEntry( String key, ArrayList<QueryResultModel> value ){
+		CacheEntry( String key, ArrayList<PersonModel> value ){
 			this.key = key;
 			this.value = value;
 		}
@@ -122,11 +122,11 @@ public class ResultsCache {
 	 * @param models The models to prune
 	 * @return The pruned models
 	 */
-	private ArrayList<QueryResultModel> pruneResults(String searchTerm,
-			ArrayList<QueryResultModel> models){
-		ArrayList<QueryResultModel> rv = new ArrayList<QueryResultModel>();
+	private ArrayList<PersonModel> pruneResults(String searchTerm,
+			ArrayList<PersonModel> models){
+		ArrayList<PersonModel> rv = new ArrayList<PersonModel>();
 		
-		for( QueryResultModel element : models ){
+		for( PersonModel element : models ){
 			if( matchSubsequence( element.getElement("name", null), searchTerm ) ){
 				rv.add(element);
 			}
@@ -141,8 +141,8 @@ public class ResultsCache {
 	 * @param searchTerm The string to search
 	 * @return The matching results
 	 */
-	public ArrayList<QueryResultModel> extract(String searchTerm){		
-		ArrayList<QueryResultModel> rv;
+	public ArrayList<PersonModel> extract(String searchTerm){		
+		ArrayList<PersonModel> rv;
 		for( CacheEntry entry : representation ){
 			if( SEARCH_CACHE == true ){
 				if( matchSearchTerm(entry.key, searchTerm) ){
@@ -168,7 +168,7 @@ public class ResultsCache {
 	 * @param searchTerm What was searched for to get the results
 	 * @param searchResults A list of the results
 	 */
-	public void insert(String searchTerm, ArrayList<QueryResultModel> searchResults ) {
+	public void insert(String searchTerm, ArrayList<PersonModel> searchResults ) {
 		//Log.i( TAG, "Insert Happening: " + searchTerm );
 		
 		CacheEntry entry = new CacheEntry( searchTerm, searchResults );

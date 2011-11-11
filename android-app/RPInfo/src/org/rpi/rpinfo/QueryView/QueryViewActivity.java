@@ -1,7 +1,6 @@
-package org.rpi.rpinfo.DetailedView;
+package org.rpi.rpinfo.QueryView;
 
 import org.rpi.rpinfo.R;
-import org.rpi.rpinfo.QueryView.ResultsListManager;
 import org.rpi.rpinfo.R.id;
 import org.rpi.rpinfo.R.layout;
 
@@ -14,7 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class DataDisplayerActivity extends Activity {
+public class QueryViewActivity extends Activity {
 	private static final String TAG = "DataDisplayerActivity";
 	private ResultsListManager resultsList = null;
 	

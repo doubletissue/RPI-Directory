@@ -5,12 +5,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.rpi.rpinfo.R;
-import org.rpi.rpinfo.QueryView.QueryResultModel;
+import org.rpi.rpinfo.QueryView.PersonModel;
 import org.rpi.rpinfo.R.id;
 import org.rpi.rpinfo.R.layout;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
@@ -22,7 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class DetailedDataDisplayerActivity extends Activity {
+public class DetailedViewActivity extends Activity {
 	private static final String TAG = "DetailedDataDisplayerActivity"; 
 		
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class DetailedDataDisplayerActivity extends Activity {
 		}
 		
 		//Extract the selected person from the intent
-		QueryResultModel selectedPerson = (QueryResultModel)b.getSerializable("selectedPerson");
+		PersonModel selectedPerson = (PersonModel)b.getSerializable("selectedPerson");
 		if( selectedPerson == null ){
 			finish();
 		}
@@ -63,17 +64,24 @@ public class DetailedDataDisplayerActivity extends Activity {
 		
 		//Set up the list view
 		ListView lv = (ListView)this.findViewById(R.id.data_list);
-		lv.setAdapter(new ArrayAdapter<DetailedResultModel>(this, R.layout.detailed_view_list_item, models));
+		lv.setAdapter(new DetailedListArrayAdapter(this, R.layout.detailed_view_list_item, models));
+		//lv.setAdapter(new ArrayAdapter<DetailedResultModel>(this, R.layout.detailed_view_list_item, models));
 		
         //If a list element is pressed
         lv.setOnItemClickListener(new OnItemClickListener(){
         	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        		//String key = parent.getAdapter().getItem(position)
-				/*
-				Intent i = new Intent(DetailedDataDisplayerActivity.this, DetailedDataDisplayerActivity.class);
-				i.putExtra("selectedPerson", apiResult.get((int) id));
-				this.startActivity(i);
-				*/
+        		DetailedResultModel model = (DetailedResultModel)parent.getAdapter().getItem(position);
+        		String key = model.getRawKey();
+        		if( key.equals("phone") ){
+    				Log.i(TAG, "Calling" + model.getValue());
+    				Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("tel:" + model.getValue()));
+    				startActivity(intent);
+        		} else if( key.equals("email") ) {
+    				Log.i(TAG, "Sending email to " + model.getValue());
+        			Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        			intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{model.getValue()});
+        			startActivity(Intent.createChooser(intent, "Send email..."));
+        		}
 			}
         });
 	}

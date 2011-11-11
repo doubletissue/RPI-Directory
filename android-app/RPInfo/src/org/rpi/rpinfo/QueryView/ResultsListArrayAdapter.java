@@ -21,14 +21,14 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
+public class ResultsListArrayAdapter extends ArrayAdapter<PersonModel> {
 	private static final String TAG = "QueryResultArrayAdapter";
 	private String searchTerm;
-	private List<QueryResultModel> representation;
+	private List<PersonModel> representation;
 	private int page = RPInfoAPI.FIRST_PAGE;
 	
-	public QueryResultArrayAdapter(Context context, int textViewResourceId,
-			List<QueryResultModel> objects, String searchTerm ) {
+	public ResultsListArrayAdapter(Context context, int textViewResourceId,
+			List<PersonModel> objects, String searchTerm ) {
 		super(context, textViewResourceId, objects);
 				
 		//Hold on to this for later
@@ -55,7 +55,7 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 	 * 
 	 * @param newResults An ArrayList of QueryResultModels 
 	 */
-	public void addData(ArrayList<QueryResultModel> newResults){
+	public void addData(ArrayList<PersonModel> newResults){
 		/*
 		 * This is hacky and terrible, and it should work the proper way but it doesn't!
 		 * The proper way would be to use the add function that is inherited from the parent class,
@@ -80,7 +80,7 @@ public class QueryResultArrayAdapter extends ArrayAdapter<QueryResultModel> {
 			
 		//Get the current from the array
 		//QueryResultModel model = this.models.get(position);
-		QueryResultModel model = this.getItem(position);
+		PersonModel model = this.getItem(position);
 		
 		//Fill the view with all of the data
 		if(model != null){
