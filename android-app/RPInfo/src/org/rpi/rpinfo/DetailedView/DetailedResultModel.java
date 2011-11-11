@@ -66,7 +66,7 @@ public class DetailedResultModel {
 	}
 	
 	public Spanned getKey() {
-		Spanned parsed_key = Html.fromHtml("<b>" + formatField( key ) + "</b>: ");
+		Spanned parsed_key = Html.fromHtml("<b>" + formatField( key ) + "</b>:");
 		return parsed_key;
 	}
 	
