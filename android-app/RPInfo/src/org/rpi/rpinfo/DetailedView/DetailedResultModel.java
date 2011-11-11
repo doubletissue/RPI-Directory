@@ -61,17 +61,24 @@ public class DetailedResultModel {
 		return parsed_data;
 	}
 	
-	public String getKey() {
+	public String getRawKey() {
 		return key;
+	}
+	
+	public Spanned getKey() {
+		Spanned parsed_key = Html.fromHtml("<b>" + formatField( key ) + "</b>: ");
+		return parsed_key;
 	}
 	
 	public String getValue() {
 		return value;
 	}
 	
+	/*
 	public String toString() {
 		//Spanned is like a string but it can contain formatting data and such
 		Spanned parsed_data = Html.fromHtml("<b>" + formatField( key ) + "</b>: " + formatValue( key, value ) );
 		return parsed_data.toString();
 	}
+	*/
 }

@@ -69,8 +69,8 @@ public class RPInfoAPI {
 	 * @param apiResult The result of the API transaction
 	 * @return The ArrayList<QueryResultModel> that corresponds to the data
 	 */
-	private ArrayList<QueryResultModel> parseApiResult(JSONObject apiResult){
-		ArrayList<QueryResultModel> list_items = new ArrayList<QueryResultModel>();
+	private ArrayList<PersonModel> parseApiResult(JSONObject apiResult){
+		ArrayList<PersonModel> list_items = new ArrayList<PersonModel>();
 
 		JSONArray data_array;
 		try {
@@ -82,7 +82,7 @@ public class RPInfoAPI {
 
 				// Get the current object in the array and add it to the list
 				current = data_array.getJSONObject(i);
-				list_items.add(new QueryResultModel(current));
+				list_items.add(new PersonModel(current));
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -97,7 +97,7 @@ public class RPInfoAPI {
 	 * @param numResults The number of results per page
 	 * @return The results of the query
 	 */
-	private ArrayList<QueryResultModel> doRequest( String searchTerm, int page, int numResults ){
+	private ArrayList<PersonModel> doRequest( String searchTerm, int page, int numResults ){
 		/**
 		 * Do only one request at a time - reduce server load, but also
 		 * allow requests to take advantage of cached results by previous
@@ -107,7 +107,7 @@ public class RPInfoAPI {
 		
 		synchronized( requestLock ){
 			try {
-				ArrayList<QueryResultModel> rv = null;
+				ArrayList<PersonModel> rv = null;
 				if( page == FIRST_PAGE ){
 					rv = cache.extract( searchTerm );
 				}
@@ -157,7 +157,7 @@ public class RPInfoAPI {
 	 * @param numResults The number of results per page
 	 * @return The results of the query
 	 */
-	public ArrayList<QueryResultModel> request( String searchTerm, int page, int numResults ){	
+	public ArrayList<PersonModel> request( String searchTerm, int page, int numResults ){	
 		return doRequest( searchTerm, page, numResults );
 	}
 }

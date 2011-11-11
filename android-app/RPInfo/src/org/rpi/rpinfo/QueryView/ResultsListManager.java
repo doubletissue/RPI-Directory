@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.rpi.rpinfo.R;
-import org.rpi.rpinfo.DetailedView.DetailedDataDisplayerActivity;
+import org.rpi.rpinfo.DetailedView.DetailedViewActivity;
 import org.rpi.rpinfo.R.id;
 import org.rpi.rpinfo.R.layout;
 
@@ -78,19 +78,19 @@ public class ResultsListManager {
 	}
 	
 	//Perform the actual update asynchronously
-	private class DoUpdate extends AsyncTask<Void, Void, ArrayList<QueryResultModel> > {
+	private class DoUpdate extends AsyncTask<Void, Void, ArrayList<PersonModel> > {
 		private SearchTermData searchTermData = null;
 		
 		protected void onPreExecute() {
 			return;
 		}
 		
-		protected ArrayList<QueryResultModel> doInBackground(Void... params){
+		protected ArrayList<PersonModel> doInBackground(Void... params){
 			if( searchTerms.size() == 0 ){
 				return null;
 			}
 			
-			ArrayList<QueryResultModel> apiResult = null;			
+			ArrayList<PersonModel> apiResult = null;			
 			synchronized(searchLock){
 				searchTermData = getNextSearchTerm();
 										
@@ -101,7 +101,7 @@ public class ResultsListManager {
 			return apiResult;
  		}
 		
-		protected void addMoreButton( final ListView lv, final QueryResultArrayAdapter a ){
+		protected void addMoreButton( final ListView lv, final ResultsListArrayAdapter a ){
 	        //Remove the more button from the footer if it has already been place
 	        if( moreButton != null ){
 	        	lv.removeFooterView(moreButton);
@@ -114,20 +114,20 @@ public class ResultsListManager {
 	        b.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					//Most of what's going on here is to display the progress dialog
-					new AsyncTask<Void, Void, ArrayList<QueryResultModel>>() {
+					new AsyncTask<Void, Void, ArrayList<PersonModel>>() {
 						private ProgressDialog pd;
 
 						protected void onPreExecute() {
 							pd = ProgressDialog.show(context, "", "Fetching more results...");
 						};
 						
-						protected ArrayList<QueryResultModel> doInBackground(Void... arg0) {
+						protected ArrayList<PersonModel> doInBackground(Void... arg0) {
 							//Get the new data
-							ArrayList<QueryResultModel> newResults = RPInfoAPI.getInstance().request(a.getSearchTerm(), a.nextPage(), RPInfoAPI.DEFAULT_NUM_RESULTS);
+							ArrayList<PersonModel> newResults = RPInfoAPI.getInstance().request(a.getSearchTerm(), a.nextPage(), RPInfoAPI.DEFAULT_NUM_RESULTS);
 							return newResults;
 						}
 						
-						protected void onPostExecute(ArrayList<QueryResultModel> newResults) {
+						protected void onPostExecute(ArrayList<PersonModel> newResults) {
 							//Store the new data
 							a.addData( newResults );
 							pd.dismiss();
@@ -140,7 +140,7 @@ public class ResultsListManager {
 	        lv.addFooterView(ll);
 		}
 		
-		protected void onPostExecute(final ArrayList<QueryResultModel> apiResult) {
+		protected void onPostExecute(final ArrayList<PersonModel> apiResult) {
 			/*
 			 * If this was not the most recently started update or there is no api result,
 			 * there isn't much that we can do.
@@ -152,7 +152,7 @@ public class ResultsListManager {
 						
 			//Set up the list view (where the results are displayed)
 	        final ListView lv = (ListView)context.findViewById(R.id.data_list);
-	        final QueryResultArrayAdapter a = new QueryResultArrayAdapter(context, R.layout.query_result_list_item, apiResult, searchTermData.searchTerm);
+	        final ResultsListArrayAdapter a = new ResultsListArrayAdapter(context, R.layout.query_result_list_item, apiResult, searchTermData.searchTerm);
 	      
 	        //Add the more button to the bottom of the list
 	        addMoreButton( lv, a );
@@ -162,7 +162,7 @@ public class ResultsListManager {
 	        //If a list element is pressed
 	        lv.setOnItemClickListener(new OnItemClickListener(){
 	        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {			
-					Intent i = new Intent(context, DetailedDataDisplayerActivity.class);
+					Intent i = new Intent(context, org.rpi.rpinfo.DetailedView.DetailedViewActivity.class);
 					i.putExtra("selectedPerson", apiResult.get((int) id));
 					context.startActivity(i);
 				}

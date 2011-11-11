@@ -7,10 +7,13 @@
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 		<activity android:name=".RPInfoActivity" android:label="@string/app_name">
 		</activity>
-		<activity android:name=".DetailedView.DataDisplayerActivity"><intent-filter>
+		<activity android:name=".QueryView.QueryViewActivity">
+			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter></activity>
+			</intent-filter>
+		</activity>
+		<activity android:name=".DetailedView.DetailedViewActivity"></activity>
 
 	</application>
 </manifest>
