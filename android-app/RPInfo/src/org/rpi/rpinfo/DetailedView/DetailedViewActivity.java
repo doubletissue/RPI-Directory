@@ -79,6 +79,7 @@ public class DetailedViewActivity extends Activity {
         		} else if( key.equals("email") ) {
     				Log.i(TAG, "Sending email to " + model.getValue());
         			Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        			intent.setType("message/rfc822");
         			intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{model.getValue()});
         			startActivity(Intent.createChooser(intent, "Send email..."));
         		}
