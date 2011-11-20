@@ -173,7 +173,7 @@ public class ResultsListManager {
 	/**
 	 * Wrapper for AsyncTask DoUpdate
 	 */
-	public void update(String searchTerm){
+	public void update(String searchTerm){		
 		synchronized(searchTermsLock){
 			Date thisUpdate = new Date();
 			//Set the current item as the next search (for speed)
@@ -181,6 +181,16 @@ public class ResultsListManager {
 			//Set the current update time to be the one that is actually rendered
 			setCurrentUpdate(thisUpdate);
 		}
+		
+		//If only searching for one character, give the user time to add others before starting a relatively long single character search 
+		if( searchTerm.length() == 1){
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		new DoUpdate().execute();
 	}
 }

@@ -154,7 +154,7 @@ public class DetailedViewActivity extends Activity {
 			Log.i(TAG, "Person does not have a phone number.");
 		}
 		
-		String personWebsite = selectedPerson.getElement("website", null);
+		String personWebsite = selectedPerson.getElement("homepage", null);
 		if( personWebsite != null ){
 			ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
 					.withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, contact_index)
