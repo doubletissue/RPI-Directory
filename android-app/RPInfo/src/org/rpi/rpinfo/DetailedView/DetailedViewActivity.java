@@ -10,12 +10,15 @@ import org.rpi.rpinfo.R.id;
 import org.rpi.rpinfo.R.layout;
 
 import android.app.Activity;
+import android.content.ContentProviderOperation;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,7 +28,8 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class DetailedViewActivity extends Activity {
 	private static final String TAG = "DetailedDataDisplayerActivity"; 
-		
+	private PersonModel selectedPerson;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -37,26 +41,12 @@ public class DetailedViewActivity extends Activity {
 		}
 		
 		//Extract the selected person from the intent
-		PersonModel selectedPerson = (PersonModel)b.getSerializable("selectedPerson");
+		selectedPerson = (PersonModel)b.getSerializable("selectedPerson");
 		if( selectedPerson == null ){
 			finish();
 		}
-		
+						
 		ArrayList<DetailedResultModel> models = DetailedResultModel.generateModels(selectedPerson.getAllElements());
-				
-		/*
-		//Extract the data from the selected person and prepare to put it into a nice list view
-		Map<String, String> raw_data = selectedPerson.getAllElements();
-		
-		//Spanned is like a string but it can contain formatting data and such
-		ArrayList<Spanned> parsed_data = new ArrayList<Spanned>();
-		for( Entry<String, String> entry : raw_data.entrySet() ){
-			if( !entry.getKey().equals("name") ){
-				//Make the name of the field bold
-				parsed_data.add( Html.fromHtml("<b>" + formatField( entry.getKey() ) + "</b>: " + formatValue( entry.getKey(), entry.getValue() ) ) );
-			}
-		}
-		*/
 		
 		//Put the person's name in
 		TextView name = (TextView)this.findViewById(R.id.person_name);
@@ -65,7 +55,6 @@ public class DetailedViewActivity extends Activity {
 		//Set up the list view
 		ListView lv = (ListView)this.findViewById(R.id.data_list);
 		lv.setAdapter(new DetailedListArrayAdapter(this, R.layout.detailed_view_list_item, models));
-		//lv.setAdapter(new ArrayAdapter<DetailedResultModel>(this, R.layout.detailed_view_list_item, models));
 		
         //If a list element is pressed
         lv.setOnItemClickListener(new OnItemClickListener(){
@@ -85,6 +74,26 @@ public class DetailedViewActivity extends Activity {
         		}
 			}
         });
+	}
+	
+	public boolean onCreateOptionsMenu(Menu menu){
+		MenuInflater infalter = getMenuInflater();
+		infalter.inflate(R.layout.detailed_view_menu, menu);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch( item.getItemId() ){
+			case R.id.add_contacts_button: 
+		}
+		return true;
+	}
+	
+	/**
+	 * Add the selected person to ones contacts
+	 */
+	private void addToContacts(){
+		ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 	}
 
 }
