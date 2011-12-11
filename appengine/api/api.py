@@ -13,6 +13,35 @@ class NewApi(webapp.RequestHandler):
 
 class Api(webapp.RequestHandler):
   
+  def noNameSearch(self, year, major, num_results, page_offset):
+    logging.debug("Searching with no name for " + major + ",  " + year)
+    cache = memcache.get( "noName:" + year + ":" + major)
+    if cache:
+      result,recursion_level = cache
+      if result:
+        # Reset the timer
+        #if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, result, 86400):
+          #logging.error("Memcache set failed.")
+        return result, recursion_level
+    
+    query = Person.all()
+    
+    if year is not "":
+      query = query.filter('year = ',year)
+    if major is not "":
+      query = query.filter('major = ',major)
+      
+    query = query.order("first_name")
+    results = query.fetch(num_results)
+    
+    # No recursion here, but included in the memcache for consistancy
+    recursion_level = 0
+    
+    if not memcache.set("noName:" + year + ":" + major, (results,recursion_level), 86400):
+      logging.error("Memcache set failed.")
+
+    return results, recursion_level
+  
   def nameSearch(self,name_type,name,year,major, num_results, page_offset):
     logging.debug("Searching for " + name_type + " of " + name)
     cache = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
@@ -26,7 +55,7 @@ class Api(webapp.RequestHandler):
     
     
     if name == '':
-      return [], 0
+      return noNameSearch(year, major, num_results, page_offset)
     
     query = Person.all()
     
@@ -67,8 +96,9 @@ class Api(webapp.RequestHandler):
       page_size = 20
     
     names = name.split()[:3]
-    
-    quick_person = Person.get_by_key_name(names[0])
+    quick_person = False
+    if len(names) > 0:
+      quick_person = Person.get_by_key_name(names[0])
     
     l1 = []
     l2 = []
@@ -120,7 +150,11 @@ class Api(webapp.RequestHandler):
           #if i > page_size*page_num:
             #break
       l = sorted(l, key=lambda person: person['name'])[page_size*(page_num-1):page_size*page_num]
-    
+    elif len(names) == 0:
+      people,_ = self.noNameSearch(year,major,1000,0)
+      for i in range(len(people)):
+        l.append(i)
+      l = sorted(l, key=lambda person: person['name'])[page_size*(page_num-1):page_size*page_num]
     if quick_person:
       newL = []
       for i in l:

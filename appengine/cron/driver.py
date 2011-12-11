@@ -1,7 +1,7 @@
 from cron.crawler import Crawler
 from models import SearchPosition
 from models import Person
-from models import DepartmentKeyword
+#from models import DepartmentKeyword
 
 import cgi
 import datetime
@@ -23,8 +23,8 @@ NUM_THREADS = 100
 #Creates a person and stores it
 def putResult(d):
   person = Person.buildPerson(d)
-  if person.department:
-    DepartmentKeyword.buildKeywords(person.department)
+  #if person.department:
+    #DepartmentKeyword.buildKeywords(person.department)
   person.put()
 
 class Driver(webapp.RequestHandler):
