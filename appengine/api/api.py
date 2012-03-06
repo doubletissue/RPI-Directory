@@ -39,6 +39,8 @@ class Api(webapp.RequestHandler):
     return results, recursion_level
   
   def nameSearch(self, name_type, name, year, major, num_results, page_offset):
+    if num_results > 30:
+      logging.debug("Got a high number of results to give: " + num_results)
     if name == '':
       return noNameSearch(year, major, num_results, page_offset)
       
