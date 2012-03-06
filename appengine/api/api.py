@@ -35,7 +35,7 @@ class Api(webapp.RequestHandler):
     query = query.filter(name_type + ' >= ', name)
     query = query.filter(name_type + ' <= ', name+u'\ufffd')
     query = query.order(name_type)
-    results = query.fetch(num_results)
+    results = query.fetch(limit=num_results)
     
     modded = False
     
@@ -67,18 +67,18 @@ class Api(webapp.RequestHandler):
     l = []
     
     if len(names) == 1:
-      first_name_results, modded = self.nameSearch('first_name',names[0],year,major, 100, 0)
+      first_name_results, modded = self.nameSearch('first_name',names[0],year,major, 30, 0)
       for p in first_name_results:
         l.append(Person.buildMap(p))
-      last_name_results, modded  = self.nameSearch('last_name',names[0],year,major, 100, 0)
+      last_name_results, modded  = self.nameSearch('last_name',names[0],year,major, 30, 0)
       for p in last_name_results:
         l.append(Person.buildMap(p))
     elif len(names) > 1:
       d = set()
-      last_name_results, modded = self.nameSearch('last_name',names[-1],year,major, 100, 0)
+      last_name_results, modded = self.nameSearch('last_name',names[-1],year,major, 30, 0)
       for p in last_name_results:
         d.add(p.key().name())
-      first_name_results, modded  = self.nameSearch('first_name',names[0],year,major, 100, 0)
+      first_name_results, modded  = self.nameSearch('first_name',names[0],year,major, 30, 0)
       i = 0
       for p in first_name_results:
         if p.key().name() in d:
