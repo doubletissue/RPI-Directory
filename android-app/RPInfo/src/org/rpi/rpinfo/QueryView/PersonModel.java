@@ -1,4 +1,4 @@
-package org.rpi.rpinfo;
+package org.rpi.rpinfo.QueryView;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -11,12 +11,17 @@ import org.json.JSONObject;
 /**
  * A frontend for a JSONObject with data on a particular person
  */
-public class QueryResultModel implements Serializable {
+public class PersonModel implements Serializable {
 	//A unique identifier for this class (for serialization)
 	private static final long serialVersionUID = -579697907972516780L;
 	private String data = null;
 	
-	public QueryResultModel( JSONObject data ){
+	/**
+	 * Constructor
+	 * 
+	 * @param data A JSONObject containing the relevant data
+	 */
+	public PersonModel( JSONObject data ){
 		//The question remains: why does JSONObject not implement Serializable?
 		this.data = data.toString();
 	}
@@ -72,6 +77,9 @@ public class QueryResultModel implements Serializable {
 		}
 	}
 	
+	/** 
+	 * @return A Map<String, String> representing the original JSON object that was passed in.
+	 */
 	public Map<String, String> getAllElements(){
 		JSONObject JSONData = null;
 		

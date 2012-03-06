@@ -4,21 +4,21 @@
 	android:orientation="vertical">
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:id="@+id/query_result_name"
-		android:padding="0dp" android:textSize="16sp">
+		android:padding="0dp" android:textSize="20sp">
 	</TextView>
 	<LinearLayout android:layout_height="wrap_content"
 		android:layout_width="fill_parent" android:orientation="horizontal">
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:id="@+id/query_result_email"
-			android:padding="0dp" android:textSize="10sp" android:layout_weight="1" android:text="Hello, email">
+			android:padding="0dp" android:textSize="14sp" android:layout_weight="0.75" android:text="Hello, email">
 		</TextView>
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:id="@+id/query_result_year"
-			android:padding="0dp" android:textSize="10sp" android:layout_weight="1" android:text="Hello,year">
+			android:padding="0dp" android:textSize="14sp" android:layout_weight="1" android:text="Hello,year">
 		</TextView>
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:id="@+id/query_result_department"
-			android:padding="0dp" android:textSize="10sp" android:layout_weight="1" android:text="Hello, department">
+			android:padding="0dp" android:textSize="14sp" android:layout_weight="1" android:text="Hello, department">
 		</TextView>
 	</LinearLayout>
 </LinearLayout>

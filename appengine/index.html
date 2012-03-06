@@ -1,11 +1,11 @@
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<title>RPI Directory</title>
 		<link href='http://fonts.googleapis.com/css?family=Puritan:700' rel='stylesheet' type='text/css'>
 		<link href='css/main.css' rel='stylesheet' type='text/css'>
+		<link href='css/960.css' rel='stylesheet' type='text/css'>
 		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript" src="js/tblsrt.js"></script>
 		<script type="text/javascript" src="js/bindwithdelay.js"></script>
@@ -23,24 +23,27 @@
 		</script>
 		</head>
 		<body id="body">
-		  <div id="container">
-		    <div class="full_width big">RPI Directory</div>
-		    <div id="inputBox">
-			  <input type="text" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
+		  <div id="container" class="container_12">
+		    <div class="full_width grid_12">RPI Directory</div>
+		    <div id="inputBox" class="grid_8 prefix_2 suffix_2">
+			    <input type="text" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
 		    </div>
+		    <div id="output" class="grid_10 prefix_1 suffix_1"></div>
+		    <div id="noscript" class="grid_10 prefix_1 suffix_1"><noscript>You have JavaScript disabled.  This search will not work without it, please turn on JavaScript and refresh your browser.</noscript></div>
+		    <div class="grid_12">
+		      <table id="results" class="tablesorter" style="display:none">
+    		    <thead>
+    		      <tr>
+    			      <th>Name</th>
+      			    <th>Department</th>
+      			    <th>Class</th>
+      			    <th>Email</th>
+    			    </tr>
+    			  </thead>
+    			  <tbody>
+    			  </tbody>
+    		  </table>
+    		</div>
 		  </div>
-		  <div id="output"></div>
-		  <div id="noscript"><noscript>You have JavaScript disabled.  This search will not work without it, please turn on JavaScript.</noscript></div>
-		  <table id="results" class="tablesorter" style="display:none">
-		    <thead>
-		      <tr>
-			    <th>Name</th>
-			    <th>Major</th>
-			    <th>Class</th>
-			  </tr>
-			</thead>
-			<tbody>
-			</tbody>
-		  </table>	
 		</body>
 </html>

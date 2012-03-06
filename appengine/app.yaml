@@ -1,5 +1,5 @@
 application: rpidirectory
-version: 1
+version: 2
 runtime: python
 api_version: 1
 
@@ -12,6 +12,10 @@ handlers:
   static_files: favicon.ico
   upload: favicon.ico
 
+- url: /robots.txt
+  static_files: robots.txt
+  upload: robots.txt
+
 - url: /css
   static_dir: css
 
@@ -21,8 +25,14 @@ handlers:
 - url: /crawl/.*
   script: cron/driver.py
 
+- url: /debugcrawl.*
+  script: cron/crawler.py
+
 - url: /api.*
   script: api/api.py
+  
+- url: /_ah/xmpp/message/chat/
+  script: api/chatbot.py
   
 - url: /admin_page.*
   script: admin_page.py

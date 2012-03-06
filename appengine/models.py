@@ -8,6 +8,7 @@ class Person(db.Model):
   first_name      = db.StringProperty()
   middle_name     = db.StringProperty()
   last_name       = db.StringProperty()
+  department      = db.StringProperty()
   email           = db.StringProperty()
   rcsid           = db.StringProperty()
   year            = db.StringProperty()
@@ -41,15 +42,17 @@ class Person(db.Model):
         person.first_name = names[0]
       if len(names) > 1:
         person.last_name = names[-1]
-      if len(names) > 2:
-        person.middle_name = names[1]
+      #if len(names) > 2:
+        #person.middle_name = names[1]
     if 'email' in d:
       person.email = d['email']
       person.key_name = d['email']
-    if 'class' in d:
-      person.year = d['class']
+    if 'year' in d:
+      person.year = d['year']
     if 'major' in d:
       person.major = d['major']
+    if 'department' in d:
+      person.department = d['department']
     if 'title' in d:
       person.title = d['title']
     if 'phone' in d:
@@ -79,40 +82,43 @@ class Person(db.Model):
     
     name = ''
     if p.first_name is not None:
-      name += p.first_name.capitalize()
-    if p.middle_name is not None:
-      name += ' ' + p.middle_name.capitalize()
+      name += p.first_name.title()
+    #if p.middle_name is not None:
+      #name += ' ' + p.middle_name.title()
     if p.last_name is not None:
-      name += ' ' + p.last_name.capitalize()
+      name += ' ' + p.last_name.title()
     if name is not "":
       d['name'] = name
     
     if p.year is not None:
-      d['class'] = p.year.capitalize()
+      d['year'] = p.year.title()
     
     if p.major is not None:
-      d['major'] = p.major.capitalize()
+      d['major'] = p.major.title()
+    
+    if p.department is not None:
+      d['department'] = p.department.title()
     
     if p.title is not None:
-      d['title'] = p.title.capitalize()
+      d['title'] = p.title.title()
     
     if p.phone is not None:
-      d['phone'] = p.phone.capitalize()
+      d['phone'] = p.phone.title()
     
     if p.fax is not None:
-      d['fax'] = p.fax.capitalize()
+      d['fax'] = p.fax.title()
     
     if p.homepage is not None:
-      d['homepage'] = p.homepage.capitalize()
+      d['homepage'] = p.homepage.title()
     
     if p.office_location is not None:
-      d['office_location'] = p.office_location.capitalize()
+      d['office_location'] = p.office_location.title()
     
     if p.campus_mailstop is not None:
-      d['campus_mailstop'] = p.campus_mailstop.capitalize()
+      d['campus_mailstop'] = p.campus_mailstop.title()
     
     if p.mailing_address is not None:
-      d['mailing_address'] = p.mailing_address.capitalize()
+      d['mailing_address'] = p.mailing_address.title()
     
     return d
   
@@ -121,3 +127,19 @@ class Person(db.Model):
 class SearchPosition(db.Model):
   """Model to store Crawler position."""
   position = db.IntegerProperty()
+
+#class DepartmentKeyword(db.Model):
+  #"""Model to store a single work from a major, for searching purposes"""
+  #departments = db.ListProperty
+  
+  #@staticmethod
+  #def buildKeywords(s):
+    #for word in s.split():
+      #d = DepartmentKeyword.get_by_key_name(word)
+      #if not d:
+        #w = DepartmentKeyword(key_name = word)
+        #w.department = [s]
+        #w.put()
+      #elif s not in d.departments:
+        #d.departments.append(s)
+        #d.put()
