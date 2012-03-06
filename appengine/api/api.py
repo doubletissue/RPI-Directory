@@ -13,7 +13,7 @@ class NewApi(webapp.RequestHandler):
 
 class Api(webapp.RequestHandler):
   def noNameSearch(self, year, major, num_results, page_offset):
-    cache = memcache.get( "noName:" + year + ":" + major)
+    cache = memcache.get("noName:" + year + ":" + major)
     if cache:
       result, recursion_level = cache
       if result:
@@ -33,7 +33,7 @@ class Api(webapp.RequestHandler):
     # No recursion here, but included in the memcache for consistancy
     recursion_level = 0
     
-    if not memcache.set("noName:" + year + ":" + major, (results,recursion_level), 86400):
+    if not memcache.set("noName:" + year + ":" + major, (results, recursion_level), 86400):
       logging.error("Memcache set failed.")
 
     return results, recursion_level
@@ -41,14 +41,15 @@ class Api(webapp.RequestHandler):
   def nameSearch(self, name_type, name, year, major, num_results, page_offset):
     if num_results > 30:
       logging.debug("Got a high number of results to give: " + num_results)
-    if name == '':
-      return noNameSearch(year, major, num_results, page_offset)
       
     cache = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
     if cache:
       result, recursion_level = cache
       if result:
         return result, recursion_level
+    
+    if name == '':
+      return noNameSearch(year, major, num_results, page_offset)
     
     query = Person.all()
     
@@ -67,6 +68,7 @@ class Api(webapp.RequestHandler):
     if len(results) == 0:
       results,recursion_level = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
       recursion_level += 1
+      
     if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, (results, recursion_level), 86400):
       logging.error("Memcache set failed.")
 
@@ -98,13 +100,11 @@ class Api(webapp.RequestHandler):
     l = []
     
     if len(names) == 1:
-      first_name_results, first_name_recur = self.nameSearch('first_name', names[0], year, major, 30, 0)
-      last_name_results, last_name_recur  = self.nameSearch('last_name', names[0], year,major, 30, 0)
+      first_name_results, first_name_recur = self.nameSearch('first_name', names[0], year, major, 20, 0)
+      last_name_results, last_name_recur  = self.nameSearch('last_name', names[0], year,major, 20, 0)
       
       first_name_portion = float(len(first_name_results))/(len(first_name_results)+len(last_name_results))
       last_name_portion  = float(len(last_name_results ))/(len(first_name_results)+len(last_name_results))
-      
-      
       
       
       if first_name_recur == last_name_recur:
