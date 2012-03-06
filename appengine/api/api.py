@@ -9,22 +9,16 @@ from django.utils import simplejson as json
 
 class Api(webapp.RequestHandler):
   
-  def nameSearch(self,name_type,name,year,major, num_results, page_offset):
-    logging.debug("Searching for " + name_type + " of " + name)
+  def nameSearch(self, name_type, name, year, major, num_results, page_offset):
+    #logging.debug("Searching for " + name_type + " of " + name)
     result = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
-    if result:
-      logging.debug("cache hit")
-      # Reset the timer
-      #if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, result, 86400):
-        #logging.error("Memcache set failed.")
-        
-      if len(result) > 0:
-        logging.debug("Got " + str(len(result)) + " results, returning")
-        return result, True
-      else:
-        logging.debug("Got " + str(len(result)) + " results, recurring to " + name[:-1])
-        results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
-        return results, False
+    
+    if result and len(result) > 0:
+      return result, True
+    else:
+      #logging.debug("Got " + str(len(result)) + " results, recurring to " + name[:-1])
+      results,_ = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
+      return results, False
     
     
     if name == '':
@@ -34,6 +28,7 @@ class Api(webapp.RequestHandler):
     
     if year is not "":
       query = query.filter('year = ',year)
+      
     if major is not "":
       query = query.filter('major = ',major)
     
@@ -72,18 +67,18 @@ class Api(webapp.RequestHandler):
     l = []
     
     if len(names) == 1:
-      first_name_results, modded = self.nameSearch('first_name',names[0],year,major, 1000, 0)
+      first_name_results, modded = self.nameSearch('first_name',names[0],year,major, 100, 0)
       for p in first_name_results:
         l.append(Person.buildMap(p))
-      last_name_results, modded  = self.nameSearch('last_name',names[0],year,major, 1000, 0)
+      last_name_results, modded  = self.nameSearch('last_name',names[0],year,major, 100, 0)
       for p in last_name_results:
         l.append(Person.buildMap(p))
     elif len(names) > 1:
       d = set()
-      last_name_results, modded = self.nameSearch('last_name',names[-1],year,major, 1000, 0)
+      last_name_results, modded = self.nameSearch('last_name',names[-1],year,major, 100, 0)
       for p in last_name_results:
         d.add(p.key().name())
-      first_name_results, modded  = self.nameSearch('first_name',names[0],year,major, 1000, 0)
+      first_name_results, modded  = self.nameSearch('first_name',names[0],year,major, 100, 0)
       i = 0
       for p in first_name_results:
         if p.key().name() in d:
