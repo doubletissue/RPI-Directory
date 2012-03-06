@@ -20,7 +20,7 @@ class Person(db.Model):
   office_location = db.StringProperty(multiline=True)
   campus_mailstop = db.StringProperty(multiline=True)
   mailing_address = db.StringProperty(multiline=True)
-  date_crawled    = db.DateProperty(auto_now=True)
+  date_crawled    = db.DateTimeProperty(auto_now=True)
   
   @staticmethod
   def buildPerson(d):
