@@ -16,7 +16,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -82,7 +82,6 @@ public class ResultsListManager {
 		private SearchTermData searchTermData = null;
 		
 		protected void onPreExecute() {
-			return;
 		}
 		
 		protected ArrayList<PersonModel> doInBackground(Void... params){
@@ -90,13 +89,27 @@ public class ResultsListManager {
 				return null;
 			}
 			
-			ArrayList<PersonModel> apiResult = null;			
 			synchronized(searchLock){
 				searchTermData = getNextSearchTerm();
-										
-				//Get the JSON output from the api
-				apiResult = RPInfoAPI.getInstance().request(searchTermData.searchTerm, RPInfoAPI.FIRST_PAGE, RPInfoAPI.DEFAULT_NUM_RESULTS);
 			}
+			
+			if( searchTermData.searchTerm.length() <= 2){
+				try {
+					//Log.i(TAG, "Waiting...");
+					Thread.sleep(500);
+					//Log.i(TAG, "Done!");
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			ArrayList<PersonModel> apiResult = null;			
+
+				
+			//Log.i(TAG, "Next Term: " + searchTermData.searchTerm);
+										
+			//Get the JSON output from the api
+			apiResult = RPInfoAPI.getInstance().request(searchTermData.searchTerm, RPInfoAPI.FIRST_PAGE, RPInfoAPI.DEFAULT_NUM_RESULTS);
 			
 			return apiResult;
  		}
@@ -173,7 +186,20 @@ public class ResultsListManager {
 	/**
 	 * Wrapper for AsyncTask DoUpdate
 	 */
-	public void update(String searchTerm){		
+	public void update(String searchTerm){
+		/*
+		//If only searching for one character, give the user time to enter more characters
+		if( searchTerm.length() <= 2){
+			try {
+				Log.i(TAG, "Waiting...");
+				Thread.sleep(3000);
+				Log.i(TAG, "Done!");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		*/
+		
 		synchronized(searchTermsLock){
 			Date thisUpdate = new Date();
 			//Set the current item as the next search (for speed)
@@ -181,15 +207,8 @@ public class ResultsListManager {
 			//Set the current update time to be the one that is actually rendered
 			setCurrentUpdate(thisUpdate);
 		}
-		
-		//If only searching for one character, give the user time to add others before starting a relatively long single character search 
-		if( searchTerm.length() == 1){
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+				
+		//Log.i(TAG, searchTerm);
 		
 		new DoUpdate().execute();
 	}
