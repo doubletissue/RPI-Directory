@@ -34,7 +34,7 @@ class Api(webapp.RequestHandler):
     # No recursion here, but included in the memcache for consistancy
     recursion_level = 0
     
-    if not memcache.set("noName:" + year + ":" + major, (results,recursion_level), 86400):
+    if not memcache.set("noName:" + year + ":" + major, (results, recursion_level), 86400):
       logging.error("Memcache set failed.")
 
     return results, recursion_level
@@ -51,6 +51,9 @@ class Api(webapp.RequestHandler):
       result, recursion_level = cache
       if result:
         return result, recursion_level
+    
+    if name == '':
+      return noNameSearch(year, major, num_results, page_offset)
     
     query = Person.all()
     
@@ -69,6 +72,7 @@ class Api(webapp.RequestHandler):
     if len(results) == 0:
       results,recursion_level = self.nameSearch(name_type,name[:-1],year,major,num_results,page_offset)
       recursion_level += 1
+      
     if not memcache.set(name_type + ":" + name + ":" + year + ":" + major, (results, recursion_level), 86400):
       logging.error("Memcache set failed.")
 
@@ -108,8 +112,6 @@ class Api(webapp.RequestHandler):
       
       first_name_portion = float(len(first_name_results))/(len(first_name_results)+len(last_name_results))
       last_name_portion  = float(len(last_name_results ))/(len(first_name_results)+len(last_name_results))
-      
-      
       
       
       if first_name_recur == last_name_recur:
