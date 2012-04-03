@@ -6,6 +6,7 @@ var padding = '15%';
 var last_token = 1;
 var cached_results = {};
 var local_storage_supported;
+var query = '';
 
 function parseServerData(data){
 	if (data.data !== [] && data.data.length > 0 && last_token == data.token){
@@ -52,12 +53,6 @@ function AddResultsToTable(data){
   // Loop through JSON
   $.each(data.data, function(i, person){
     var table_row = "<tr>";
-    // Loop through each person and output their attributes
-    //$.each(person, function(key, value){
-	   //if (key in {'name':'', 'major':'','class':''}/* && value != undefined*/){
-	   //  table_row += ("<td>" + value + "</td>");	
-	   //}
-    //});
     
     //Professor Check
     if (person.major == undefined && person.department == undefined){
@@ -116,23 +111,35 @@ function callServer(keyword){
 }
 
 $(document).ready(function() {
-	$("#keyword").bindWithDelay("keyup", function(event) {
-	  var keyword = $("#keyword").val().toLowerCase();
+  $("#keyword").keyup(function(event){
+    var keyword = $("#keyword").val().toLowerCase();
 	  var margin = $("#container").css("margin-top");
-
-	  // Check for enter keypress
+	  
+    // Check for enter keypress
 	  if (event.which == 13) {
 	     event.preventDefault();
 	     return;
 	  }
     
-    // If a non-blank entry
-	  if (keyword != ''){
+    if (keyword != ''){
 	    //Animate text box up
    	  if ( margin != "0%" || margin != "0px" ){
    	    animate(true);
    	  }
  	   
+ 	    // Check cache
+ 	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
+ 	      parseCachedData(keyword);
+ 	    }
+    }
+  });
+  
+	$("#keyword").bindWithDelay("keyup", function(event) {
+	  var keyword = $("#keyword").val().toLowerCase();
+	  var margin = $("#container").css("margin-top");
+    
+    // If a non-blank entry
+	  if (keyword != ''){ 	   
  	    last_token += 1;
  	    
  	    // Check cache
@@ -142,6 +149,7 @@ $(document).ready(function() {
  	      $("#results").css("opacity", ".25");
  	      callServer(keyword);
  	    }
+ 	    
  	    $("#results").show();
 	  }else if (keyword == ''){ // Entry is blank
 	    $("#results").hide();
@@ -150,7 +158,7 @@ $(document).ready(function() {
   		  animate(false);
 	    }
     }
-  }, 100);
+  }, 500);
   
   //Make table sortable
   $("#results").tablesorter();

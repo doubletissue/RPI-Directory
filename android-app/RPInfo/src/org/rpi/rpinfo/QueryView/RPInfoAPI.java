@@ -19,7 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
+//import android.util.Log;
 
 public class RPInfoAPI {
 	private static RPInfoAPI singleton = null;
@@ -103,7 +103,7 @@ public class RPInfoAPI {
 		 * allow requests to take advantage of cached results by previous
 		 * requests.
 		 */
-		Log.i( TAG, "Search: " + searchTerm );
+		//Log.i( TAG, "Search: " + searchTerm );
 		
 		synchronized( requestLock ){
 			try {

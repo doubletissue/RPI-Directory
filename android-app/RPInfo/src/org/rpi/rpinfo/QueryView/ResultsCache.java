@@ -3,7 +3,7 @@ package org.rpi.rpinfo.QueryView;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import android.util.Log;
+//import android.util.Log;
 
 public class ResultsCache {	
 	private static final String TAG = "ResultsCache";

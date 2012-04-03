@@ -3,6 +3,9 @@ version: 2
 runtime: python
 api_version: 1
 
+builtins:
+- remote_api: on
+
 inbound_services:
 - mail
 - xmpp_message
