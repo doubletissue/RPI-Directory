@@ -13,6 +13,7 @@ class NewApi(webapp.RequestHandler):
 
 class Api(webapp.RequestHandler):
   def noNameSearch(self, year, major, num_results, page_offset):
+    logging.debug("Entered a noname search")
     cache = memcache.get( "noName:" + year + ":" + major)
     if cache:
       result, recursion_level = cache
@@ -39,10 +40,11 @@ class Api(webapp.RequestHandler):
     return results, recursion_level
   
   def nameSearch(self, name_type, name, year, major, num_results, page_offset):
+    logging.debug("Entered a name search")
     if num_results > 30:
       logging.debug("Got a high number of results to give: " + num_results)
     if name == '':
-      return noNameSearch(year, major, num_results, page_offset)
+      return self.noNameSearch(year, major, num_results, page_offset)
       
     cache = memcache.get(name_type + ":" + name + ":" + year + ":" + major)
     if cache:
@@ -92,6 +94,9 @@ class Api(webapp.RequestHandler):
     quick_person = False
     if len(names) > 0:
       quick_person = Person.get_by_key_name(names[0])
+    quick_person2 = False
+    if len(names) > 1:
+      quick_person2 = Person.all().filter("first_name = ", names[0]).filter("last_name = ", names[-1]).fetch(10)
     
     l1 = []
     l2 = []
@@ -99,7 +104,7 @@ class Api(webapp.RequestHandler):
     
     if len(names) == 1:
       first_name_results, first_name_recur = self.nameSearch('first_name', names[0], year, major, 30, 0)
-      last_name_results, last_name_recur  = self.nameSearch('last_name', names[0], year,major, 30, 0)
+      last_name_results, last_name_recur  = self.nameSearch('last_name', names[0], year,major, 10, 0)
       
       first_name_portion = float(len(first_name_results))/(len(first_name_results)+len(last_name_results))
       last_name_portion  = float(len(last_name_results ))/(len(first_name_results)+len(last_name_results))
@@ -129,7 +134,7 @@ class Api(webapp.RequestHandler):
       
     elif len(names) > 1:
       d = set()
-      last_name_results, first_name_recur = self.nameSearch('last_name',names[-1],year,major, 30, 0)
+      last_name_results, first_name_recur = self.nameSearch('last_name',names[-1],year,major, 10, 0)
       for p in last_name_results:
         d.add(p.key().name())
       first_name_results, last_name_recur  = self.nameSearch('first_name',names[0],year,major, 30, 0)
@@ -148,6 +153,7 @@ class Api(webapp.RequestHandler):
       for i in range(len(people)):
         l.append(i)
       l = sorted(l, key=lambda person: person['name'])[page_size*(page_num-1):page_size*page_num]
+      
     if quick_person:
       newL = []
       for i in l:
@@ -156,6 +162,22 @@ class Api(webapp.RequestHandler):
         newL.append(i)
       l = newL
       l.insert(0,Person.buildMap(quick_person))
+      
+    if quick_person2:
+      newL = []
+      for i in l:
+        found = False
+        for j in quick_person2:
+          logging.debug(str(type(i)) + "," + str(type(j)))
+          if 'rcsid' in i and j.rcsid and i['rcsid'] == j.rcsid:
+            found = True
+            break
+        if not found:
+          newL.append(i)
+      l = newL
+      for j in quick_person2:
+        l.insert(0,Person.buildMap(j))
+      
     d = {}
     d['data'] = l
     d['token'] = token
