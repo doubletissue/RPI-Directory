@@ -35,8 +35,7 @@ public class QueryViewActivity extends Activity {
 				}
 			}
 		});
-       
-        
+
         /*
         //Automatically populate the results while the user types 
         searchBox.addTextChangedListener(new TextWatcher() {
