@@ -22,7 +22,7 @@ import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.RawContacts;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -71,11 +71,11 @@ public class DetailedViewActivity extends Activity {
         		DetailedResultModel model = (DetailedResultModel)parent.getAdapter().getItem(position);
         		String key = model.getRawKey();
         		if( key.equals("phone") ){
-    				Log.i(TAG, "Calling" + model.getValue());
+    				//Log.i(TAG, "Calling" + model.getValue());
     				Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("tel:" + model.getValue()));
     				startActivity(intent);
         		} else if( key.equals("email") ) {
-    				Log.i(TAG, "Sending email to " + model.getValue());
+    				//Log.i(TAG, "Sending email to " + model.getValue());
         			Intent intent = new Intent(android.content.Intent.ACTION_SEND);
         			intent.setType("message/rfc822");
         			intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{model.getValue()});
@@ -115,7 +115,7 @@ public class DetailedViewActivity extends Activity {
 				.withValue(RawContacts.ACCOUNT_NAME, null)
 				.build());
 		} else {
-			Log.i(TAG, "Person does not have an RCS id. Cannot add to contacts.");
+			//Log.i(TAG, "Person does not have an RCS id. Cannot add to contacts.");
 			return false;
 		}
 		
@@ -127,7 +127,7 @@ public class DetailedViewActivity extends Activity {
 					.withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, personName)
 					.build());
 		} else {
-			Log.i(TAG, "Person does not have a name.");
+			//Log.i(TAG, "Person does not have a name.");
 		}
 		
 		String personEmail = selectedPerson.getElement("email", null);
@@ -139,7 +139,7 @@ public class DetailedViewActivity extends Activity {
 					.withValue(ContactsContract.CommonDataKinds.Email.DATA1, personEmail)
 					.build());
 		} else {
-			Log.i(TAG, "Person does not have a e-mail address.");
+			//Log.i(TAG, "Person does not have a e-mail address.");
 		}
 		
 		String personPhoneNumber = selectedPerson.getElement("email", null);
@@ -151,7 +151,7 @@ public class DetailedViewActivity extends Activity {
 					.withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, personPhoneNumber)
 					.build());
 		} else {
-			Log.i(TAG, "Person does not have a phone number.");
+			//Log.i(TAG, "Person does not have a phone number.");
 		}
 		
 		String personWebsite = selectedPerson.getElement("homepage", null);
@@ -163,7 +163,7 @@ public class DetailedViewActivity extends Activity {
 					.withValue(ContactsContract.CommonDataKinds.Website.URL, personWebsite)
 					.build());
 		} else {
-			Log.i(TAG, "Person does not have a website.");
+			//Log.i(TAG, "Person does not have a website.");
 		}
 		
 		try {
