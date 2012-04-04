@@ -44,6 +44,8 @@ class ChatHandler(xmpp_handlers.CommandHandler):
       else:
         s += 'Faculty\n'
       #s += ')\n'
+    if s == '':
+      s = "No results found"
     message.reply(s)
 
 
