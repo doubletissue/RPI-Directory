@@ -130,6 +130,7 @@ $(document).ready(function() {
  	    // Check cache
  	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
  	      parseCachedData(keyword);
+ 	      $("#results").show();
  	    }
     }
   });
