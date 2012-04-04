@@ -27,7 +27,7 @@ class Api(webapp.RequestHandler):
     
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
-    cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s", (name, name))
+    cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE '%%%s%%' OR last_name LIKE '%%%s%%'", (name, name))
     
     d = {}
     l = []
