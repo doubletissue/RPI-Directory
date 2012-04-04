@@ -42,13 +42,7 @@ def putResult(d):
   
   person = Person.buildPerson(d)
   
-  logging.error(person.first_name)
-  logging.error(person.last_name)
-  logging.error(person.email)
-  logging.error(person.major)
-  logging.error(person.year)
-  
-  cursor.execute('INSERT INTO rpidirectory (name, first_name, last_name, email, major, year) VALUES (%s, %s, %s, %s, %s, %s)', (person.rcsid, person.first_name, person.last_name, person.email, person.major, person.year))
+  cursor.execute('INSERT INTO rpidirectory (`name`, `campus_mailstop`, `department`, `email`, `fax`, `first_name`, `homepage`, `last_name`, `mailing_address`, `major`, `office_location`, `phone`, `rcsid`, `title`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (person.rcsid, person.campus_mailstop, person.department, person.email, person.fax, person.first_name, person.homepage, person.last_name, person.mailing_address, person.major, person.office_location, person.phone, person.rcsid, person.title, person.year))
   conn.close()
 
 class Driver(webapp.RequestHandler):
