@@ -117,7 +117,7 @@ class Api(webapp.RequestHandler):
     d['data'] = l
     d['token'] = token
     d['name'] = name
-    s = json.dumps(d)
+    s = json.dumps(d[:20)
     self.response.out.write(s)
 
 application = webapp.WSGIApplication([
