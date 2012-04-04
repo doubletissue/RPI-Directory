@@ -11,24 +11,31 @@ import logging
 import string
 
 from google.appengine.ext import db
+from google.appengine.api import rdbms
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.api import taskqueue
 from google.appengine.api import memcache
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+_INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
 NUM_THREADS = 100
 
 #Creates a person and stores it
 def putResult(d):
+  """
   person = Person.buildPerson(d)
   #if person.department:
     #DepartmentKeyword.buildKeywords(person.department)
   person.put()
+  """
+  #conn = rdbms.connect(instance=_INSTANCE_NAME, database="rpidirectory")
+  logging.error("PUTRESULT!!!" + repr(d))
 
 class Driver(webapp.RequestHandler):
   def get(self):
+    logging.error("DRIVER STARTED!!!")
     index = memcache.get("index")
 
     if not index:
