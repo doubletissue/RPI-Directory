@@ -26,6 +26,9 @@ row_attributes = (['first_name',
                    'year'])
 
 def CamelCase(s):
+  if len(s) == 1:
+    return s.upper()
+
   ss = s.split(" ")
   for i in range(len(ss)):
     ss[i] = ss[i][0].upper() + ss[i][1:]
