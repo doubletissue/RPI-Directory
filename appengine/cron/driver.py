@@ -20,7 +20,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 _INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
-NUM_THREADS = 100
+NUM_THREADS = 10
 
 #Creates a person and stores it
 def putResult(d):
