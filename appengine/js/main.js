@@ -126,11 +126,11 @@ $(document).ready(function() {
    	  if ( margin != "0%" || margin != "0px" ){
    	    animate(true);
    	  }
- 	   
+ 	    $("#results").show();
  	    // Check cache
  	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
  	      parseCachedData(keyword);
- 	      $("#results").show();
+ 	      $("#results").css("opacity", "1");
  	    }
     }
   });
@@ -151,7 +151,7 @@ $(document).ready(function() {
  	      callServer(keyword);
  	    }
  	    
- 	    $("#results").show();
+ 	    $("#results").css("opacity", "1");
 	  }else if (keyword == ''){ // Entry is blank
 	    $("#results").hide();
 	    // Animate box back down
