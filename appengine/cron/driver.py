@@ -30,26 +30,17 @@ def putResult(d):
     #DepartmentKeyword.buildKeywords(person.department)
   person.put()
   """
-  conn = rdbms.connect(instance=_INSTANCE_NAME, database="rpidirectory")
-  cursor = conn.cursor()
-  
-  if 'name' in d:
-    names = d['name'].split()[:3]
-    if len(names) > 0:
-      first_name = names[0]
-    if len(names) > 1:
-      last_name = names[-1]
   
   person = Person.buildPerson(d)
-  
-  if not 'email' in d and 'name' in d:
-    person.rcsid = d['name']
     
+  conn = rdbms.connect(instance=_INSTANCE_NAME, database="rpidirectory")
+  cursor = conn.cursor()  
   cursor.execute('REPLACE INTO rpidirectory (`name`, `campus_mailstop`, `department`, `email`, `fax`, `first_name`, `homepage`, `last_name`, `mailing_address`, `major`, `office_location`, `phone`, `rcsid`, `title`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (person.rcsid, person.campus_mailstop, person.department, person.email, person.fax, person.first_name, person.homepage, person.last_name, person.mailing_address, person.major, person.office_location, person.phone, person.rcsid, person.title, person.year))
   conn.close()
 
 def crawlPerson(index):
   result = Crawler().getMap(index)
+  
   if 'error' in result.keys():
     logging.error("error at index" + str(index) + ", error is " + result['error'])
     if result['error'] == 'page_not_found':

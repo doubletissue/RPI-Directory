@@ -32,6 +32,7 @@ class Person(db.Model):
       person.rcsid = rcsid
     elif 'name' in d:
       person = Person(key_name = d['name'])
+      person.rcsid = d['name']
     else:
       # No name for the person, no point in making them
       person = Person()
