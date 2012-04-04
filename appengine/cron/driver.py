@@ -40,7 +40,9 @@ def putResult(d):
     if len(names) > 1:
       last_name = names[-1]
   
-  cursor.execute('INSERT INTO rpidirectory (first_name, last_name, email, major, year) VALUES (%s, %s, %s, %s, %s)', (first_name, last_name, email, major, year))
+  person = Person.buildPerson(d)
+  
+  cursor.execute('INSERT INTO rpidirectory (first_name, last_name, email, major, year) VALUES (%s, %s, %s, %s, %s)', (person.first_name, person.last_name, person.email, person.major, person.year))
   conn.close()
 
 class Driver(webapp.RequestHandler):
