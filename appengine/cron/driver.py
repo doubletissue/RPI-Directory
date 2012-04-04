@@ -37,7 +37,7 @@ def putResult(d):
   cursor = conn.cursor()
   query = 'REPLACE INTO rpidirectory (`name`, `campus_mailstop`, `department`, `email`, `fax`, `first_name`, `homepage`, `last_name`, `mailing_address`, `major`, `office_location`, `phone`, `rcsid`, `title`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
   args = (person.rcsid, person.campus_mailstop, person.department, person.email, person.fax, person.first_name, person.homepage, person.last_name, person.mailing_address, person.major, person.office_location, person.phone, person.rcsid, person.title, person.year)
-  #logging.info(query)
+  logging.info(repr(args))
   cursor.execute(query, args)
   conn.close()
 
