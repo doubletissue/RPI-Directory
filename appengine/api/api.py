@@ -47,7 +47,7 @@ def parse_person_from_sql(raw_row):
 
   #Parse the rest
   for attribute,raw_row_data in zip(row_attributes[2:], raw_row[2:]):
-    if raw_row_data != "":
+    if raw_row_data != None:
       if attribute in ["department", "mailing_address", "office_location", "major", "title", "year"]:
         output[attribute] = cgi.escape(CamelCase(raw_row_data))
       else:
@@ -97,8 +97,8 @@ class Api(webapp.RequestHandler):
       if cursor.rowcount == 0:
         #Check for partial name match
         logging.debug("No exact name match, checking partial name match...")
-        first_name = '%' + names[0] + '%'
-        last_name = '%' + names[-1] + '%'
+        first_name = names[0] + '%'
+        last_name = names[-1] + '%'
         cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s", (first_name, last_name, QUERY_LIMIT))
     
     d = {}
