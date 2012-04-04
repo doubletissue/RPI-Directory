@@ -26,10 +26,11 @@ row_attributes = (['first_name',
                    'year'])
 
 def CamelCase(s):
-  if s == "":
+  if s = "":
     return ""
 
   ss = s.split(" ")
+  logging.error("STRING: " + repr(ss))
   for i in range(len(ss)):
     if len(ss[i]) == 1:
       ss[i] = ss[i].upper()
