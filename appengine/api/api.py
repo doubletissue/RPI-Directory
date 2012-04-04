@@ -27,17 +27,26 @@ class Api(webapp.RequestHandler):
     
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
-    cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE '%%%s%%' OR last_name LIKE '%%%s%%'", (name, name))
+
+    #Get the first name and the last name. Ignore other things.
+    if len(names) == 1:
+      name_part = names[0]
+      cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE '%%%s%%' OR last_name LIKE '%%%s%%'", (name_part, name_part))
+    else:
+      first_name = names[0]
+      last_name = names[-1]
+      cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE '%%%s%%' AND last_name LIKE '%%%s%%'", (first_name, last_name))
     
     d = {}
     l = []
     
-    for row in cursor.fetchall():
-      l.append({"name": cgi.escape(row[0]) + " " + cgi.escape(row[1]), 
-                "major": cgi.escape(row[2]),
-                "email": cgi.escape(row[3]),
-                "year": cgi.escape(row[4])})
-  
+    if len(names) != 0:
+      for row in cursor.fetchall():
+        l.append({"name": cgi.escape(row[0]) + " " + cgi.escape(row[1]), 
+                  "major": cgi.escape(row[2]),
+                  "email": cgi.escape(row[3]),
+                  "year": cgi.escape(row[4])})
+    
     d = {}
     d['data'] = l
     d['token'] = token
