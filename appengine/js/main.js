@@ -54,21 +54,23 @@ function AddResultsToTable(data){
   $.each(data.data, function(i, person){
     var table_row = "<tr>";
     
+    console.log(person.name + ", " + person.major + ", " + person.department);
+    
     //Professor Check
-    if (person.major == "None" && person.department == "None"){
+    if (person.major == undefined && person.department == undefined){
       person.major = "N/A";
-    }else if (person.department != "None"){
+    }else if (person.department != undefined){
       person.major = person.department;
     }
 
     //Faculty Check
-    if (person.year == "None" && person.title != "None"){
+    if (person.year == undefined && person.title != undefined){
       person.year = person.title;
-    }else if (person.year == "None" && person.department != "None"){
+    }else if (person.year == undefined && person.department != undefined){
       person.year = "Faculty";
     }
     
-    table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == "None" ? 'N/A' : person.year) + "</td><td>" + (person.email == "None" ? 'N/A' : person.email) + "</td>");
+    table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" + (person.email == undefined ? 'N/A' : person.email) + "</td>");
     table_row += "</tr>";
     $("#results").find("tbody").append(table_row);
   });
@@ -79,6 +81,7 @@ function AddResultsToTable(data){
 // Send true to animate it up, false to animate it down
 function animate(flag){
   if (flag){
+    $("#qr").hide();
     $("#container").animate({
       marginTop: '0%'
     }, delay, function(){ $("#container").css("margin-top","0%"); });
@@ -86,6 +89,7 @@ function animate(flag){
     $("#container").animate({
       marginTop: padding,
     }, delay * 1.3);
+  $("#qr").show();
   }
 }
 

@@ -47,7 +47,7 @@ def parse_person_from_sql(raw_row):
 
   #Parse the rest
   for attribute,raw_row_data in zip(row_attributes[2:], raw_row[2:]):
-    if raw_row_data != None:
+    if raw_row_data not in [None, "None"]:
       if attribute in ["department", "mailing_address", "office_location", "major", "title", "year"]:
         output[attribute] = cgi.escape(CamelCase(raw_row_data))
       else:
@@ -58,6 +58,12 @@ def parse_person_from_sql(raw_row):
 class NewApi(webapp.RequestHandler):
   pass
 
+def parse_int(i, default):
+  if i == '':
+    return default
+  else:
+    return int(i)
+
 class Api(webapp.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
@@ -65,9 +71,8 @@ class Api(webapp.RequestHandler):
     major     = urllib.unquote(cgi.escape(self.request.get('major')).lower()[:50])
     name      = urllib.unquote(cgi.escape(self.request.get('name')).lower()[:50])
     token     = urllib.unquote(cgi.escape(self.request.get('token')))
-    page_num  = urllib.unquote(cgi.escape(self.request.get('page_num')))
-    page_size = urllib.unquote(cgi.escape(self.request.get('page_size')))
-    
+    page_num  = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
+    page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
     
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
@@ -80,26 +85,26 @@ class Api(webapp.RequestHandler):
       #Check for RCS ID
       logging.debug("Checking RCS ID...")
       rcsid_candidate = names[0]
-      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE name = %s LIMIT %s", (rcsid_candidate, QUERY_LIMIT))
+      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE rcsid = %s LIMIT %s,%s", (rcsid_candidate, (page_num-1)*20, QUERY_LIMIT))
 
       if cursor.rowcount == 0:
         #Check for partial name match
         logging.debug("No RCS ID, checking name...")
         name_part = names[0] + '%'
-        cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s LIMIT %s", (name_part, name_part, QUERY_LIMIT))
+        cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s LIMIT %s,%s", (name_part, name_part, (page_num-1)*20, QUERY_LIMIT))
     elif len(names) > 1:
       #Check for exact name match
       logging.debug("Checking exact name match...")
       first_name = names[0]
       last_name = names[-1]
-      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name = %s AND last_name = %s LIMIT %s", (first_name, last_name, QUERY_LIMIT))
+      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name = %s AND last_name = %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, QUERY_LIMIT))
       
       if cursor.rowcount == 0:
         #Check for partial name match
         logging.debug("No exact name match, checking partial name match...")
         first_name = names[0] + '%'
         last_name = names[-1] + '%'
-        cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s", (first_name, last_name, QUERY_LIMIT))
+        cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, QUERY_LIMIT))
     
     d = {}
     l = []
