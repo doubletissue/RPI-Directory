@@ -71,6 +71,7 @@ class DriverWorker(webapp.RequestHandler):
   def get(self):
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
+    logging.error("RESULT!!!" + repr(result))
     if 'error' in result.keys():
       logging.error("error at index" + index + ", error is " + result['error'])
       if result['error'] == 'page_not_found':
@@ -86,6 +87,7 @@ class DriverWorker(webapp.RequestHandler):
   def post(self):
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
+    logging.error("RESULT!!!" + repr(result))
     if 'error' in result.keys():
       logging.error("error at index" + index + ", error is " + result['error'])
       if result['error'] == 'page_not_found':
