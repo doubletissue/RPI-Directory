@@ -85,7 +85,7 @@ class Api(webapp.RequestHandler):
       if cursor.rowcount == 0:
         #Check for partial name match
         logging.debug("No RCS ID, checking name...")
-        name_part = '%' + names[0] + '%'
+        name_part = names[0] + '%'
         cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s LIMIT %s", (name_part, name_part, QUERY_LIMIT))
     elif len(names) > 1:
       #Check for exact name match
@@ -97,8 +97,8 @@ class Api(webapp.RequestHandler):
       if cursor.rowcount == 0:
         #Check for partial name match
         logging.debug("No exact name match, checking partial name match...")
-        first_name = '%' + names[0] + '%'
-        last_name = '%' + names[-1] + '%'
+        first_name = names[0] + '%'
+        last_name = names[-1] + '%'
         cursor.execute("SELECT " + ",".join(row_attributes) + "r FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s", (first_name, last_name, QUERY_LIMIT))
     
     d = {}
