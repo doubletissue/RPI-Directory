@@ -47,7 +47,7 @@ def parse_person_from_sql(raw_row):
 
   #Parse the rest
   for attribute,raw_row_data in zip(row_attributes[2:], raw_row[2:]):
-    if raw_row_data != None:
+    if raw_row_data not in [None, "None"]
       if attribute in ["department", "mailing_address", "office_location", "major", "title", "year"]:
         output[attribute] = cgi.escape(CamelCase(raw_row_data))
       else:
