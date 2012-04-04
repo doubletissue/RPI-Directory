@@ -20,7 +20,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 _INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
-NUM_THREADS = 100
+NUM_THREADS = 1
 
 #Creates a person and stores it
 def putResult(d):
@@ -42,12 +42,13 @@ def putResult(d):
   
   person = Person.buildPerson(d)
   
+  logging.error(repr(person))
+  
   cursor.execute('INSERT INTO rpidirectory (first_name, last_name, email, major, year) VALUES (%s, %s, %s, %s, %s)', (person.first_name, person.last_name, person.email, person.major, person.year))
   conn.close()
 
 class Driver(webapp.RequestHandler):
   def get(self):
-    logging.error("DRIVER STARTED!!!")
     index = memcache.get("index")
 
     if not index:
@@ -59,7 +60,7 @@ class Driver(webapp.RequestHandler):
       else:
         index = index_from_ds.position
       memcache.add("index", index, 86400)
-
+    
     result = Crawler().getMap(index)
     
     if 'error' in result.keys():
