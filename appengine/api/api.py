@@ -10,37 +10,29 @@ from django.utils import simplejson as json
 
 _INSTANCE_NAME = 'christianjohnson.org:rpidirectory:christianjohnson'
 
-"""
-name
-campus_mailstop
-department
-email
-fax
-first_name
-homepage
-last_name
-mailing_address
-major
-middle_name
-office_location
-phone
-rcsid
-title
-year
-"""
-row_attributes = (['year',
-                   'major',
-                   'title',
-                   'department',
-                   'phone',
-                   'fax',
-                   'office_location',
+row_attributes = (['first_name',
+                   'last_name',
                    'campus_mailstop',
-                   'mailing_address'])
+                   'department',
+                   'email',
+                   'fax',
+                   'homepage',
+                   'mailing_address',
+                   'major',
+                   'middle_name',
+                   'office_location',
+                   'phone',
+                   'rcsid',
+                   'title',
+                   'year'])
 
 def parse_person_from_sql(raw_row):
   output = {}
-  for attribute,raw_row_data in zip(row_attributes, raw_row):
+
+  if row_attributes[0] != None and row_attributes[1] != None:
+    output["name"] = row_attributes[0] + " " row_attributes[1]
+
+  for attribute,raw_row_data in zip(row_attributes[2:], raw_row[2:]):
     if raw_row_data != None:
       output[attribute] = cgi.escape(raw_row_data)
 
@@ -95,7 +87,7 @@ class Api(webapp.RequestHandler):
     
     if len(names) != 0 and cursor.rowcount != 0:
       for row in cursor.fetchall():
-        l.append
+        l.append(parse_person_from_sql(row))
         """
         l.append({"name": cgi.escape(row[0]) + " " + cgi.escape(row[1]), 
                   "major": cgi.escape(row[2]),
