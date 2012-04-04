@@ -19,22 +19,32 @@ row_attributes = (['first_name',
                    'homepage',
                    'mailing_address',
                    'major',
-                   'middle_name',
                    'office_location',
                    'phone',
                    'rcsid',
                    'title',
                    'year'])
 
+def CamelCase(s):
+  ss = s.split(" ")
+  for i in range(len(ss)):
+    ss[i] = ss[i][0].upper() + ss[i][1:]
+  return " ".join(ss)
+
 def parse_person_from_sql(raw_row):
   output = {}
 
+  #Parse name specially
   if row_attributes[0] != None and row_attributes[1] != None:
-    output["name"] = raw_row[0] + " " + raw_row[1]
+    output["name"] = cgi.escape(CamelCase(raw_row[0] + " " + raw_row[1]))
 
+  #Parse the rest
   for attribute,raw_row_data in zip(row_attributes[2:], raw_row[2:]):
     if raw_row_data != None:
-      output[attribute] = cgi.escape(raw_row_data)
+      if attribute in ["department", "major", "title"]:
+        output[attribute] = cgi.escape(CamelCase(raw_row_data))
+      else:
+        output[attribute] = cgi.escape(raw_row_data)
 
   return output
 
