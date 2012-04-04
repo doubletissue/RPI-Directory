@@ -55,20 +55,20 @@ function AddResultsToTable(data){
     var table_row = "<tr>";
     
     //Professor Check
-    if (person.major == undefined && person.department == undefined){
+    if (person.major == "None" && person.department == "None"){
       person.major = "N/A";
-    }else if (person.department != undefined){
+    }else if (person.department != "None"){
       person.major = person.department;
     }
 
     //Faculty Check
-    if (person.year == undefined && person.title != undefined){
+    if (person.year == "None" && person.title != "None"){
       person.year = person.title;
-    }else if (person.year == undefined && person.department != undefined){
+    }else if (person.year == "None" && person.department != "None"){
       person.year = "Faculty";
     }
     
-    table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" + (person.email == undefined ? 'N/A' : person.email) + "</td>");
+    table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == "None" ? 'N/A' : person.year) + "</td><td>" + (person.email == "None" ? 'N/A' : person.email) + "</td>");
     table_row += "</tr>";
     $("#results").find("tbody").append(table_row);
   });
