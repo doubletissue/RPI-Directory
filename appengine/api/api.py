@@ -26,12 +26,12 @@ row_attributes = (['first_name',
                    'year'])
 
 def CamelCase(s):
-  if len(s) == 1:
-    return s.upper()
-
   ss = s.split(" ")
   for i in range(len(ss)):
-    ss[i] = ss[i][0].upper() + ss[i][1:]
+    if len(ss[i]) == 1:
+      ss[i] = ss[i].upper()
+    else:
+      ss[i] = ss[i][0].upper() + ss[i][1:]
   return " ".join(ss)
 
 def parse_person_from_sql(raw_row):
