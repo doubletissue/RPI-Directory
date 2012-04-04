@@ -110,8 +110,12 @@ class Api(webapp.RequestHandler):
       first_name_results, first_name_recur = self.nameSearch('first_name', names[0], year, major, 30, 0)
       last_name_results, last_name_recur  = self.nameSearch('last_name', names[0], year,major, 10, 0)
       
-      first_name_portion = float(len(first_name_results))/(len(first_name_results)+len(last_name_results))
-      last_name_portion  = float(len(last_name_results ))/(len(first_name_results)+len(last_name_results))
+      if (len(first_name_results)+len(last_name_results)) > 0:
+        first_name_portion = float(len(first_name_results))/(len(first_name_results)+len(last_name_results))
+        last_name_portion  = float(len(last_name_results ))/(len(first_name_results)+len(last_name_results))
+      else:
+        first_name_portion = 0
+        last_name_portion = 0
       
       
       if first_name_recur == last_name_recur:
