@@ -23,16 +23,19 @@ class Api(webapp.RequestHandler):
     page_num  = urllib.unquote(cgi.escape(self.request.get('page_num')))
     page_size = urllib.unquote(cgi.escape(self.request.get('page_size')))
     
-    names = name.split()[:3]
     
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
+    
+    names = map(str, name.split()[:3])
+    logging.error("NAMES: " + repr(names))
+    logging.error("DIR: " + repr(dir(conn)))
 
     #Get the first name and the last name. Ignore other things.
     if len(names) == 1:
       name_part = names[0]
       cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE '%%%s%%' OR last_name LIKE '%%%s%%'", (name_part, name_part))
-    else:
+    elif len(names) > 1:
       first_name = names[0]
       last_name = names[-1]
       cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE '%%%s%%' AND last_name LIKE '%%%s%%'", (first_name, last_name))
