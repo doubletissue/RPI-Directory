@@ -65,8 +65,8 @@ class Api(webapp.RequestHandler):
     major     = urllib.unquote(cgi.escape(self.request.get('major')).lower()[:50])
     name      = urllib.unquote(cgi.escape(self.request.get('name')).lower()[:50])
     token     = urllib.unquote(cgi.escape(self.request.get('token')))
-    page_num  = urllib.unquote(cgi.escape(self.request.get('page_num')))
-    page_size = urllib.unquote(cgi.escape(self.request.get('page_size')))
+    page_num  = int(urllib.unquote(cgi.escape(self.request.get('page_num'))))
+    page_size = int(urllib.unquote(cgi.escape(self.request.get('page_size'))))
     
     
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
