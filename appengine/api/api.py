@@ -10,6 +10,40 @@ from django.utils import simplejson as json
 
 _INSTANCE_NAME = 'christianjohnson.org:rpidirectory:christianjohnson'
 
+"""
+name
+campus_mailstop
+department
+email
+fax
+first_name
+homepage
+last_name
+mailing_address
+major
+middle_name
+office_location
+phone
+rcsid
+title
+year
+"""
+row_attributes = (['year',
+                   'major',
+                   'title',
+                   'department',
+                   'phone',
+                   'fax',
+                   'office_location',
+                   'campus_mailstop',
+                   'mailing_address'])
+
+def parse_person_from_sql(raw_row):
+  output = {}
+  for attribute,raw_row_data in zip(row_attributes, raw_row):
+    if raw_row_data != None:
+      output[attribute] = cgi.escape(raw_row_data)
+
 class NewApi(webapp.RequestHandler):
   pass
 
@@ -27,6 +61,7 @@ class Api(webapp.RequestHandler):
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
     
+    names = cgi.escape(names)
     names = map(str, name.split()[:3])
 
     #Get the first name and the last name. Ignore other things.
@@ -34,36 +69,39 @@ class Api(webapp.RequestHandler):
       #Check for RCS ID
       logging.debug("Checking RCS ID...")
       rcsid_candidate = names[0]
-      cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE name = %s", (rcsid_candidate))
+      cursor.execute("SELECT " + row_attributes + " FROM rpidirectory WHERE name = %s", (rcsid_candidate))
 
       if cursor.rowcount == 0:
         #Check for partial name match
         logging.debug("No RCS ID, checking name...")
         name_part = '%' + names[0] + '%'
-        cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s", (name_part, name_part))
+        cursor.execute("SELECT " + row_attributes + " FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s", (name_part, name_part))
     elif len(names) > 1:
       #Check for exact name match
       logging.debug("Checking exact name match...")
       first_name = names[0]
       last_name = names[-1]
-      cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name = %s AND last_name = %s", (first_name, last_name))
+      cursor.execute("SELECT " + row_attributes + " FROM rpidirectory WHERE first_name = %s AND last_name = %s", (first_name, last_name))
       
       if cursor.rowcount == 0:
         #Check for partial name match
         logging.debug("No exact name match, checking partial name match...")
         first_name = '%' + names[0] + '%'
         last_name = '%' + names[-1] + '%'
-        cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s", (first_name, last_name))
+        cursor.execute("SELECT " + row_attributes + "r FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s", (first_name, last_name))
     
     d = {}
     l = []
     
     if len(names) != 0 and cursor.rowcount != 0:
       for row in cursor.fetchall():
+        l.append
+        """
         l.append({"name": cgi.escape(row[0]) + " " + cgi.escape(row[1]), 
                   "major": cgi.escape(row[2]),
                   "email": cgi.escape(row[3]),
                   "year": cgi.escape(row[4])})
+        """
     
     d = {}
     d['data'] = l
