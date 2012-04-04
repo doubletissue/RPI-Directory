@@ -58,7 +58,7 @@ class Api(webapp.RequestHandler):
     d = {}
     l = []
     
-    if len(names) != 0:
+    if len(names) != 0 and cursor.rowcount != 0:
       for row in cursor.fetchall():
         l.append({"name": cgi.escape(row[0]) + " " + cgi.escape(row[1]), 
                   "major": cgi.escape(row[2]),
