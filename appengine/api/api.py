@@ -30,7 +30,7 @@ def parse_person_from_sql(raw_row):
   output = {}
 
   if row_attributes[0] != None and row_attributes[1] != None:
-    output["name"] = row_attributes[0] + " " row_attributes[1]
+    output["name"] = row_attributes[0] + " " + row_attributes[1]
 
   for attribute,raw_row_data in zip(row_attributes[2:], raw_row[2:]):
     if raw_row_data != None:
