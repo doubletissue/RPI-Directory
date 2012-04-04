@@ -31,13 +31,29 @@ class Api(webapp.RequestHandler):
 
     #Get the first name and the last name. Ignore other things.
     if len(names) == 1:
-      name_part = '%' + names[0] + '%'
-      cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s", (name_part, name_part))
-      
+      #Check for RCS ID
+      logging.debug("Checking RCS ID...")
+      rcsid_candidate = names[0]
+      cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE name = %s", (rcsid_candidate))
+
+      if cursor.rowcount == 0:
+        #Check for partial name match
+        logging.debug("No RCS ID, checking name...")
+        name_part = '%' + names[0] + '%'
+        cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s", (name_part, name_part))
     elif len(names) > 1:
-      first_name = '%' + names[0] + '%'
-      last_name = '%' + names[-1] + '%'
-      cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s", (first_name, last_name))
+      #Check for exact name match
+      logging.debug("Checking exact name match...")
+      first_name = names[0]
+      last_name = names[-1]
+      cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name = %s AND last_name = %s", (first_name, last_name))
+      
+      if cursor.rowcount == 0:
+        #Check for partial name match
+        logging.debug("No exact name match, checking partial name match...")
+        first_name = '%' + names[0] + '%'
+        last_name = '%' + names[-1] + '%'
+        cursor.execute("SELECT first_name, last_name, major, email, year FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s", (first_name, last_name))
     
     d = {}
     l = []
