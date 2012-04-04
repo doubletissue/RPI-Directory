@@ -73,6 +73,8 @@ class Api(webapp.RequestHandler):
     token     = urllib.unquote(cgi.escape(self.request.get('token')))
     page_num  = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
+    
+    logging.error("PAGE NUM: " + str(page_num))
 
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
