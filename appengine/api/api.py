@@ -58,6 +58,12 @@ def parse_person_from_sql(raw_row):
 class NewApi(webapp.RequestHandler):
   pass
 
+def parse_int(i):
+  if i == '':
+    return 0
+  else:
+    return int(i)
+
 class Api(webapp.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
@@ -65,10 +71,9 @@ class Api(webapp.RequestHandler):
     major     = urllib.unquote(cgi.escape(self.request.get('major')).lower()[:50])
     name      = urllib.unquote(cgi.escape(self.request.get('name')).lower()[:50])
     token     = urllib.unquote(cgi.escape(self.request.get('token')))
-    page_num  = int(urllib.unquote(cgi.escape(self.request.get('page_num'))))
-    page_size = int(urllib.unquote(cgi.escape(self.request.get('page_size'))))
-    
-    
+    page_num  = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))))
+    page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))))
+
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
     
