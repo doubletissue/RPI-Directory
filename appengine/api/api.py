@@ -30,9 +30,8 @@ def CamelCase(s):
     return ""
 
   ss = s.split(" ")
-  logging.error("STRING: " + repr(ss))
   for i in range(len(ss)):
-    if len(ss[i]) == 1:
+    if len(ss[i]) in [0, 1]:
       ss[i] = ss[i].upper()
     else:
       ss[i] = ss[i][0].upper() + ss[i][1:]
