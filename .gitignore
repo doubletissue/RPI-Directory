@@ -1,5 +1,7 @@
 google_appengine/
 build/
+android-app/built/
+email-info
 xcuserdata/
 *.xcworkspacedata
 
