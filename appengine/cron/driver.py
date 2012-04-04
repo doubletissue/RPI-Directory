@@ -30,8 +30,18 @@ def putResult(d):
     #DepartmentKeyword.buildKeywords(person.department)
   person.put()
   """
-  #conn = rdbms.connect(instance=_INSTANCE_NAME, database="rpidirectory")
-  logging.error("PUTRESULT!!!" + repr(d))
+  conn = rdbms.connect(instance=_INSTANCE_NAME, database="rpidirectory")
+  cursor = conn.cursor()
+  
+  if 'name' in d:
+    names = d['name'].split()[:3]
+    if len(names) > 0:
+      first_name = names[0]
+    if len(names) > 1:
+      last_name = names[-1]
+  
+  cursor.execute('INSERT INTO rpidirectory (first_name, last_name, email, major, year) VALUES (%s, %s, %s, %s, %s)', (first_name, last_name, email, major, year))
+  conn.close()
 
 class Driver(webapp.RequestHandler):
   def get(self):
@@ -48,13 +58,29 @@ class Driver(webapp.RequestHandler):
         index = index_from_ds.position
       memcache.add("index", index, 86400)
 
+    result = Crawler().getMap(index)
+    
+    if 'error' in result.keys():
+      logging.error("error at index" + index + ", error is " + result['error'])
+      if result['error'] == 'page_not_found':
+        logging.error("Invalid index: " + index)
+        raise Exception()
+      if result['error'] == 'end of database':
+        logging.error("Index out of range: " + index)
+        memcache.set("index", 1, 86400)
+        SearchPosition(key_name="index", position=1).put()
+    else:
+      putResult(result)
+      self.response.headers['Content-Type'] = 'text/html'
+      self.response.out.write(str(index) + "<br")
+  
     #Spawn 5 tasks and do them
-    for i in range(index, index + NUM_THREADS):
-      taskqueue.add(url='/crawl/worker', params={'index': i}, target='backend')
+    #for i in range(index, index + NUM_THREADS):
+    #  taskqueue.add(url='/crawl/worker', params={'index': i}, target='backend')
 
-      #Update Memcache
-      if not memcache.incr("index"):
-        logging.error("Memcache set failed")
+    #Update Memcache
+    if not memcache.incr("index"):
+      logging.error("Memcache set failed")
     
     #Update DataStore
     index_from_ds = SearchPosition.get_by_key_name("index")
@@ -63,9 +89,6 @@ class Driver(webapp.RequestHandler):
     else:
       index_from_ds = SearchPosition(key_name="index", position=index)
     index_from_ds.put()
-    self.response.headers['Content-Type'] = 'text/plain'
-    self.response.out.write(index)
-
 
 class DriverWorker(webapp.RequestHandler):
   def get(self):
@@ -84,6 +107,7 @@ class DriverWorker(webapp.RequestHandler):
     else:
       putResult(result)
       self.response.out.write(result)
+      
   def post(self):
     index = cgi.escape(self.request.get('index'))
     result = Crawler().getMap(index)
