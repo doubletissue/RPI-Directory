@@ -99,7 +99,7 @@ class Api(webapp.RequestHandler):
         logging.debug("No exact name match, checking partial name match...")
         first_name = '%' + names[0] + '%'
         last_name = '%' + names[-1] + '%'
-        cursor.execute("SELECT " + ",".join(row_attributes) + "r FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s", (first_name, last_name, QUERY_LIMIT))
+        cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s", (first_name, last_name, QUERY_LIMIT))
     
     d = {}
     l = []
