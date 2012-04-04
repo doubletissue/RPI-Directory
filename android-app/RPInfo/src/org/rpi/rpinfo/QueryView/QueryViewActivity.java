@@ -26,6 +26,7 @@ public class QueryViewActivity extends Activity {
          
         //This is where the search term is entered
         final EditText searchBox = (EditText)findViewById(R.id.searchBox);
+        /*
         final Button submitSearch = (Button)findViewById(R.id.submit);
         
         submitSearch.setOnClickListener(new OnClickListener() {
@@ -35,8 +36,8 @@ public class QueryViewActivity extends Activity {
 				}
 			}
 		});
+		*/
 
-        /*
         //Automatically populate the results while the user types 
         searchBox.addTextChangedListener(new TextWatcher() {
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -53,6 +54,6 @@ public class QueryViewActivity extends Activity {
 				//Nothing
 			}
 		});
-		*/
+
 	}
 }
