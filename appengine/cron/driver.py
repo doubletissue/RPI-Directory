@@ -51,12 +51,12 @@ def putResult(d):
 def crawlPerson(index):
   result = Crawler().getMap(index)
   if 'error' in result.keys():
-    logging.error("error at index" + index + ", error is " + result['error'])
+    logging.error("error at index" + str(index) + ", error is " + result['error'])
     if result['error'] == 'page_not_found':
-      logging.error("Invalid index: " + index)
+      logging.error("Invalid index: " + str(index))
       raise Exception()
     if result['error'] == 'end of database':
-      logging.error("Index out of range: " + index)
+      logging.error("Index out of range: " + str(index))
       memcache.set("index", 1, 86400)
       SearchPosition(key_name="index", position=1).put()
   else:
