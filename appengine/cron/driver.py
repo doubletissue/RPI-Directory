@@ -79,9 +79,9 @@ class Driver(webapp.RequestHandler):
       memcache.add("index", index, 86400)
   
     #Spawn tasks
-    for i in range(index, index + NUM_THREADS):
+    #for i in range(index, index + NUM_THREADS):
       #taskqueue.add(url='/crawl/worker', params={'index': i}, target='backend')
-      crawlPerson(i)
+    crawlPerson(i)
       
     #Update Memcache
     if not memcache.incr("index"):
