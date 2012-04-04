@@ -20,7 +20,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 _INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
-NUM_THREADS = 1
+NUM_THREADS = 100
 
 #Creates a person and stores it
 def putResult(d):
@@ -42,9 +42,7 @@ def putResult(d):
   
   person = Person.buildPerson(d)
   
-  logging.error(repr(person))
-  
-  cursor.execute('INSERT INTO rpidirectory (first_name, last_name, email, major, year) VALUES (%s, %s, %s, %s, %s)', (person.first_name, person.last_name, person.email, person.major, person.year))
+  cursor.execute('INSERT INTO rpidirectory (`name`, `campus_mailstop`, `department`, `email`, `fax`, `first_name`, `homepage`, `last_name`, `mailing_address`, `major`, `office_location`, `phone`, `rcsid`, `title`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (person.rcsid, person.campus_mailstop, person.department, person.email, person.fax, person.first_name, person.homepage, person.last_name, person.mailing_address, person.major, person.office_location, person.phone, person.rcsid, person.title, person.year))
   conn.close()
 
 class Driver(webapp.RequestHandler):
@@ -60,26 +58,10 @@ class Driver(webapp.RequestHandler):
       else:
         index = index_from_ds.position
       memcache.add("index", index, 86400)
-    
-    result = Crawler().getMap(index)
-    
-    if 'error' in result.keys():
-      logging.error("error at index" + index + ", error is " + result['error'])
-      if result['error'] == 'page_not_found':
-        logging.error("Invalid index: " + index)
-        raise Exception()
-      if result['error'] == 'end of database':
-        logging.error("Index out of range: " + index)
-        memcache.set("index", 1, 86400)
-        SearchPosition(key_name="index", position=1).put()
-    else:
-      putResult(result)
-      self.response.headers['Content-Type'] = 'text/html'
-      self.response.out.write(str(index) + "<br")
   
-    #Spawn 5 tasks and do them
-    #for i in range(index, index + NUM_THREADS):
-    #  taskqueue.add(url='/crawl/worker', params={'index': i}, target='backend')
+    #Spawn tasks
+    for i in range(index, index + NUM_THREADS):
+      taskqueue.add(url='/crawl/worker', params={'index': i}, target='backend')
 
     #Update Memcache
     if not memcache.incr("index"):
@@ -94,27 +76,11 @@ class Driver(webapp.RequestHandler):
     index_from_ds.put()
 
 class DriverWorker(webapp.RequestHandler):
-  def get(self):
-    index = cgi.escape(self.request.get('index'))
-    result = Crawler().getMap(index)
-    logging.error("RESULT!!!" + repr(result))
-    if 'error' in result.keys():
-      logging.error("error at index" + index + ", error is " + result['error'])
-      if result['error'] == 'page_not_found':
-        logging.error("Invalid index: " + index)
-        raise Exception()
-      if result['error'] == 'end of database':
-        logging.error("Index out of range: " + index)
-        memcache.set("index", 1, 86400)
-        SearchPosition(key_name="index", position=1).put()
-    else:
-      putResult(result)
-      self.response.out.write(result)
-      
   def post(self):
+    logging.info("In DriverWorker")
     index = cgi.escape(self.request.get('index'))
+    
     result = Crawler().getMap(index)
-    logging.error("RESULT!!!" + repr(result))
     if 'error' in result.keys():
       logging.error("error at index" + index + ", error is " + result['error'])
       if result['error'] == 'page_not_found':

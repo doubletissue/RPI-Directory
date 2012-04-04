@@ -139,7 +139,6 @@ class Crawler(webapp.RequestHandler):
       if v is not "":
         d[attributes[k]] = v
         
-    logging.error("SENDRESULT!!!" + repr(d))
     return d
     
     
