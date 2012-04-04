@@ -87,7 +87,7 @@ class Api(webapp.RequestHandler):
       #Check for RCS ID
       logging.debug("Checking RCS ID...")
       rcsid_candidate = names[0]
-      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE name = %s LIMIT %s,%s", (rcsid_candidate, (page_num-1)*20, QUERY_LIMIT))
+      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE rcsid = %s LIMIT %s,%s", (rcsid_candidate, (page_num-1)*20, QUERY_LIMIT))
 
       if cursor.rowcount == 0:
         #Check for partial name match
