@@ -18,7 +18,7 @@ class ChatHandler(webapp.RequestHandler):
     search_string = urllib.quote(query)
     message.reply("Searching...try again in a few seconds if I don't get back to you :)")
     url = 'http://rpidirectory.appspot.com/api?name=' + search_string + '&page_size=3&page_num=1'
-    result = urlfetch.fetch(url)
+    result = urlfetch.fetch(url, deadline=20)
     if result.status_code != 200:
       message.reply("An internal error occured, please try again in a few minutes.")
       return
