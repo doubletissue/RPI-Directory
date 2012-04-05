@@ -11,7 +11,7 @@ import cgi
 import urllib
 
 
-class ChatHandler(xmpp_handlers.CommandHandler):
+class ChatHandler(webapp.RequestHandler):
   def post(self):
     message = xmpp.Message(self.request.POST)
     query = message.body.lower()
@@ -25,7 +25,13 @@ class ChatHandler(xmpp_handlers.CommandHandler):
     
     s = ''
     d = eval(result.content)
+    
+    resultCount = 3
+    
     for person in d['data']:
+      if resultCount <= 0:
+        break
+      resultCount -= 1
       s += '*' + person['name'] + "*\n"
       #s += '('
 
