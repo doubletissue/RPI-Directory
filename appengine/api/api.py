@@ -140,7 +140,7 @@ class Api(webapp.RequestHandler):
     #Add to memcache
     memcache.add(memcache_key, l, 518400)
     
-    logging.debug("Cache miss, adding " + name + " to cache")
+    logging.debug("Cache miss, adding " + name + " to MemCache")
     
     s = json.dumps(d)
     self.response.out.write(s)

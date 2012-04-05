@@ -154,8 +154,6 @@ $(document).ready(function() {
  	      $("#results").css("opacity", ".25");
  	      callServer(keyword);
  	    }
- 	    
- 	    $("#results").css("opacity", "1");
 	  }else if (keyword == ''){ // Entry is blank
 	    $("#results").hide();
 	    // Animate box back down
