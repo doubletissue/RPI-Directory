@@ -74,34 +74,47 @@ class Api(webapp.RequestHandler):
     page_num  = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
     
+    #Check memcache for results
+    memcache_key = name + ":" + major + ":" + year
+    cached_mem = memcache.get(memcache_key)
+    if cached_mem:
+      d = {}
+      d['data'] = cached_mem
+      d['token'] = token
+      d['name'] = name
+      
+      s = json.dumps(d)
+      self.response.out.write(s)
+      return
+    
+    # If not, we query Cloud SQL
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
     
-    names = cgi.escape(name)
     names = map(str, name.split()[:3])
 
     #Get the first name and the last name. Ignore other things.
     if len(names) == 1:
       #Check for RCS ID
-      logging.debug("Checking RCS ID...")
+      #logging.debug("Checking RCS ID...")
       rcsid_candidate = names[0]
       cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE rcsid = %s LIMIT %s,%s", (rcsid_candidate, (page_num-1)*20, QUERY_LIMIT))
 
       if cursor.rowcount == 0:
         #Check for partial name match
-        logging.debug("No RCS ID, checking name...")
+        #logging.debug("No RCS ID, checking name...")
         name_part = names[0] + '%'
         cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s LIMIT %s,%s", (name_part, name_part, (page_num-1)*20, QUERY_LIMIT))
     elif len(names) > 1:
       #Check for exact name match
-      logging.debug("Checking exact name match...")
+      #logging.debug("Checking exact name match...")
       first_name = names[0]
       last_name = names[-1]
       cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name = %s AND last_name = %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, QUERY_LIMIT))
       
       if cursor.rowcount == 0:
         #Check for partial name match
-        logging.debug("No exact name match, checking partial name match...")
+        #logging.debug("No exact name match, checking partial name match...")
         first_name = names[0] + '%'
         last_name = names[-1] + '%'
         cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, QUERY_LIMIT))
@@ -123,6 +136,12 @@ class Api(webapp.RequestHandler):
     d['data'] = l
     d['token'] = token
     d['name'] = name
+    
+    #Add to memcache
+    memcache.add(memcache_key, l, 518400)
+    
+    logging.debug("Cache miss, adding " + name + " to cache")
+    
     s = json.dumps(d)
     self.response.out.write(s)
 
