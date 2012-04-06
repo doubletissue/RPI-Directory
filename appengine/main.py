@@ -56,6 +56,13 @@ class Stats(webapp.RequestHandler):
     list_of_classes = []
     for row in classes:
       list_of_classes.append((str(row[0]).title(), row[1]))
+      
+   #Faculty - LIMIT 20
+    cursor.execute("SELECT department, COUNT(department) from rpidirectory GROUP BY department ORDER BY COUNT(department) DESC LIMIT 20")
+    faculties = cursor.fetchall()
+    list_of_faculty = []
+    for row in faculties:
+      list_of_faculty.append((str(row[0]).title(), row[1]))
     
     #MemCache Stats
     memcache_stats = memcache.get_stats()
@@ -64,10 +71,13 @@ class Stats(webapp.RequestHandler):
     template_values = {'memcache': memcache_stats,
                        'list_of_majors' : list_of_majors,
                        'list_of_classes' : list_of_classes,
+                       'list_of_faculty' : list_of_faculty,
                        }
                        
     path = os.path.join(os.path.dirname(__file__), 'stats.html')
     self.response.out.write(template.render(path, template_values))
+    
+    conn.close()
 
 application = webapp.WSGIApplication(
   [('/', MainPage),

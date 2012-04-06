@@ -87,11 +87,33 @@
 	      var chart = new google.visualization.PieChart(document.getElementById('class_stats'));
 	      chart.draw(data, options);
     }
+    
+    function drawFacultyChart() {
+
+      // Create the data table.
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Department');
+      data.addColumn('number', 'Amount');
+      data.addRows([
+        {% for class in list_of_faculty %}
+          ['{{ class.0 }}', {{ class.1 }}],
+        {% endfor %}
+      ]);
+
+      // Set chart options
+      var options = {'title':'Top {{ list_of_faculty|length }} Faculty Departments'};
+
+      // Instantiate and draw our chart, passing in some options.
+      var chart = new google.visualization.PieChart(document.getElementById('faculty_stats'));
+      chart.draw(data, options);
+  }
+    
 		
 		  $(document).ready(function() {
 			  drawMemCacheChart({{ memcache.hits }}, {{ memcache.misses }});
 			  drawMajorsChart();
 			  drawClassesChart();
+			  drawFacultyChart();
 		  });
 		</script>
 		</head>
@@ -100,6 +122,7 @@
 		    <div class="full_width big">RPI Directory Stats</div>
   		  <div id="major_stats" class="grid_12 chart"></div>
   		  <div id="class_stats" class="grid_12 chart"></div>
+  		  <div id="faculty_stats" class="grid_12 chart"></div>
   		  <div id="memcache_stats" class="grid_12 chart"></div>
   		  <div id="stats">
   		    {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB<br>
