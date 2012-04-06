@@ -150,7 +150,50 @@ function drawLastNameChart() {
   var chart = new google.visualization.PieChart(document.getElementById('last_name_stats'));
   chart.draw(data, options);
 }
-		
+
+{% if list_of_searched_first_names and list_of_searched_last_names %}
+function drawSearchedFirstNameChart() {
+
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'First Name');
+  data.addColumn('number', 'Amount');
+  data.addRows([
+    {% for class in list_of_searched_first_names %}
+      ['{{ class.0 }}', {{ class.1 }}],
+    {% endfor %}
+  ]);
+
+  // Set chart options
+  var options = {'title':'Top {{ list_of_searched_first_names|length }} Searched First Names'};
+
+  // Instantiate and draw our chart, passing in some options.
+  var chart = new google.visualization.PieChart(document.getElementById('searched_first_names_stats'));
+  chart.draw(data, options);
+}
+
+function drawSearchedLastNameChart() {
+
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Last Name');
+  data.addColumn('number', 'Amount');
+  data.addRows([
+    {% for class in list_of_searched_last_names %}
+      ['{{ class.0 }}', {{ class.1 }}],
+    {% endfor %}
+  ]);
+
+  // Set chart options
+  var options = {'title':'Top {{ list_of_searched_last_names|length }} Searched  Last Names'};
+
+  // Instantiate and draw our chart, passing in some options.
+  var chart = new google.visualization.PieChart(document.getElementById('searched_last_names_stats'));
+  chart.draw(data, options);
+}
+
+{% endif %}
+
 		  $(document).ready(function() {
 			  drawMemCacheChart({{ memcache.hits }}, {{ memcache.misses }});
 			  drawMajorsChart();
@@ -158,6 +201,11 @@ function drawLastNameChart() {
 			  drawFacultyChart();
 			  drawFirstNameChart();
 			  drawLastNameChart();
+			  {% if list_of_searched_first_names and list_of_searched_last_names %}
+			  drawSearchedFirstNameChart();
+			  drawSearchedLastNameChart();
+			  {% endif %}
+			  
 		  });
 		</script>
 		</head>
@@ -169,6 +217,10 @@ function drawLastNameChart() {
 		  <div id="last_name_stats" class="chart"></div>
 		  <div id="class_stats" class="chart"></div>
 		  <div id="memcache_stats" class="chart"></div>
+		  {% if list_of_searched_first_names and list_of_searched_last_names %}
+		  <div id="searched_first_names_stats" class="chart"></div>
+		  <div id="searched_last_names_stats" class="chart"></div>
+		  {% endif %}
 		  <div id="stats">
 		    {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB<br>
 		  </div>

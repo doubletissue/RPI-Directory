@@ -7,6 +7,7 @@ import logging
 import cgi
 import urllib
 from models import Person
+from collections import defaultdict
 from django.utils import simplejson as json
 
 _INSTANCE_NAME = 'christianjohnson.org:rpidirectory:christianjohnson'
@@ -99,12 +100,37 @@ class Api(webapp.RequestHandler):
           message.to = "rpi-directory-ip@googlegroups.com"
           message.body = "IP: " + ip + "\nban time: " + str(ban_time) + "\nQuery: " + name + "\nHit Count: " + str(ipCount)
           message.send()
-          logging.info("EMail sent about ip: " + ip)
-          
+          logging.info("EMail sent about ip: " + ip) 
         return
       memcache.replace(ip,ipCount+1,time=600)
     else:
       memcache.add(ip,1,time=600)
+    
+    #Log results in MemCache for Stats page
+    names = map(str, name.split()[:3])
+    if len(names) > 1 and len(names[0]) > 1 and len(names[-1]) > 1:
+      #First name
+      memcache_key = "stats_first_names"
+      cached_mem = memcache.get(memcache_key)
+      if cached_mem:
+        cached_mem[names[0].title()] += 1
+        memcache.set(memcache_key, cached_mem)
+      else:
+        d = defaultdict(int)
+        d[names[0].title()] += 1
+        memcache.set(memcache_key, d)
+      
+      #Last name
+      memcache_key = "stats_last_names"
+      cached_mem = memcache.get(memcache_key)
+      if cached_mem:
+        cached_mem[names[-1].title()] += 1
+        memcache.set(memcache_key, cached_mem)
+      else:
+        d = defaultdict(int)
+        d[names[-1].title()] += 1
+        memcache.set(memcache_key, d)
+      
     
     #Check memcache for results
     memcache_key = name + ":" + major + ":" + year
@@ -122,8 +148,6 @@ class Api(webapp.RequestHandler):
     # If not, we query Cloud SQL
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
-    
-    names = map(str, name.split()[:3])
 
     #Get the first name and the last name. Ignore other things.
     if len(names) == 1:

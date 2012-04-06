@@ -5,6 +5,7 @@ from google.appengine.api import memcache
 import os
 from google.appengine.ext.webapp import template
 import logging
+import operator
 import cgi
 
 _INSTANCE_NAME = 'christianjohnson.org:rpidirectory:christianjohnson'
@@ -120,6 +121,23 @@ class Stats(webapp.RequestHandler):
         list_of_last_names.append((str(row[0]).title(), row[1]))
       memcache.add(memcache_key, list_of_last_names, TIME_MEMCACHE)
     
+    #Most common first names searched
+    memcache_key = "stats_first_names"
+    cached_mem = memcache.get(memcache_key)
+    if cached_mem:
+      sorted_x = sorted(cached_mem.iteritems(), key=operator.itemgetter(1))
+      list_of_searched_first_names = sorted_x[:10]
+    else:
+      list_of_searched_first_names = None
+      
+    #Most common last names searched
+    memcache_key = "stats_last_names"
+    cached_mem = memcache.get(memcache_key)
+    if cached_mem:
+      sorted_x = sorted(cached_mem.iteritems(), key=operator.itemgetter(1))
+      list_of_searched_last_names = sorted_x[:10]
+    else:
+      list_of_searched_last_names = None
     
     #MemCache Stats
     memcache_stats = memcache.get_stats()
@@ -131,6 +149,8 @@ class Stats(webapp.RequestHandler):
                        'list_of_faculty' : list_of_faculty,
                        'list_of_first_names' : list_of_first_names,
                        'list_of_last_names' : list_of_last_names,
+                       'list_of_searched_first_names' : list_of_searched_first_names,
+                       'list_of_searched_last_names' : list_of_searched_last_names
                        }
                        
     path = os.path.join(os.path.dirname(__file__), 'stats.html')
