@@ -107,13 +107,55 @@
       var chart = new google.visualization.PieChart(document.getElementById('faculty_stats'));
       chart.draw(data, options);
   }
-    
+  
+  function drawFirstNameChart() {
+
+    // Create the data table.
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'First Name');
+    data.addColumn('number', 'Total');
+    data.addRows([
+      {% for class in list_of_first_names %}
+        ['{{ class.0 }}', {{ class.1 }}],
+      {% endfor %}
+    ]);
+
+    // Set chart options
+    var options = {'title':'Top {{ list_of_first_names|length }} First Names'};
+
+    // Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.PieChart(document.getElementById('first_name_stats'));
+    chart.draw(data, options);
+}
+
+
+function drawLastNameChart() {
+
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Last Name');
+  data.addColumn('number', 'Amount');
+  data.addRows([
+    {% for class in list_of_last_names %}
+      ['{{ class.0 }}', {{ class.1 }}],
+    {% endfor %}
+  ]);
+
+  // Set chart options
+  var options = {'title':'Top {{ list_of_last_names|length }} Last Names'};
+
+  // Instantiate and draw our chart, passing in some options.
+  var chart = new google.visualization.PieChart(document.getElementById('last_name_stats'));
+  chart.draw(data, options);
+}
 		
 		  $(document).ready(function() {
 			  drawMemCacheChart({{ memcache.hits }}, {{ memcache.misses }});
 			  drawMajorsChart();
 			  drawClassesChart();
 			  drawFacultyChart();
+			  drawFirstNameChart();
+			  drawLastNameChart();
 		  });
 		</script>
 		</head>
@@ -123,6 +165,8 @@
   		  <div id="major_stats" class="grid_12 chart"></div>
   		  <div id="class_stats" class="grid_12 chart"></div>
   		  <div id="faculty_stats" class="grid_12 chart"></div>
+  		  <div id="first_name_stats" class="grid_12 chart"></div>
+  		  <div id="last_name_stats" class="grid_12 chart"></div>
   		  <div id="memcache_stats" class="grid_12 chart"></div>
   		  <div id="stats">
   		    {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB<br>

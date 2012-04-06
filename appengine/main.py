@@ -57,12 +57,28 @@ class Stats(webapp.RequestHandler):
     for row in classes:
       list_of_classes.append((str(row[0]).title(), row[1]))
       
-   #Faculty - LIMIT 20
+    #Faculty - LIMIT 20
     cursor.execute("SELECT department, COUNT(department) from rpidirectory GROUP BY department ORDER BY COUNT(department) DESC LIMIT 20")
     faculties = cursor.fetchall()
     list_of_faculty = []
     for row in faculties:
       list_of_faculty.append((str(row[0]).title(), row[1]))
+    
+    #First Name Stats
+    cursor.execute("SELECT first_name, COUNT(first_name) as total from rpidirectory WHERE first_name <> 'id="singledirectoryentry">' GROUP BY first_name ORDER BY total DESC LIMIT 20")
+    first_names = cursor.fetchall()
+    list_of_first_names = []
+    for row in first_names:
+      list_of_first_names.append((str(row[0]).title(), row[1]))
+    
+    
+    #Last Name Stats
+    cursor.execute("SELECT last_name, COUNT(last_name) as total from rpidirectory  WHERE last_name <> '<th>' GROUP BY last_name ORDER BY total DESC LIMIT 20")
+    last_names = cursor.fetchall()
+    list_of_last_names = []
+    for row in last_names:
+      list_of_last_names.append((str(row[0]).title(), row[1]))
+    
     
     #MemCache Stats
     memcache_stats = memcache.get_stats()
@@ -72,6 +88,8 @@ class Stats(webapp.RequestHandler):
                        'list_of_majors' : list_of_majors,
                        'list_of_classes' : list_of_classes,
                        'list_of_faculty' : list_of_faculty,
+                       'list_of_first_names' : list_of_first_names,
+                       'list_of_last_names' : list_of_last_names,
                        }
                        
     path = os.path.join(os.path.dirname(__file__), 'stats.html')
