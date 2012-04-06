@@ -79,7 +79,13 @@ class Api(webapp.RequestHandler):
     ipCount = memcache.get(ip)
     if ipCount:
       if ipCount > 20:
-        self.response.out.write("Error!")
+        d = {}
+        d['data'] = 'Quota Exceeded'
+        d['token'] = token
+        d['name'] = name
+        s = json.dumps(d)
+        self.response.out.write(s)
+        logging.info('Quota exceeded for ' + ip + ', count at ' + ipCount)
         return
       memcache.replace(ip,ipCount+1,time=3600)
     else:
