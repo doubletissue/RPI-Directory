@@ -74,6 +74,17 @@ class Api(webapp.RequestHandler):
     page_num  = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
     
+    # Flood Prevention
+    ip = str(self.request.remote_addr)
+    ipCount = memcache.get(ip)
+    if ipCount:
+      if ipCount > 20:
+        self.response.out.write("Error!")
+        return
+      memcache.replace(ip,ipCount+1,time=3600)
+    else:
+      memcache.add(ip,1,time=3600)
+    
     #Check memcache for results
     memcache_key = name + ":" + major + ":" + year
     cached_mem = memcache.get(memcache_key)
