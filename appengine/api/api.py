@@ -87,7 +87,9 @@ class Api(webapp.RequestHandler):
         s = json.dumps(d)
         self.response.out.write(s)
         
-        ban_time = 600 + 60 * 2 ** ( (ipCount-1000) )  
+        ban_time = 600 + 60 * 2 ** ( (ipCount-1000) )
+        if ban_time > 7*24*60*60:
+          ban_time = 7*24*60*60
         logging.info('Quota exceeded for ' + ip + ', count at ' + str(ipCount) + ', banned for ' + str(ban_time))
         memcache.replace(ip,ipCount+1,time=ban_time)
         
