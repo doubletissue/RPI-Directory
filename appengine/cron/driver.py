@@ -72,7 +72,7 @@ class Driver(webapp.RequestHandler):
   
     #Spawn tasks
     for i in range(index, index + NUM_THREADS):
-      taskqueue.add(url='/crawl/worker', params={'index': i}, target='1.backend')
+      taskqueue.add(url='/crawl/worker', params={'index': i}) #, target='backend'
     #crawlPerson(index)
       
     #Update Memcache
@@ -89,7 +89,8 @@ class Driver(webapp.RequestHandler):
 
 class DriverWorker(webapp.RequestHandler):
   def post(self):
-    logging.info("In DriverWorker")
+    #logging.info("In DriverWorker")
+    memcache.put("backend","w")
     index = cgi.escape(self.request.get('index'))
     crawlPerson(index)
 	
