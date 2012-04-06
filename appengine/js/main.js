@@ -79,7 +79,8 @@ function AddResultsToTable(data){
     
     //EMail check
     if (person.email != undefined){
-      email = '<a href=\"mailto:' + person.email + '\">' + person.email + "</a>";
+      email = person.email.replace("@", "[at]");
+      email = person.email.replace(".", "[dot]");
     }else{
       email = "N/A";
     }
