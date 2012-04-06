@@ -2,7 +2,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import rdbms
 from google.appengine.api import memcache
-from google.appengine.rpi import mail
+from google.appengine.api import mail
 import logging
 import cgi
 import urllib
