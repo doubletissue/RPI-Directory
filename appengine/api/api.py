@@ -2,6 +2,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import rdbms
 from google.appengine.api import memcache
+from google.appengine.rpi import mail
 import logging
 import cgi
 import urllib
@@ -85,8 +86,19 @@ class Api(webapp.RequestHandler):
         d['name'] = name
         s = json.dumps(d)
         self.response.out.write(s)
-        logging.info('Quota exceeded for ' + ip + ', count at ' + str(ipCount))
-        memcache.replace(ip,ipCount+1,time= 600 + 60 * 2 ** ( (ipCount-1000) ) )
+        
+        ban_time = 600 + 60 * 2 ** ( (ipCount-1000) )  
+        logging.info('Quota exceeded for ' + ip + ', count at ' + str(ipCount) + ', banned for ' + str(ban_time))
+        memcache.replace(ip,ipCount+1,time=ban_time)
+        
+        if (ipCount - 1001) % 100 == 0:
+          message = mail.EmailMessage(sender="IP Banning <ip-logger@rpidirectory.appspotmail.com>",
+                                      subject="RPIDirectory IP " + ip + " Banned")
+          message.to = "rpi-directory-ip@googlegroups.com"
+          message.body = "IP: " + ip + "\nban time: " + str(ban_time) + "\nQuery: " + name + "\nHit Count: " + str(ipCount)
+          message.send()
+          logging.info("EMail sent about ip: " + ip)
+          
         return
       memcache.replace(ip,ipCount+1,time=600)
     else:
