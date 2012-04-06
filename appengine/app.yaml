@@ -24,6 +24,9 @@ handlers:
 
 - url: /js
   static_dir: js
+  
+- url: /images
+  static_dir: images
 
 - url: /crawl/.*
   script: cron/driver.py
