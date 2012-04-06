@@ -178,7 +178,7 @@ $(document).ready(function() {
   		  animate(false);
 	    }
     }
-  }, 150);
+  }, 250);
   
   //Make table sortable
   $("#results").tablesorter();
