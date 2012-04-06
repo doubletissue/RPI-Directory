@@ -79,8 +79,10 @@ function AddResultsToTable(data){
     
     //EMail check
     if (person.email != undefined){
-      email = person.email.replace("@", "[at]");
-      email = person.email.replace(".", "[dot]");
+      email = person.email.replace("@", " [at] ");
+      while (email.indexOf(".") > -1){
+        email = email.replace(".", " [dot] ");
+      }
     }else{
       email = "N/A";
     }
