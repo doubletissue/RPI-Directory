@@ -10,6 +10,8 @@
 		<style type="text/css">
 		  .chart {
 		    height: 500px;
+		    width: 50%;
+		    float: left;
 		  }
 		
 			#stats {
@@ -160,18 +162,16 @@ function drawLastNameChart() {
 		</script>
 		</head>
 		<body id="body">
-		  <div class="container_12">
-		    <div class="full_width big">RPI Directory Stats</div>
-  		  <div id="major_stats" class="grid_12 chart"></div>
-  		  <div id="class_stats" class="grid_12 chart"></div>
-  		  <div id="faculty_stats" class="grid_12 chart"></div>
-  		  <div id="first_name_stats" class="grid_12 chart"></div>
-  		  <div id="last_name_stats" class="grid_12 chart"></div>
-  		  <div id="memcache_stats" class="grid_12 chart"></div>
-  		  <div id="stats">
-  		    {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB<br>
-  		  </div>
-  		</div>
+	    <div class="full_width big">RPI Directory Stats</div>
+		  <div id="major_stats" class="chart"></div>
+		  <div id="class_stats" class="chart"></div>
+		  <div id="faculty_stats" class="chart"></div>
+		  <div id="first_name_stats" class="chart"></div>
+		  <div id="last_name_stats" class="chart"></div>
+		  <div id="memcache_stats" class="chart"></div>
+		  <div id="stats">
+		    {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB<br>
+		  </div>
   		<script type="text/javascript">
   		  var _gaq = _gaq || [];
   		  _gaq.push(['_setAccount', 'UA-25705269-1']);

@@ -65,7 +65,7 @@ class Stats(webapp.RequestHandler):
       list_of_faculty.append((str(row[0]).title(), row[1]))
     
     #First Name Stats
-    cursor.execute("SELECT first_name, COUNT(first_name) as total from rpidirectory WHERE first_name <> 'id="singledirectoryentry">' GROUP BY first_name ORDER BY total DESC LIMIT 20")
+    cursor.execute("SELECT first_name, COUNT(first_name) as total from rpidirectory WHERE first_name <> 'id=\"singledirectoryentry\">' GROUP BY first_name ORDER BY total DESC LIMIT 20")
     first_names = cursor.fetchall()
     list_of_first_names = []
     for row in first_names:
@@ -73,7 +73,7 @@ class Stats(webapp.RequestHandler):
     
     
     #Last Name Stats
-    cursor.execute("SELECT last_name, COUNT(last_name) as total from rpidirectory  WHERE last_name <> '<th>' GROUP BY last_name ORDER BY total DESC LIMIT 20")
+    cursor.execute("SELECT last_name, COUNT(last_name) as total from rpidirectory  WHERE last_name NOT LIKE '<th>%' GROUP BY last_name ORDER BY total DESC LIMIT 20")
     last_names = cursor.fetchall()
     list_of_last_names = []
     for row in last_names:
