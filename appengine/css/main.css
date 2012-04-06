@@ -6,6 +6,7 @@
 	width: 100%; 
 	padding: .25em;
 	font-size: 130%;
+	margin-bottom: 50px;
 }
 
 #container {
@@ -34,6 +35,18 @@
 
 #output {
 	font-family: arial, sans-serif;
+}
+
+#qr {
+  font-family: 'Trebuchet MS', Helvetica, sans-serif;
+  text-align: center;
+}
+
+#footer {
+  font-family: 'Trebuchet MS', Helvetica, sans-serif;
+  margin-top: 50px;
+  text-align: center;
+  font-size: 80%;
 }
 
 /* tables */

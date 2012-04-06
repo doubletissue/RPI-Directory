@@ -1,0 +1,120 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>RPI Directory Stats</title>
+		<link href='http://fonts.googleapis.com/css?family=Puritan:700' rel='stylesheet' type='text/css'>
+		<link href='css/960.css' rel='stylesheet' type='text/css'>
+		<link href='css/main.css' rel='stylesheet' type='text/css'>
+		<style type="text/css">
+		  .chart {
+		    height: 500px;
+		  }
+		
+			#stats {
+				text-align: center;
+				font-size: 150%;
+				font-family: 'Trebuchet MS', Helvetica, sans-serif;font-family: 'Trebuchet MS', Helvetica, sans-serif;
+			}
+		 </style>
+		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+		<!--Load the AJAX API-->
+		    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+		    <script type="text/javascript">
+		
+		      // Load the Visualization API and the piechart package.
+		      google.load('visualization', '1.0', {'packages':['corechart']});
+
+		      // Callback that creates and populates a data table, 
+		      // instantiates the pie chart, passes in the data and
+		      // draws it.
+		      function drawMemCacheChart(hits, misses) {
+
+		        // Create the data table.
+  		      var data = new google.visualization.DataTable();
+  		      data.addColumn('string', 'Title');
+  		      data.addColumn('number', 'Amount');
+  		      data.addRows([
+  		        ['Hits', hits],
+  		        ['Misses', misses],
+  		      ]);
+
+  		      // Set chart options
+  		      var options = {'title':'MemCache Statistics'};
+
+  		      // Instantiate and draw our chart, passing in some options.
+  		      var chart = new google.visualization.PieChart(document.getElementById('memcache_stats'));
+  		      chart.draw(data, options);
+		    }
+		    
+		    function drawMajorsChart() {
+
+	        // Create the data table.
+		      var data = new google.visualization.DataTable();
+		      data.addColumn('string', 'Major');
+		      data.addColumn('number', 'Amount');
+		      data.addRows([
+		        {% for major in list_of_majors %}
+		          ['{{ major.0 }}', {{ major.1 }}],
+		        {% endfor %}
+		      ]);
+
+		      // Set chart options
+		      var options = {'title':'Top {{ list_of_majors|length }} Majors at RPI'};
+
+		      // Instantiate and draw our chart, passing in some options.
+		      var chart = new google.visualization.PieChart(document.getElementById('major_stats'));
+		      chart.draw(data, options);
+	    }
+	    
+	    function drawClassesChart() {
+
+        // Create the data table.
+	      var data = new google.visualization.DataTable();
+	      data.addColumn('string', 'Class');
+	      data.addColumn('number', 'Amount');
+	      data.addRows([
+	        {% for class in list_of_classes %}
+	          ['{{ class.0 }}', {{ class.1 }}],
+	        {% endfor %}
+	      ]);
+
+	      // Set chart options
+	      var options = {'title':'Breakdown of Student Body'};
+
+	      // Instantiate and draw our chart, passing in some options.
+	      var chart = new google.visualization.PieChart(document.getElementById('class_stats'));
+	      chart.draw(data, options);
+    }
+		
+		  $(document).ready(function() {
+			  drawMemCacheChart({{ memcache.hits }}, {{ memcache.misses }});
+			  drawMajorsChart();
+			  drawClassesChart();
+		  });
+		</script>
+		</head>
+		<body id="body">
+		  <div class="container_12">
+		    <div class="full_width big">RPI Directory Stats</div>
+  		  <div id="major_stats" class="grid_12 chart"></div>
+  		  <div id="class_stats" class="grid_12 chart"></div>
+  		  <div id="memcache_stats" class="grid_12 chart"></div>
+  		  <div id="stats">
+  		    {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB<br>
+  		  </div>
+  		</div>
+  		<script type="text/javascript">
+  		  var _gaq = _gaq || [];
+  		  _gaq.push(['_setAccount', 'UA-25705269-1']);
+  		  _gaq.push(['_trackPageview']);
+
+  		  (function() {
+  		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  		  })();
+  		</script>
+		</body>
+</html>

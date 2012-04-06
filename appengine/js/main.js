@@ -54,8 +54,6 @@ function AddResultsToTable(data){
   $.each(data.data, function(i, person){
     var table_row = "<tr>";
     
-    console.log(person.name + ", " + person.major + ", " + person.department);
-    
     //Professor Check
     if (person.major == undefined && person.department == undefined){
       person.major = "N/A";
@@ -70,7 +68,16 @@ function AddResultsToTable(data){
       person.year = "Faculty";
     }
     
-    table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" + (person.email == undefined ? 'N/A' : person.email) + "</td>");
+    var email = "";
+    
+    //EMail check
+    if (person.email != undefined){
+      email = '<a href=\"mailto:' + person.email + '\">' + person.email + "</a>";
+    }else{
+      email = "N/A";
+    }
+    
+    table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" +  email + "</td>");
     table_row += "</tr>";
     $("#results").find("tbody").append(table_row);
   });
@@ -161,7 +168,7 @@ $(document).ready(function() {
   		  animate(false);
 	    }
     }
-  }, 500);
+  }, 150);
   
   //Make table sortable
   $("#results").tablesorter();
