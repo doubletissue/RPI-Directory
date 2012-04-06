@@ -78,7 +78,7 @@ class Api(webapp.RequestHandler):
     ip = str(self.request.remote_addr)
     ipCount = memcache.get(ip)
     if ipCount:
-      if ipCount > 20:
+      if ipCount > 1000:
         d = {}
         d['data'] = 'Quota Exceeded'
         d['token'] = token
@@ -86,10 +86,11 @@ class Api(webapp.RequestHandler):
         s = json.dumps(d)
         self.response.out.write(s)
         logging.info('Quota exceeded for ' + ip + ', count at ' + str(ipCount))
+        memcache.replace(ip,ipCount+1,time= 600 + 60 * 2 ** ( (ipCount-1000) ) )
         return
-      memcache.replace(ip,ipCount+1,time=3600)
+      memcache.replace(ip,ipCount+1,time=600)
     else:
-      memcache.add(ip,1,time=3600)
+      memcache.add(ip,1,time=600)
     
     #Check memcache for results
     memcache_key = name + ":" + major + ":" + year
