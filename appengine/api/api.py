@@ -85,7 +85,7 @@ class Api(webapp.RequestHandler):
         d['name'] = name
         s = json.dumps(d)
         self.response.out.write(s)
-        logging.info('Quota exceeded for ' + ip + ', count at ' + ipCount)
+        logging.info('Quota exceeded for ' + ip + ', count at ' + str(ipCount))
         return
       memcache.replace(ip,ipCount+1,time=3600)
     else:
