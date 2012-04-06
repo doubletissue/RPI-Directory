@@ -9,9 +9,16 @@ var local_storage_supported;
 var query = '';
 
 function parseServerData(data){
+  // Check if quota exceeded
+  if (data.data !== [] && data.data == "Quota Exceeded"){
+    alert("Quota Exceeded.  Please try again in 5 minutes...");
+    return;
+  }
+  
 	if (data.data !== [] && data.data.length > 0 && last_token == data.token){
 	  AddResultsToTable(data);
   }
+  
   // Undo the opacity
   $("#results").css("opacity", "1");
   
