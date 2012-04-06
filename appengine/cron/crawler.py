@@ -41,6 +41,7 @@ class Crawler(webapp.RequestHandler):
       endIndex   = string.find('</td>',startIndex)
       r = string[startIndex:endIndex].strip()
       r = r.replace("&Amp;","&")
+      r = r.replace("&amp;","&")
       r = r.replace("<br />","\n")
       p = re.compile(' *\n *')
       r = p.sub('\n',r)
