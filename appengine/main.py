@@ -40,44 +40,85 @@ class MainPage(webapp.RequestHandler):
 
 class Stats(webapp.RequestHandler):
   def get(self):
+    
+    TIME_MEMCACHE = 86400
+    
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
     
     #Majors
-    cursor.execute("SELECT major, COUNT(major) as total FROM rpidirectory GROUP BY major ORDER BY total DESC LIMIT 20")
-    majors = cursor.fetchall()
-    list_of_majors = []
-    for row in majors:
-      list_of_majors.append((str(row[0]).title(), row[1]))
+    #Check MemCache
+    memcache_key = "stats_major"
+    cached_mem = memcache.get(memcache_key)
+    if cached_mem:
+      list_of_majors = cached_mem
+    else:
+      cursor.execute("SELECT major, COUNT(major) as total FROM rpidirectory GROUP BY major ORDER BY total DESC LIMIT 20")
+      majors = cursor.fetchall()
+      list_of_majors = []
+      for row in majors:
+        list_of_majors.append((str(row[0]).title(), row[1]))
+      
+      #Store it in MemCache
+      memcache.add(memcache_key, list_of_majors, TIME_MEMCACHE)
+    
     
     #Classes - LIMIT 5 to eliminate NULL and NONE values
-    cursor.execute("SELECT year, COUNT(year) as total FROM rpidirectory GROUP BY year ORDER BY total DESC LIMIT 5")
-    classes = cursor.fetchall()
-    list_of_classes = []
-    for row in classes:
-      list_of_classes.append((str(row[0]).title(), row[1]))
+    #Check MemCache
+    memcache_key = "stats_classes"
+    cached_mem = memcache.get(memcache_key)
+    if cached_mem:
+      list_of_classes = cached_mem
+    else:
+      cursor.execute("SELECT year, COUNT(year) as total FROM rpidirectory GROUP BY year ORDER BY total DESC LIMIT 5")
+      classes = cursor.fetchall()
+      list_of_classes = []
+      for row in classes:
+        list_of_classes.append((str(row[0]).title(), row[1]))
+      memcache.add(memcache_key, list_of_classes, TIME_MEMCACHE)
       
     #Faculty - LIMIT 20
-    cursor.execute("SELECT department, COUNT(department) from rpidirectory GROUP BY department ORDER BY COUNT(department) DESC LIMIT 20")
-    faculties = cursor.fetchall()
-    list_of_faculty = []
-    for row in faculties:
-      list_of_faculty.append((str(row[0]).title(), row[1]))
+    #Check MemCache
+    memcache_key = "stats_faculty"
+    cached_mem = memcache.get(memcache_key)
+    if cached_mem:
+      list_of_faculty = cached_mem
+    else:
+      cursor.execute("SELECT department, COUNT(department) from rpidirectory GROUP BY department ORDER BY COUNT(department) DESC LIMIT 20")
+      faculties = cursor.fetchall()
+      list_of_faculty = []
+      for row in faculties:
+        list_of_faculty.append((str(row[0]).title(), row[1]))
+      memcache.add(memcache_key, list_of_faculty, TIME_MEMCACHE)
     
     #First Name Stats
-    cursor.execute("SELECT first_name, COUNT(first_name) as total from rpidirectory WHERE first_name <> 'id=\"singledirectoryentry\">' GROUP BY first_name ORDER BY total DESC LIMIT 20")
-    first_names = cursor.fetchall()
-    list_of_first_names = []
-    for row in first_names:
-      list_of_first_names.append((str(row[0]).title(), row[1]))
+    #Check MemCache
+    memcache_key = "stats_first_name"
+    cached_mem = memcache.get(memcache_key)
+    if cached_mem:
+      list_of_first_names = cached_mem
+    else:
+      cursor.execute("SELECT first_name, COUNT(first_name) as total from rpidirectory WHERE first_name <> 'id=\"singledirectoryentry\">' GROUP BY first_name ORDER BY total DESC LIMIT 20")
+      first_names = cursor.fetchall()
+      list_of_first_names = []
+      for row in first_names:
+        list_of_first_names.append((str(row[0]).title(), row[1]))
+      memcache.add(memcache_key, list_of_first_names, TIME_MEMCACHE)
     
     
     #Last Name Stats
-    cursor.execute("SELECT last_name, COUNT(last_name) as total from rpidirectory  WHERE last_name NOT LIKE '<th>%' GROUP BY last_name ORDER BY total DESC LIMIT 20")
-    last_names = cursor.fetchall()
-    list_of_last_names = []
-    for row in last_names:
-      list_of_last_names.append((str(row[0]).title(), row[1]))
+    #Check MemCache
+    memcache_key = "stats_last_name"
+    cached_mem = memcache.get(memcache_key)
+    if cached_mem:
+      list_of_last_names = cached_mem
+    else:
+      cursor.execute("SELECT last_name, COUNT(last_name) as total from rpidirectory  WHERE last_name NOT LIKE '<th>%' GROUP BY last_name ORDER BY total DESC LIMIT 20")
+      last_names = cursor.fetchall()
+      list_of_last_names = []
+      for row in last_names:
+        list_of_last_names.append((str(row[0]).title(), row[1]))
+      memcache.add(memcache_key, list_of_last_names, TIME_MEMCACHE)
     
     
     #MemCache Stats
