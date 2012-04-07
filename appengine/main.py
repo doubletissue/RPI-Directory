@@ -126,7 +126,7 @@ class Stats(webapp.RequestHandler):
     cached_mem = memcache.get(memcache_key)
     if cached_mem:
       sorted_x = sorted(cached_mem.iteritems(), key=operator.itemgetter(1), reverse=True)
-      list_of_searched_first_names = sorted_x[:10]
+      list_of_searched_first_names = sorted_x[:20]
     else:
       list_of_searched_first_names = None
       
@@ -135,7 +135,7 @@ class Stats(webapp.RequestHandler):
     cached_mem = memcache.get(memcache_key)
     if cached_mem is not None:
       sorted_x = sorted(cached_mem.iteritems(), key=operator.itemgetter(1), reverse=True)
-      list_of_searched_last_names = sorted_x[:10]
+      list_of_searched_last_names = sorted_x[:20]
     else:
       list_of_searched_last_names = None
       
@@ -144,7 +144,7 @@ class Stats(webapp.RequestHandler):
     cached_mem = memcache.get(memcache_key)
     if cached_mem is not None:
       sorted_x = sorted(cached_mem.iteritems(), key=operator.itemgetter(1), reverse=True)
-      list_of_ips = sorted_x[:10]
+      list_of_ips = sorted_x[:20]
     else:
       list_of_ips = None
     
