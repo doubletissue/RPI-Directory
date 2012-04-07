@@ -107,6 +107,7 @@ class Api(webapp.RequestHandler):
       memcache.add(ip,1,time=600)
       
     
+    names = map(str, name.split()[:3])
     #Check memcache for results
     memcache_key = name + ":" + major + ":" + year
     cached_mem = memcache.get(memcache_key)
@@ -179,7 +180,6 @@ class Api(webapp.RequestHandler):
         memcache.set(memcache_key, d)
       
       #Log names searched
-      names = map(str, name.split()[:3])
       if len(names) > 1 and len(names[0]) > 1 and len(names[-1]) > 1:
         #First name
         memcache_key = "stats_first_names"
