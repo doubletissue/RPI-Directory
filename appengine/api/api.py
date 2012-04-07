@@ -136,7 +136,7 @@ class Api(webapp.RequestHandler):
       #Last name
       memcache_key = "stats_last_names"
       cached_mem = memcache.get(memcache_key)
-      if cached_mem:
+      if cached_mem is not None:
         cached_mem[names[-1].title()] += 1
         memcache.set(memcache_key, cached_mem)
       else:
