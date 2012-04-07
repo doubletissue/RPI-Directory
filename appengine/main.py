@@ -15,7 +15,7 @@ class MainPage(webapp.RequestHandler):
     #Check MemCache for number of people in website
     memcache_key = "number_people"
     cached_mem = memcache.get(memcache_key)
-    if cached_mem:
+    if cached_mem is not None:
       number_people = cached_mem
     else:
       #If not, we query Cloud SQL
@@ -51,7 +51,7 @@ class Stats(webapp.RequestHandler):
     #Check MemCache
     memcache_key = "stats_major"
     cached_mem = memcache.get(memcache_key)
-    if cached_mem:
+    if cached_mem is not None:
       list_of_majors = cached_mem
     else:
       cursor.execute("SELECT major, COUNT(major) as total FROM rpidirectory GROUP BY major ORDER BY total DESC LIMIT 20")
@@ -68,7 +68,7 @@ class Stats(webapp.RequestHandler):
     #Check MemCache
     memcache_key = "stats_classes"
     cached_mem = memcache.get(memcache_key)
-    if cached_mem:
+    if cached_mem is not None:
       list_of_classes = cached_mem
     else:
       cursor.execute("SELECT year, COUNT(year) as total FROM rpidirectory GROUP BY year ORDER BY total DESC LIMIT 5")
@@ -82,7 +82,7 @@ class Stats(webapp.RequestHandler):
     #Check MemCache
     memcache_key = "stats_faculty"
     cached_mem = memcache.get(memcache_key)
-    if cached_mem:
+    if cached_mem is not None:
       list_of_faculty = cached_mem
     else:
       cursor.execute("SELECT department, COUNT(department) from rpidirectory GROUP BY department ORDER BY COUNT(department) DESC LIMIT 20")
@@ -111,7 +111,7 @@ class Stats(webapp.RequestHandler):
     #Check MemCache
     memcache_key = "stats_last_name"
     cached_mem = memcache.get(memcache_key)
-    if cached_mem:
+    if cached_mem is not None:
       list_of_last_names = cached_mem
     else:
       cursor.execute("SELECT last_name, COUNT(last_name) as total from rpidirectory  WHERE last_name NOT LIKE '<th>%' GROUP BY last_name ORDER BY total DESC LIMIT 20")
@@ -133,7 +133,7 @@ class Stats(webapp.RequestHandler):
     #Most common last names searched
     memcache_key = "stats_last_names"
     cached_mem = memcache.get(memcache_key)
-    if cached_mem:
+    if cached_mem is not None:
       sorted_x = sorted(cached_mem.iteritems(), key=operator.itemgetter(1), reverse=True)
       list_of_searched_last_names = sorted_x[:10]
     else:
@@ -142,7 +142,7 @@ class Stats(webapp.RequestHandler):
     #List of IPs
     memcache_key = "stats_ip"
     cached_mem = memcache.get(memcache_key)
-    if cached_mem:
+    if cached_mem is not None:
       sorted_x = sorted(cached_mem.iteritems(), key=operator.itemgetter(1), reverse=True)
       list_of_ips = sorted_x[:10]
     else:
