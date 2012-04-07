@@ -79,7 +79,7 @@ class Api(webapp.RequestHandler):
     # Flood Prevention
     ip = str(self.request.remote_addr)
     ipCount = memcache.get(ip)
-    if ipCount:
+    if ipCount is not None:
       if ipCount > 1000:
         d = {}
         d['data'] = 'Quota Exceeded'
@@ -111,7 +111,7 @@ class Api(webapp.RequestHandler):
     ip = str(self.request.remote_addr)
     memcache_key = "stats_ip"
     cached_mem = memcache.get(memcache_key)
-    if cached_mem:
+    if cached_mem is not None:
       cached_mem[ip] += 1
       memcache.set(memcache_key, cached_mem)
     else:
@@ -125,7 +125,7 @@ class Api(webapp.RequestHandler):
       #First name
       memcache_key = "stats_first_names"
       cached_mem = memcache.get(memcache_key)
-      if cached_mem:
+      if cached_mem is not None:
         cached_mem[names[0].title()] += 1
         memcache.set(memcache_key, cached_mem)
       else:
