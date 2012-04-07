@@ -125,6 +125,7 @@ class Api(webapp.RequestHandler):
     cursor = conn.cursor()
 
     #Get the first name and the last name. Ignore other things.
+    names = map(str, name.split()[:3])
     if len(names) == 1:
       #Check for RCS ID
       #logging.debug("Checking RCS ID...")
