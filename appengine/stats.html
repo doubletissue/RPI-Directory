@@ -151,7 +151,7 @@ function drawLastNameChart() {
   chart.draw(data, options);
 }
 
-{% if list_of_searched_first_names and list_of_searched_last_names %}
+{% if list_of_searched_first_names and list_of_searched_last_names and list_of_ips %}
 function drawSearchedFirstNameChart() {
 
   // Create the data table.
@@ -192,6 +192,26 @@ function drawSearchedLastNameChart() {
   chart.draw(data, options);
 }
 
+function drawIPChart() {
+
+  // Create the data table.
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'IP Address');
+  data.addColumn('number', 'Amount');
+  data.addRows([
+    {% for class in list_of_ips %}
+      ['{{ class.0 }}', {{ class.1 }}],
+    {% endfor %}
+  ]);
+
+  // Set chart options
+  var options = {'title':'Top {{ list_of_ips|length }} Active IP Addresses'};
+
+  // Instantiate and draw our chart, passing in some options.
+  var chart = new google.visualization.PieChart(document.getElementById('ip_stats'));
+  chart.draw(data, options);
+}
+
 {% endif %}
 
 		  $(document).ready(function() {
@@ -204,6 +224,7 @@ function drawSearchedLastNameChart() {
 			  {% if list_of_searched_first_names and list_of_searched_last_names %}
 			  drawSearchedFirstNameChart();
 			  drawSearchedLastNameChart();
+			  drawIPChart();
 			  {% endif %}
 			  
 		  });
@@ -217,9 +238,10 @@ function drawSearchedLastNameChart() {
 		  <div id="last_name_stats" class="chart"></div>
 		  <div id="class_stats" class="chart"></div>
 		  <div id="memcache_stats" class="chart"></div>
-		  {% if list_of_searched_first_names and list_of_searched_last_names %}
+		  {% if list_of_searched_first_names and list_of_searched_last_names and list_of_ips %}
 		  <div id="searched_first_names_stats" class="chart"></div>
 		  <div id="searched_last_names_stats" class="chart"></div>
+		  <div id="ip_stats" class="chart"></div>
 		  {% endif %}
 		  <div id="stats">
 		    {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB<br>

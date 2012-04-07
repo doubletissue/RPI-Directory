@@ -107,6 +107,19 @@ class Api(webapp.RequestHandler):
       memcache.add(ip,1,time=600)
     
     #Log results in MemCache for Stats page
+    #IP address
+    ip = str(self.request.remote_addr)
+    memcache_key = "stats_ip"
+    cached_mem = memcache.get(memcache_key)
+    if cached_mem:
+      cached_mem[ip] += 1
+      memcache.set(memcache_key, cached_mem)
+    else:
+      d = defaultdict(int)
+      d[ip] += 1
+      memcache.set(memcache_key, d)
+    
+    #Log names searched
     names = map(str, name.split()[:3])
     if len(names) > 1 and len(names[0]) > 1 and len(names[-1]) > 1:
       #First name

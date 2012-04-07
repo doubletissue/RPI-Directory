@@ -138,6 +138,16 @@ class Stats(webapp.RequestHandler):
       list_of_searched_last_names = sorted_x[:10]
     else:
       list_of_searched_last_names = None
+      
+    #List of IPs
+    memcache_key = "stats_ip"
+    cached_mem = memcache.get(memcache_key)
+    if cached_mem:
+      sorted_x = sorted(cached_mem.iteritems(), key=operator.itemgetter(1), reverse=True)
+      list_of_ips = sorted_x[:10]
+    else:
+      list_of_ips = None
+    
     
     #MemCache Stats
     memcache_stats = memcache.get_stats()
@@ -150,7 +160,8 @@ class Stats(webapp.RequestHandler):
                        'list_of_first_names' : list_of_first_names,
                        'list_of_last_names' : list_of_last_names,
                        'list_of_searched_first_names' : list_of_searched_first_names,
-                       'list_of_searched_last_names' : list_of_searched_last_names
+                       'list_of_searched_last_names' : list_of_searched_last_names,
+                       'list_of_ips' : list_of_ips
                        }
                        
     path = os.path.join(os.path.dirname(__file__), 'stats.html')
