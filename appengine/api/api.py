@@ -148,7 +148,7 @@ class Api(webapp.RequestHandler):
     #Check memcache for results
     memcache_key = name + ":" + major + ":" + year
     cached_mem = memcache.get(memcache_key)
-    if cached_mem:
+    if cached_mem is not None:
       d = {}
       d['data'] = cached_mem
       d['token'] = token
