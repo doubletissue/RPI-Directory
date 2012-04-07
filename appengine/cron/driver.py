@@ -90,7 +90,7 @@ class Driver(webapp.RequestHandler):
 class DriverWorker(webapp.RequestHandler):
   def post(self):
     #logging.info("In DriverWorker")
-    memcache.put("backend","w")
+    memcache.add("backend","w")
     index = cgi.escape(self.request.get('index'))
     crawlPerson(index)
 	
