@@ -79,7 +79,7 @@ class Api(webapp.RequestHandler):
     # Flood Prevention
     ip = str(self.request.remote_addr)
     ipCount = memcache.get(ip)
-    if ipCount:
+    if ipCount is not None:
       if ipCount > 1000:
         d = {}
         d['data'] = 'Quota Exceeded'
