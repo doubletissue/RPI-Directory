@@ -9,6 +9,29 @@ var cached_results = {};
 var local_storage_supported;
 var query = '';
 
+//Chart data
+var chart_data;
+var major_chart;
+
+// Set chart options
+var chart_options = {
+  'title':'Search Statistics',
+  'animation':{
+    duration: 1000,
+    easing: 'out',
+  }
+};
+
+
+function drawSidebarChart() {
+  chart_data.removeRows(0, chart_data.getNumberOfRows());
+  chart_data.addRows([
+    ['Hits', Math.floor(Math.random()*100)],
+    ['Misses', 7],
+  ]);
+  major_chart.draw(chart_data, chart_options);
+}
+
 function parseServerData(data){
   // Check if quota exceeded
   if (data.data !== [] && data.data == "Quota Exceeded"){
@@ -96,8 +119,12 @@ function AddResultsToTable(data){
     table_row += "</tr>";
     $("#results").find("tbody").append(table_row);
   });
+  
   $("#results").trigger("update");
   $("#results").css("opacity", "1");
+  
+  //Update graph
+  drawSidebarChart();
 }
 
 //Function to animate text box:
@@ -177,4 +204,13 @@ $(document).ready(function() {
 	
 	//Detect LocalStorage (HTML5 Cache)
 	local_storage_supported = DetectLocalStorage();
+	
+	//Chart
+	chart_data = new google.visualization.DataTable();
+  chart_data.addColumn('string', 'Major');
+  chart_data.addColumn('number', 'Amount');
+  
+  // Instantiate and draw our chart, passing in some options.
+  major_chart = new google.visualization.PieChart(document.getElementById('major_stats'));
+  
 });
