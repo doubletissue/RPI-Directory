@@ -2,6 +2,7 @@
 // RCOS RPI Directory JavaScript
 
 var delay = 60;
+var keybind_delay = Math.floor(100 + Math.random() * 100);
 var padding = '15%';
 var last_token = 1;
 var cached_results = {};
@@ -129,7 +130,7 @@ function DetectLocalStorage(){
 function callServer(keyword){
   $.ajax({
     type: "GET",
-    url: "/api?q=" + encodeURI(keyword) + "&token=" + last_token,
+    url: "/api?q=" + encodeURI(keyword) + "&token=" + last_token + "&delay=" + keybind_delay,
     async: true,
     dataType: "json",
     success: parseServerData
@@ -166,7 +167,7 @@ $(document).ready(function() {
   		  animate(false);
 	    }
     }
-  }, 100);
+  }, keybind_delay);
   
   //Make table sortable
   $("#results").tablesorter();
