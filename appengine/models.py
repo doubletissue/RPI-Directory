@@ -21,6 +21,7 @@ class Person(db.Model):
   campus_mailstop = db.StringProperty(multiline=True)
   mailing_address = db.StringProperty(multiline=True)
   date_crawled    = db.DateTimeProperty(auto_now=True)
+  directory_id    = 0
   
   @staticmethod
   def buildPerson(d):
@@ -69,6 +70,8 @@ class Person(db.Model):
       person.campus_mailstop = d['campus_mailstop']
     if 'mailing_address' in d:
       person.mailing_address = d['mailing_address']
+    if 'directory_id' in d:
+      person.directory_id = d['directory_id']
     
     return person
   
@@ -121,6 +124,9 @@ class Person(db.Model):
     
     if p.mailing_address is not None:
       d['mailing_address'] = p.mailing_address.title()
+    
+    if p.directory_id is not None:
+      d['directory_id'] = p.directory_id
     
     return d
   

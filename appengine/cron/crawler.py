@@ -10,7 +10,7 @@ class Crawler(webapp.RequestHandler):
     self.response.headers['Content-Type'] = 'text/plain'
     d = self.parseData(cgi.escape(self.request.get('key')))
     for k in d.keys():
-      self.response.out.write(k + " --> " + d[k] + '\n')
+      self.response.out.write(k + " --> " + str(d[k]) + '\n')
     self.response.out.write("-------------------------")
   
   def getMap(self, key):
@@ -147,7 +147,9 @@ class Crawler(webapp.RequestHandler):
 
   def parseData(self,key):
     s = self.getPage(key)
-    return self.findStuff(s)
+    d = self.findStuff(s)
+    d['directory_id'] = int(key)
+    return d
 
 application = webapp.WSGIApplication(
   [

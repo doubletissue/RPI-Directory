@@ -15,18 +15,22 @@ function parseServerData(data){
     return;
   }
   
-	if (data.data !== [] && data.data.length > 0 && last_token == data.token){
+  //Empty list
+  if (data.data.length == 0){
+    $("#results").css("opacity", "1");
+  }
+  
+	if (data.data.length > 0 && Math.abs(last_token - data.token) < 2){
 	  AddResultsToTable(data);
   }
   
-  // Undo the opacity
-  $("#results").css("opacity", "1");
+  
   
   // Cache the results
-  cached_results[data.name] = data;
+  cached_results[data.q] = data;
   if (local_storage_supported){
     try {
-      localStorage.setItem(data.name, JSON.stringify(data));
+      localStorage.setItem(data.q, JSON.stringify(data));
     }catch (e){
       if (e == QUOTA_EXCEEDED_ERR) {
         // oh noes, out of 5 MB of localstorage...clear it out!
@@ -92,12 +96,13 @@ function AddResultsToTable(data){
     $("#results").find("tbody").append(table_row);
   });
   $("#results").trigger("update");
+  $("#results").css("opacity", "1");
 }
 
 //Function to animate text box:
 // Send true to animate it up, false to animate it down
 function animate(flag){
-  if (flag){
+  if (flag){    
     $("#qr").hide();
     $("#container").animate({
       marginTop: '0%'
@@ -106,7 +111,7 @@ function animate(flag){
     $("#container").animate({
       marginTop: padding,
     }, delay * 1.3);
-  $("#qr").show();
+    $("#qr").show();
   }
 }
 
@@ -124,7 +129,7 @@ function DetectLocalStorage(){
 function callServer(keyword){
   $.ajax({
     type: "GET",
-    url: "/api?name=" + encodeURI(keyword) + "&token=" + last_token,
+    url: "/api?q=" + encodeURI(keyword) + "&token=" + last_token,
     async: true,
     dataType: "json",
     success: parseServerData
@@ -132,30 +137,6 @@ function callServer(keyword){
 }
 
 $(document).ready(function() {
-  $("#keyword").keyup(function(event){
-    var keyword = $("#keyword").val().toLowerCase();
-	  var margin = $("#container").css("margin-top");
-	  
-    // Check for enter keypress
-	  if (event.which == 13) {
-	     event.preventDefault();
-	     return;
-	  }
-    
-    if (keyword != ''){
-	    //Animate text box up
-   	  if ( margin != "0%" || margin != "0px" ){
-   	    animate(true);
-   	  }
- 	    $("#results").show();
- 	    // Check cache
- 	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
- 	      parseCachedData(keyword);
- 	      $("#results").css("opacity", "1");
- 	    }
-    }
-  });
-  
 	$("#keyword").bindWithDelay("keyup", function(event) {
 	  var keyword = $("#keyword").val().toLowerCase();
 	  var margin = $("#container").css("margin-top");
@@ -163,6 +144,13 @@ $(document).ready(function() {
     // If a non-blank entry
 	  if (keyword != ''){ 	   
  	    last_token += 1;
+ 	    
+ 	    //Animate text box up
+   	  if ( margin != "0%" || margin != "0px" ){
+   	    animate(true);
+   	  }
+ 	    
+ 	    $("#results").show();
  	    
  	    // Check cache
  	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
@@ -178,7 +166,7 @@ $(document).ready(function() {
   		  animate(false);
 	    }
     }
-  }, 250);
+  }, 50);
   
   //Make table sortable
   $("#results").tablesorter();
