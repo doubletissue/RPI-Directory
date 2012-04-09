@@ -23,10 +23,10 @@ function parseServerData(data){
   $("#results").css("opacity", "1");
   
   // Cache the results
-  cached_results[data.name] = data;
+  cached_results[data.q] = data;
   if (local_storage_supported){
     try {
-      localStorage.setItem(data.name, JSON.stringify(data));
+      localStorage.setItem(data.q, JSON.stringify(data));
     }catch (e){
       if (e == QUOTA_EXCEEDED_ERR) {
         // oh noes, out of 5 MB of localstorage...clear it out!
@@ -98,6 +98,9 @@ function AddResultsToTable(data){
 // Send true to animate it up, false to animate it down
 function animate(flag){
   if (flag){
+    // Get rid of current results		
+    $("#results").find("tbody").empty();
+    
     $("#qr").hide();
     $("#container").animate({
       marginTop: '0%'
