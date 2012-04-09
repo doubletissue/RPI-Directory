@@ -42,6 +42,7 @@ def putResult(d):
   conn.close()
 
 def crawlPerson(index):
+  logging.info("In CrawlPerson")
   result = Crawler().getMap(index)
   
   if 'error' in result.keys():
@@ -54,6 +55,7 @@ def crawlPerson(index):
       memcache.set("index", 1, 86400)
       SearchPosition(key_name="index", position=1).put()
   else:
+    logging.info("putting results")
     putResult(result)
 
 class Driver(webapp.RequestHandler):
@@ -71,9 +73,9 @@ class Driver(webapp.RequestHandler):
       memcache.add("index", index, 86400)
   
     #Spawn tasks
-    for i in range(index, index + NUM_THREADS):
-      taskqueue.add(url='/crawl/worker', params={'index': i}) #, target='backend'
-    #crawlPerson(index)
+    #for i in range(index, index + NUM_THREADS):
+      #taskqueue.add(url='/crawl/worker', params={'index': i}) #, target='backend'
+    crawlPerson(index)
       
     #Update Memcache
     if not memcache.incr("index"):
@@ -89,8 +91,11 @@ class Driver(webapp.RequestHandler):
 
 class DriverWorker(webapp.RequestHandler):
   def post(self):
-    #logging.info("In DriverWorker")
-    memcache.add("backend","w")
+    logging.info("In DriverWorker")
+    index = cgi.escape(self.request.get('index'))
+    
+  def get(self):
+    logging.info("In DriverWorker")
     index = cgi.escape(self.request.get('index'))
     crawlPerson(index)
 	
