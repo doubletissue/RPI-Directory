@@ -59,10 +59,10 @@ def crawlPerson(index):
     logging.info("putting results")
     putResult(result)
   
-  if index > 15000:
-      logging.info("At end of database, reseting")
-      memcache.set("index", 1, 86400)
-      SearchPosition(key_name="index", position=1).put()
+  if int(index) > 15000:
+    logging.info("At end of database, reseting " + str(index))
+    memcache.set("index", 1, 86400)
+    SearchPosition(key_name="index", position=1).put()
 
 class Driver(webapp.RequestHandler):
   def get(self):
@@ -121,7 +121,8 @@ class FixBroken(webapp.RequestHandler):
 	
 application = webapp.WSGIApplication([
   ("/crawl/main", Driver),
-  ("/crawl/worker", DriverWorker)])
+  ("/crawl/worker", DriverWorker),
+  ("/crawl/fix", FixBroken)])
 
 def main():
   run_wsgi_app(application)

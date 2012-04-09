@@ -3,3 +3,8 @@ cron:
   url: /crawl/main
   schedule: every day 02:00
   timezone: US/Eastern
+  
+- description: daily fix update
+  url: /crawl/fix
+  schedule: every day 02:30
+  timezone: US/Eastern
