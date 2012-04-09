@@ -89,6 +89,7 @@ function AddResultsToTable(data){
     $("#results").find("tbody").append(table_row);
   });
   $("#results").trigger("update");
+  $("#results").css("opacity", "1");
 }
 
 //Function to animate text box:
@@ -103,7 +104,7 @@ function animate(flag){
     $("#container").animate({
       marginTop: padding,
     }, delay * 1.3);
-  $("#qr").show();
+    $("#qr").show();
   }
 }
 
@@ -150,8 +151,6 @@ $(document).ready(function() {
  	    }else{  // Dim results and call the API
  	      $("#results").css("opacity", ".25");
  	      callServer(keyword);
- 	      // Undo the opacity
-        $("#results").css("opacity", "1");
  	    }
 	  }else if (keyword == ''){ // Entry is blank
 	    $("#results").hide();
@@ -160,7 +159,7 @@ $(document).ready(function() {
   		  animate(false);
 	    }
     }
-  }, 250);
+  }, 50);
   
   //Make table sortable
   $("#results").tablesorter();
