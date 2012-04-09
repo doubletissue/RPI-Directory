@@ -94,10 +94,7 @@ function AddResultsToTable(data){
 //Function to animate text box:
 // Send true to animate it up, false to animate it down
 function animate(flag){
-  if (flag){
-    // Get rid of current results		
-    $("#results").find("tbody").empty();
-    
+  if (flag){    
     $("#qr").hide();
     $("#container").animate({
       marginTop: '0%'
@@ -170,7 +167,6 @@ $(document).ready(function() {
  	    }else{  // Dim results and call the API
  	      $("#results").css("opacity", ".25");
  	      callServer(keyword);
- 	      
  	      // Undo the opacity
         $("#results").css("opacity", "1");
  	    }
