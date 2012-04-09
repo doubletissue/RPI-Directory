@@ -73,9 +73,6 @@ def parse_person_from_sql(raw_row):
 
   return output
 
-class NewApi(webapp.RequestHandler):
-  pass
-
 def parse_int(i, default):
   if i == '':
     return default
@@ -107,7 +104,7 @@ def new_call(conn, queries, page_num, page_size):
   
   return cursor
 
-def old_call(conn, names, page_num):
+def old_call(conn, names, page_num, page_size):
   cursor = conn.cursor()
 
   #Get the first name and the last name. Ignore other things.
@@ -115,37 +112,42 @@ def old_call(conn, names, page_num):
     #Check for RCS ID
     #logging.debug("Checking RCS ID...")
     rcsid_candidate = names[0]
-    cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE rcsid = %s LIMIT %s,%s", (rcsid_candidate, (page_num-1)*20, QUERY_LIMIT))
+    cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE rcsid = %s LIMIT %s,%s", (rcsid_candidate, (page_num-1)*20, page_size))
 
     if cursor.rowcount == 0:
       #Check for partial name match
       #logging.debug("No RCS ID, checking name...")
       name_part = names[0] + '%'
-      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s LIMIT %s,%s", (name_part, name_part, (page_num-1)*20, QUERY_LIMIT))
+      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s LIMIT %s,%s", (name_part, name_part, (page_num-1)*20, page_size))
   elif len(names) > 1:
     #Check for exact name match
     #logging.debug("Checking exact name match...")
     first_name = names[0]
     last_name = names[-1]
-    cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name = %s AND last_name = %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, QUERY_LIMIT))
+    cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name = %s AND last_name = %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, page_size))
     
     if cursor.rowcount == 0:
       #Check for partial name match
       #logging.debug("No exact name match, checking partial name match...")
       first_name = names[0] + '%'
       last_name = names[-1] + '%'
-      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, QUERY_LIMIT))
+      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, page_size))
 
   return cursor
 
 class Api(webapp.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
-    search    = urllib.unquote(cgi.escape(self.request.get('q')).lower()[:100])
-    name      = urllib.unquote(cgi.escape(self.request.get('name')).lower()[:50])
+    search    = str(urllib.unquote(cgi.escape(self.request.get('q')).lower()[:100]))
+    name      = str(urllib.unquote(cgi.escape(self.request.get('name')).lower()[:50]))
     token     = urllib.unquote(cgi.escape(self.request.get('token')))
     page_num  = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
+
+    if search == "":
+      call_type = "old"
+    else:
+      call_type = "new"
     
     if page_size > 20:
       page_size = 20
@@ -179,22 +181,26 @@ class Api(webapp.RequestHandler):
       memcache.replace(ip,ipCount+1,time=600)
     else:
       memcache.add(ip,1,time=600)
-     
-    
-    queries = map(str, search.split())
-    #Check memcache for results
-    memcache_key = search
-    cached_mem = memcache.get(memcache_key)
-    if cached_mem is not None:
-      d = {}
-      d['data'] = cached_mem
-      d['token'] = token
-      if search == '':
-        call_type = "old"
-        d['name'] = name
-      else:
-        call_type = "new"
-        d['q'] = search
+
+    if call_type == "old":
+      queries = map(str, name.split())
+    elif call_type == "new":
+      queries = map(str, search.split())
+      #Check memcache for results
+      memcache_key = search
+      cached_mem = memcache.get(memcache_key)
+      if cached_mem is not None:
+        d = {}
+        d['data'] = cached_mem
+        d['token'] = token
+        if call_type == "old":
+          d['name'] = name
+        elif call_type == "new":
+          d['q'] = search
+        else:
+          raise
+    else:
+      raise
       
       s = json.dumps(d)
       self.response.out.write(s)
@@ -206,7 +212,7 @@ class Api(webapp.RequestHandler):
     if call_type == "old":
       cursor = old_call(conn, queries, page_num, page_size)
     elif call_type == "new":
-      cursor = new_call(conn, queries, page_num)
+      cursor = new_call(conn, queries, page_num, page_size)
     else:
       raise
     
