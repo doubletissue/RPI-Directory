@@ -129,30 +129,6 @@ function callServer(keyword){
 }
 
 $(document).ready(function() {
-  $("#keyword").keyup(function(event){
-    var keyword = $("#keyword").val().toLowerCase();
-	  var margin = $("#container").css("margin-top");
-	  
-    // Check for enter keypress
-	  if (event.which == 13) {
-	     event.preventDefault();
-	     return;
-	  }
-    
-    if (keyword != ''){
-	    //Animate text box up
-   	  if ( margin != "0%" || margin != "0px" ){
-   	    animate(true);
-   	  }
- 	    $("#results").show();
- 	    // Check cache
- 	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
- 	      parseCachedData(keyword);
- 	      $("#results").css("opacity", "1");
- 	    }
-    }
-  });
-  
 	$("#keyword").bindWithDelay("keyup", function(event) {
 	  var keyword = $("#keyword").val().toLowerCase();
 	  var margin = $("#container").css("margin-top");
@@ -177,7 +153,7 @@ $(document).ready(function() {
   		  animate(false);
 	    }
     }
-  }, 250);
+  }, 100);
   
   //Make table sortable
   $("#results").tablesorter();
