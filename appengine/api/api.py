@@ -73,22 +73,79 @@ def parse_person_from_sql(raw_row):
 
   return output
 
-class NewApi(webapp.RequestHandler):
-  pass
-
 def parse_int(i, default):
   if i == '':
     return default
   else:
     return int(i)
 
+def new_call(conn, queries, page_num, page_size):
+  # If not, we query Cloud SQL
+  cursor = conn.cursor()
+
+  query = 'SELECT ' + ",".join(row_attributes) + ' from rpidirectory WHERE ' 
+
+  for word in queries:
+    query += '('
+    for field in query_attributes:
+      query += field + ' LIKE ' + "'%" + word + "%'"
+      if field is not query_attributes[-1]:
+        query += ' OR '
+    query += ')'
+    if word is not queries[-1]:
+      query += ' AND '
+      
+  query += ' ORDER BY first_name'
+  query += ' LIMIT ' + str((page_num-1)*page_size) + ',' + str(page_size)
+  
+  logging.debug(query)
+  cursor.execute(query)
+  return cursor
+
+def old_call(conn, names, page_num, page_size):
+  cursor = conn.cursor()
+
+  #Get the first name and the last name. Ignore other things.
+  if len(names) == 1:
+    #Check for RCS ID
+    #logging.debug("Checking RCS ID...")
+    rcsid_candidate = names[0]
+    cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE rcsid = %s LIMIT %s,%s", (rcsid_candidate, (page_num-1)*20, page_size))
+
+    if cursor.rowcount == 0:
+      #Check for partial name match
+      #logging.debug("No RCS ID, checking name...")
+      name_part = names[0] + '%'
+      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s LIMIT %s,%s", (name_part, name_part, (page_num-1)*20, page_size))
+  elif len(names) > 1:
+    #Check for exact name match
+    #logging.debug("Checking exact name match...")
+    first_name = names[0]
+    last_name = names[-1]
+    cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name = %s AND last_name = %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, page_size))
+    
+    if cursor.rowcount == 0:
+      #Check for partial name match
+      #logging.debug("No exact name match, checking partial name match...")
+      first_name = names[0] + '%'
+      last_name = names[-1] + '%'
+      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, page_size))
+
+  return cursor
+
 class Api(webapp.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
-    search    = urllib.unquote(cgi.escape(self.request.get('q')).lower()[:100])
+    search    = str(urllib.unquote(cgi.escape(self.request.get('q')).lower()[:100]))
+    name      = str(urllib.unquote(cgi.escape(self.request.get('name')).lower()[:50]))
     token     = urllib.unquote(cgi.escape(self.request.get('token')))
     page_num  = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
+
+    if search == "":
+      call_type = "old"
+    else:
+      call_type = "new"
     
     if page_size > 20:
       page_size = 20
@@ -104,13 +161,13 @@ class Api(webapp.RequestHandler):
         d['q'] = search
         s = json.dumps(d)
         self.response.out.write(s)
-        
+
         ban_time = 600 + 60 * 2 ** ( (ipCount-1000) )
         if ban_time > 7*24*60*60:
           ban_time = 7*24*60*60
         logging.info('Quota exceeded for ' + ip + ', count at ' + str(ipCount) + ', banned for ' + str(ban_time))
         memcache.replace(ip,ipCount+1,time=ban_time)
-        
+
         if (ipCount - 1001) % 100 == 0:
           message = mail.EmailMessage(sender="IP Banning <ip-logger@rpidirectory.appspotmail.com>",
                                       subject="RPIDirectory IP " + ip + " Banned")
@@ -122,45 +179,32 @@ class Api(webapp.RequestHandler):
       memcache.replace(ip,ipCount+1,time=600)
     else:
       memcache.add(ip,1,time=600)
+
+    if call_type == "old":
+      queries = map(str, name.split())
+    elif call_type == "new":
+      queries = map(str, search.split())
+      #Check memcache for results
+      memcache_key = ":".join(sorted(search.split()))
+      cached_mem = memcache.get(memcache_key)
+      if cached_mem is not None:
+        d = {}
+        d['data'] = cached_mem
+        d['token'] = token
+        d['q'] = search
+        s = json.dumps(d)
+        self.response.out.write(s)
+        return
       
-    
-    queries = map(str, search.split())
-    #Check memcache for results
-    memcache_key = ":".join(sorted(search.split()))
-    cached_mem = memcache.get(memcache_key)
-    if cached_mem is not None:
-      d = {}
-      d['data'] = cached_mem
-      d['token'] = token
-      d['q'] = search
-      
-      s = json.dumps(d)
-      self.response.out.write(s)
-      return
-    
     # If not, we query Cloud SQL
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
-    cursor = conn.cursor()
-    
 
-    query = 'SELECT ' + ",".join(row_attributes) + ' from rpidirectory WHERE ' 
-
-    for word in queries:
-      query += '('
-      for field in query_attributes:
-        query += field + ' LIKE ' + "'%" + word + "%'"
-        if field is not query_attributes[-1]:
-          query += ' OR '
-      query += ')'
-      if word is not queries[-1]:
-        query += ' AND '
-        
-    query += ' ORDER BY first_name'
-    query += ' LIMIT ' + str((page_num-1)*page_size) + ',' + str(page_size)
-    
-    logging.debug(query)
-    
-    cursor.execute(query)
+    if call_type == "old":
+      cursor = old_call(conn, queries, page_num, page_size)
+    elif call_type == "new":
+      cursor = new_call(conn, queries, page_num, page_size)
+    else:
+      raise
     
     d = {}
     l = []
@@ -215,10 +259,10 @@ class Api(webapp.RequestHandler):
     d['q'] = search
     
     #Add to memcache
-    memcache_key = ":".join(sorted(search.split()))
-    memcache.add(memcache_key, l, 518400)
-    
-    logging.debug("Cache miss, adding " + search + " to MemCache")
+    if call_type == "new":
+      memcache_key = ":".join(sorted(search.split()))
+      memcache.add(memcache_key, l, 518400)
+      logging.debug("Cache miss, adding " + memcache_key + " to MemCache")
     
     s = json.dumps(d)
     self.response.out.write(s)

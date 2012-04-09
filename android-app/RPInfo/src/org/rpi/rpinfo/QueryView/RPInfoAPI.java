@@ -27,7 +27,7 @@ public class RPInfoAPI {
 	public static final int DEFAULT_NUM_RESULTS = 20;	
 	private static final String TAG = "RPInfoAPI";
 	private static final String URLBASE = "http://www.rpidirectory.appspot.com/api";
-	private static final String PARAM_NAME = "name";
+	private static final String PARAM_SEARCH_TEXT = "q";
 	private static final String PARAM_PAGE = "page_num";
 	private static final String PARAM_NUM_RESULTS = "page_size";
 	private static final ResultsCache cache = new ResultsCache();
@@ -118,7 +118,7 @@ public class RPInfoAPI {
 					
 					//Prepare the URL parameters
 					HashMap<String, String> params = new HashMap<String, String>();
-					params.put(PARAM_NAME, searchTerm);
+					params.put(PARAM_SEARCH_TEXT, searchTerm);
 					params.put(PARAM_PAGE, Integer.toString(page));
 					params.put(PARAM_NUM_RESULTS, Integer.toString(numResults));
 					
