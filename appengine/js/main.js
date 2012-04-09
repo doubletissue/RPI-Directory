@@ -98,9 +98,6 @@ function AddResultsToTable(data){
 // Send true to animate it up, false to animate it down
 function animate(flag){
   if (flag){
-    // Get rid of current results		
-    $("#results").find("tbody").empty();
-    
     $("#qr").hide();
     $("#container").animate({
       marginTop: '0%'
