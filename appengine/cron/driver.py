@@ -20,7 +20,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 _INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
-NUM_THREADS = 1000
+NUM_THREADS = 100
 
 #Creates a person and stores it
 def putResult(d):
@@ -106,19 +106,6 @@ class DriverWorker(webapp.RequestHandler):
     index = cgi.escape(self.request.get('index'))
     crawlPerson(index)
 	
-class FixBroken(webapp.RequestHandler):
-  def get(self):
-    logging.info("Fixing Broken Ones...")
-    conn = rdbms.connect(instance=_INSTANCE_NAME, database="rpidirectory")
-    cursor = conn.cursor()
-    query = 'SELECT directory_id from rpidirectory where first_name LIKE "%>%"'
-    cursor.execute(query)
-    logging.info("Found " + str(cursor.rowcount) + " broken entries")
-    if cursor.rowcount > 0:
-      for row in cursor.fetchall():
-        taskqueue.add(url='/crawl/worker', params={'index': str(row[0])}) 
-    conn.close()
-  
 class FixBroken(webapp.RequestHandler):
   def get(self):
     logging.info("Fixing Broken Ones...")
