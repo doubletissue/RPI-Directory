@@ -106,6 +106,19 @@ class DriverWorker(webapp.RequestHandler):
     index = cgi.escape(self.request.get('index'))
     crawlPerson(index)
 	
+class FixBroken(webapp.RequestHandler):
+  def get(self):
+    logging.info("Fixing Broken Ones...")
+    conn = rdbms.connect(instance=_INSTANCE_NAME, database="rpidirectory")
+    cursor = conn.cursor()
+    query = 'SELECT directory_id from rpidirectory where first_name LIKE "%>%"'
+    cursor.execute(query)
+    if cursor.rowcount > 0:
+      for row in cursor.fetchall():
+        taskqueue.add(url='/crawl/worker', params={'index': str(row[0])}) 
+    conn.close()
+    
+	
 application = webapp.WSGIApplication([
   ("/crawl/main", Driver),
   ("/crawl/worker", DriverWorker)])
