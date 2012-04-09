@@ -20,7 +20,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 _INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
-NUM_THREADS = 1
+NUM_THREADS = 100
 
 #Creates a person and stores it
 def putResult(d):
@@ -35,8 +35,9 @@ def putResult(d):
     
   conn = rdbms.connect(instance=_INSTANCE_NAME, database="rpidirectory")
   cursor = conn.cursor()
-  query = 'REPLACE INTO rpidirectory (`name`, `campus_mailstop`, `department`, `email`, `fax`, `first_name`, `homepage`, `last_name`, `mailing_address`, `major`, `office_location`, `phone`, `rcsid`, `title`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-  args = (person.rcsid, person.campus_mailstop, person.department, person.email, person.fax, person.first_name, person.homepage, person.last_name, person.mailing_address, person.major, person.office_location, person.phone, person.rcsid, person.title, person.year)
+  query = 'REPLACE INTO rpidirectory (`name`, `campus_mailstop`, `department`, `email`, `fax`, `first_name`, `homepage`, `last_name`, `mailing_address`, `major`, `office_location`, `phone`, `rcsid`, `title`, `year`, `directory_id`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+  args = (person.rcsid, person.campus_mailstop, person.department, person.email, person.fax, person.first_name, person.homepage, person.last_name, person.mailing_address, person.major, person.office_location, person.phone, person.rcsid, person.title, person.year, str(person.directory_id))
+  logging.info(query)
   logging.info(repr(args))
   cursor.execute(query, args)
   conn.close()
@@ -73,13 +74,13 @@ class Driver(webapp.RequestHandler):
       memcache.add("index", index, 86400)
   
     #Spawn tasks
-    #for i in range(index, index + NUM_THREADS):
-      #taskqueue.add(url='/crawl/worker', params={'index': i}) #, target='backend'
-    crawlPerson(index)
+    for i in range(index, index + NUM_THREADS):
+      taskqueue.add(url='/crawl/worker', params={'index': i}) #, target='backend'
+      #Update Memcache
+      if not memcache.incr("index"):
+        logging.error("Memcache set failed")
+    #crawlPerson(index)
       
-    #Update Memcache
-    if not memcache.incr("index"):
-      logging.error("Memcache set failed")
     
     #Update Datastore
     index_from_ds = SearchPosition.get_by_key_name("index")
@@ -93,6 +94,7 @@ class DriverWorker(webapp.RequestHandler):
   def post(self):
     logging.info("In DriverWorker")
     index = cgi.escape(self.request.get('index'))
+    crawlPerson(index)
     
   def get(self):
     logging.info("In DriverWorker")
