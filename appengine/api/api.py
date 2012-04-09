@@ -82,7 +82,7 @@ def parse_int(i, default):
   else:
     return int(i)
 
-def new_call(conn, queries):
+def new_call(conn, queries, page_num, page_size):
   # If not, we query Cloud SQL
   cursor = conn.cursor()
 
@@ -107,7 +107,7 @@ def new_call(conn, queries):
   
   return cursor
 
-def old_call(conn, names):
+def old_call(conn, names, page_num):
   cursor = conn.cursor()
 
   #Get the first name and the last name. Ignore other things.
@@ -189,7 +189,7 @@ class Api(webapp.RequestHandler):
       d = {}
       d['data'] = cached_mem
       d['token'] = token
-      if q == '':
+      if search == '':
         call_type = "old"
         d['name'] = name
       else:
@@ -204,9 +204,9 @@ class Api(webapp.RequestHandler):
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
 
     if call_type == "old":
-      cursor = old_call(conn, queries)
+      cursor = old_call(conn, queries, page_num, page_size)
     elif call_type == "new":
-      cursor = new_call(conn, queries)
+      cursor = new_call(conn, queries, page_num)
     else:
       raise
     
