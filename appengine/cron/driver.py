@@ -47,22 +47,22 @@ def crawlPerson(index):
   result = Crawler().getMap(index)
   
   if 'error' in result.keys():
-    logging.error("error at index" + str(index) + ", error is " + result['error'])
+    logging.warn("error at index" + str(index) + ", error is " + result['error'])
     if result['error'] == 'page_not_found':
-      logging.error("Invalid index: " + str(index))
+      logging.warn("Invalid index: " + str(index))
       raise Exception()
-    #if result['error'] == 'end of database':
-      #logging.error("Index out of range: " + str(index))
-      #memcache.set("index", 1, 86400)
-      #SearchPosition(key_name="index", position=1).put()
+    if result['error'] == 'end of database':
+      logging.warn("Index out of range: " + str(index))
+      memcache.set("index", 1, 86400)
+      SearchPosition(key_name="index", position=1).put()
   else:
     logging.info("putting results")
     putResult(result)
   
-  if int(index) > 15000:
-    logging.info("At end of database, reseting " + str(index))
-    memcache.set("index", 1, 86400)
-    SearchPosition(key_name="index", position=1).put()
+  #if int(index) > 15000:
+    #logging.info("At end of database, reseting " + str(index))
+    #memcache.set("index", 1, 86400)
+    #SearchPosition(key_name="index", position=1).put()
 
 class Driver(webapp.RequestHandler):
   def get(self):

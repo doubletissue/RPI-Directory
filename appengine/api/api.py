@@ -192,7 +192,6 @@ class Api(webapp.RequestHandler):
         d['data'] = cached_mem
         d['token'] = token
         d['q'] = search
-      
         s = json.dumps(d)
         self.response.out.write(s)
         return
