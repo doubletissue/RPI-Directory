@@ -9,27 +9,40 @@ var cached_results = {};
 var local_storage_supported;
 var query = '';
 
-//Chart data
-var chart_data;
-var major_chart;
+//Chart data and charts
+var class_chart_data, department_chart_data;
+var major_chart, department_chart;
 
-// Set chart options
-var chart_options = {
-  'title':'Search Statistics',
-  'animation':{
-    duration: 1000,
-    easing: 'out',
-  }
-};
+function resetCharts(){
+  //Reset chart
+  class_chart_data.removeRows(0, class_chart_data.getNumberOfRows());
+  department_chart_data.removeRows(0, department_chart_data.getNumberOfRows());
+}
 
-
-function drawSidebarChart() {
-  chart_data.removeRows(0, chart_data.getNumberOfRows());
-  chart_data.addRows([
-    ['Hits', Math.floor(Math.random()*100)],
-    ['Misses', 7],
-  ]);
-  major_chart.draw(chart_data, chart_options);
+function redrawCharts(class_chart_data, department_chart_data){
+  // Set class chart options
+  var class_chart_options = {
+    'title':'Class/Positions in Results',
+    'height': 300,
+    'animation':{
+      duration: 250,
+      easing: 'out',
+    }
+  };
+  
+  var department_chart_options = {
+    'title':'Departments in Results',
+    'height': 300,
+    'animation':{
+      duration: 250,
+      easing: 'out',
+    }
+  };
+  
+  //Update graphs
+  major_chart.draw(class_chart_data, class_chart_options);
+  department_chart.draw(department_chart_data, department_chart_options);
+  
 }
 
 function parseServerData(data){
@@ -47,8 +60,6 @@ function parseServerData(data){
 	if (data.data.length > 0 && Math.abs(last_token - data.token) < 2){
 	  AddResultsToTable(data);
   }
-  
-  
   
   // Cache the results
   cached_results[data.q] = data;
@@ -85,6 +96,12 @@ function AddResultsToTable(data){
   // Get rid of current results		
   $("#results").find("tbody").empty();
   
+  resetCharts();
+  
+  //Track data
+  var classes = {};
+  var departments = {};
+  
   // Loop through JSON
   $.each(data.data, function(i, person){
     var table_row = "<tr>";
@@ -118,13 +135,39 @@ function AddResultsToTable(data){
     table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" +  email + "</td>");
     table_row += "</tr>";
     $("#results").find("tbody").append(table_row);
+    
+    if (person.year == undefined){
+      person.year = "N/A";
+    }
+    
+    //Add to classes chart
+    if (classes[person.year] == undefined){
+      classes[person.year] = 1;
+    }else{
+      classes[person.year] += 1;
+    }
+    
+    //Add to departments chart
+    if (departments[person.major] == undefined){
+      departments[person.major] = 1;
+    }else{
+      departments[person.major] += 1;
+    }
+    
   });
   
   $("#results").trigger("update");
   $("#results").css("opacity", "1");
   
-  //Update graph
-  drawSidebarChart();
+  for (key in classes){
+    class_chart_data.addRow([key, classes[key]]);
+  }
+  
+  for (key in departments){
+    department_chart_data.addRow([key, departments[key]]);
+  }
+  
+  redrawCharts(class_chart_data, department_chart_data);
 }
 
 //Function to animate text box:
@@ -132,6 +175,7 @@ function AddResultsToTable(data){
 function animate(flag){
   if (flag){    
     $("#qr").hide();
+    $("#sidebar").show();
     $("#container").animate({
       marginTop: '0%'
     }, delay, function(){ $("#container").css("margin-top","0%"); });
@@ -139,6 +183,7 @@ function animate(flag){
     $("#container").animate({
       marginTop: padding,
     }, delay * 1.3);
+    $("#sidebar").hide();
     $("#qr").show();
   }
 }
@@ -205,12 +250,19 @@ $(document).ready(function() {
 	//Detect LocalStorage (HTML5 Cache)
 	local_storage_supported = DetectLocalStorage();
 	
-	//Chart
-	chart_data = new google.visualization.DataTable();
-  chart_data.addColumn('string', 'Major');
-  chart_data.addColumn('number', 'Amount');
+	//Class Chart
+	class_chart_data = new google.visualization.DataTable();
+  class_chart_data.addColumn('string', 'Major');
+  class_chart_data.addColumn('number', 'Amount');
+  
+  //Department Chart
+  department_chart_data = new google.visualization.DataTable();
+  department_chart_data.addColumn('string', 'Department');
+  department_chart_data.addColumn('number', 'Amount');
   
   // Instantiate and draw our chart, passing in some options.
   major_chart = new google.visualization.PieChart(document.getElementById('major_stats'));
+  
+  department_chart = new google.visualization.PieChart(document.getElementById('department_stats'));
   
 });

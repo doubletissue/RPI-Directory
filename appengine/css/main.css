@@ -9,6 +9,10 @@
 	width: 40%;
 }
 
+.info_chart {
+  width: 100%;
+}
+
 #container {
   margin-top: 15%;
 }

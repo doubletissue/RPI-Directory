@@ -32,7 +32,6 @@
       
       // Load the Visualization API and the piechart package.
       google.load('visualization', '1.0', {'packages':['corechart']});
-      
 		</script>
 		</head>
 		<body id="body">
@@ -44,11 +43,8 @@
 		    <div id="output" class="row-fluid span10 offset1"></div>
 		    <div id="noscript" class="row-fluid span10 offset1"><noscript>You have JavaScript disabled.  This search will not work without it, please turn on JavaScript and refresh your browser.</noscript></div>
 		    <div class="row-fluid">
-		      <div class="span3" id="sidebar">
-		      <div id="major_stats"></div>
-		      </div>
 		      <div class="span9">
-		        <table id="results" class="tablesorter" style="display:none">
+		        <table id="results" class="table table-striped tablesorter" style="display:none">
       		    <thead>
       		      <tr>
       			      <th>Name</th>
@@ -61,6 +57,10 @@
       			  </tbody>
       		  </table>
       		</div>
+      		<div class="span3" id="sidebar">
+		        <div class="info_chart" id="major_stats"></div>
+		        <div class="info_chart" id="department_stats"></div>
+		      </div>
     		</div>
     		<div id="qr">
     		  <p><a href="https://play.google.com/store/apps/details?id=org.rpi.rpinfo">Check out </a>our new Android app:</p><br><a href="https://play.google.com/store/apps/details?id=org.rpi.rpinfo"><img src="/images/qr.png"></a>
