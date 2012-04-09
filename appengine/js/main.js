@@ -166,7 +166,7 @@ $(document).ready(function() {
   		  animate(false);
 	    }
     }
-  }, 50);
+  }, 100);
   
   //Make table sortable
   $("#results").tablesorter();
