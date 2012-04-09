@@ -137,6 +137,13 @@ $(document).ready(function() {
 	  if (keyword != ''){ 	   
  	    last_token += 1;
  	    
+ 	    //Animate text box up
+   	  if ( margin != "0%" || margin != "0px" ){
+   	    animate(true);
+   	  }
+ 	    
+ 	    $("#results").show();
+ 	    
  	    // Check cache
  	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
  	      parseCachedData(keyword);
@@ -153,7 +160,7 @@ $(document).ready(function() {
   		  animate(false);
 	    }
     }
-  }, 100);
+  }, 250);
   
   //Make table sortable
   $("#results").tablesorter();
