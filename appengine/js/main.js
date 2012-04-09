@@ -19,9 +19,6 @@ function parseServerData(data){
 	  AddResultsToTable(data);
   }
   
-  // Undo the opacity
-  $("#results").css("opacity", "1");
-  
   // Cache the results
   cached_results[data.q] = data;
   if (local_storage_supported){
@@ -173,6 +170,9 @@ $(document).ready(function() {
  	    }else{  // Dim results and call the API
  	      $("#results").css("opacity", ".25");
  	      callServer(keyword);
+ 	      
+ 	      // Undo the opacity
+        $("#results").css("opacity", "1");
  	    }
 	  }else if (keyword == ''){ // Entry is blank
 	    $("#results").hide();
