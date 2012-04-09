@@ -85,7 +85,7 @@ def parse_int(i, default):
 class Api(webapp.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
-    search      = urllib.unquote(cgi.escape(self.request.get('q')).lower()[:100])
+    search    = urllib.unquote(cgi.escape(self.request.get('q')).lower()[:100])
     token     = urllib.unquote(cgi.escape(self.request.get('token')))
     page_num  = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
@@ -215,7 +215,7 @@ class Api(webapp.RequestHandler):
     d['q'] = search
     
     #Add to memcache
-    memcache.add(memcache_key, l, 518400)
+    memcache.add(search, l, 518400)
     
     logging.debug("Cache miss, adding " + search + " to MemCache")
     
