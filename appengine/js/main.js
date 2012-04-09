@@ -20,7 +20,7 @@ function parseServerData(data){
     $("#results").css("opacity", "1");
   }
   
-	if (data.data.length > 0 && Math.abs(last_token - data.token) < 1){
+	if (data.data.length > 0 && Math.abs(last_token - data.token) < 2){
 	  AddResultsToTable(data);
   }
   
