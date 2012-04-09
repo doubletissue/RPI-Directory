@@ -126,7 +126,7 @@ class Api(webapp.RequestHandler):
     
     queries = map(str, search.split())
     #Check memcache for results
-    memcache_key = search
+    memcache_key = ":".join(sorted(search.split()))
     cached_mem = memcache.get(memcache_key)
     if cached_mem is not None:
       d = {}
@@ -215,7 +215,8 @@ class Api(webapp.RequestHandler):
     d['q'] = search
     
     #Add to memcache
-    memcache.add(search, l, 518400)
+    memcache_key = ":".join(sorted(search.split()))
+    memcache.add(memcache_key, l, 518400)
     
     logging.debug("Cache miss, adding " + search + " to MemCache")
     
