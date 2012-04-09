@@ -15,11 +15,13 @@ function parseServerData(data){
     return;
   }
   
-	if (data.data !== []){
-	  $("#results").css("opacity", "1");
-	  if (data.data.length > 0 && last_token == data.token){
-	    AddResultsToTable(data);
-    }
+  //Empty list
+  if (data.data.length == 0){
+    $("#results").css("opacity", "1");
+  }
+  
+	if (data.data.length > 0 && Math.abs(last_token - data.token) < 1){
+	  AddResultsToTable(data);
   }
   
   
