@@ -3,10 +3,10 @@
 }
 
 #inputBox input {
-	padding: .25em;
+	padding: .5em;
 	font-size: 130%;
 	margin-bottom: 50px;
-	width: 40%;
+	width: 35%;
 }
 
 .info_chart {
