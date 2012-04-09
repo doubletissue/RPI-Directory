@@ -113,6 +113,7 @@ class FixBroken(webapp.RequestHandler):
     cursor = conn.cursor()
     query = 'SELECT directory_id from rpidirectory where first_name LIKE "%>%"'
     cursor.execute(query)
+    logging.info("Found " + str(cursor.rowcount) + " broken entries")
     if cursor.rowcount > 0:
       for row in cursor.fetchall():
         taskqueue.add(url='/crawl/worker', params={'index': str(row[0])}) 
