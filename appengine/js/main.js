@@ -124,7 +124,7 @@ function DetectLocalStorage(){
 function callServer(keyword){
   $.ajax({
     type: "GET",
-    url: "/api?name=" + encodeURI(keyword) + "&token=" + last_token,
+    url: "/api?q=" + encodeURI(keyword) + "&token=" + last_token,
     async: true,
     dataType: "json",
     success: parseServerData
