@@ -15,9 +15,14 @@ function parseServerData(data){
     return;
   }
   
-	if (data.data !== [] && data.data.length > 0 && last_token == data.token){
-	  AddResultsToTable(data);
+	if (data.data !== []){
+	  $("#results").css("opacity", "1");
+	  if (data.data.length > 0 && last_token == data.token){
+	    AddResultsToTable(data);
+    }
   }
+  
+  
   
   // Cache the results
   cached_results[data.q] = data;
