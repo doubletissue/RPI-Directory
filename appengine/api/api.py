@@ -75,7 +75,7 @@ class Api(webapp.RequestHandler):
     token     = urllib.unquote(cgi.escape(self.request.get('token')))
     page_num  = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
-    
+
     # Flood Prevention
     ip = str(self.request.remote_addr)
     ipCount = memcache.get(ip)
@@ -87,13 +87,13 @@ class Api(webapp.RequestHandler):
         d['name'] = name
         s = json.dumps(d)
         self.response.out.write(s)
-        
+
         ban_time = 600 + 60 * 2 ** ( (ipCount-1000) )
         if ban_time > 7*24*60*60:
           ban_time = 7*24*60*60
         logging.info('Quota exceeded for ' + ip + ', count at ' + str(ipCount) + ', banned for ' + str(ban_time))
         memcache.replace(ip,ipCount+1,time=ban_time)
-        
+
         if (ipCount - 1001) % 100 == 0:
           message = mail.EmailMessage(sender="IP Banning <ip-logger@rpidirectory.appspotmail.com>",
                                       subject="RPIDirectory IP " + ip + " Banned")
@@ -105,8 +105,7 @@ class Api(webapp.RequestHandler):
       memcache.replace(ip,ipCount+1,time=600)
     else:
       memcache.add(ip,1,time=600)
-      
-    
+
     #Check memcache for results
     memcache_key = name + ":" + major + ":" + year
     cached_mem = memcache.get(memcache_key)
@@ -115,11 +114,11 @@ class Api(webapp.RequestHandler):
       d['data'] = cached_mem
       d['token'] = token
       d['name'] = name
-      
+
       s = json.dumps(d)
       self.response.out.write(s)
       return
-    
+
     # If not, we query Cloud SQL
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     cursor = conn.cursor()
