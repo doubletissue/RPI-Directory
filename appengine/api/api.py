@@ -99,9 +99,7 @@ def new_call(conn, queries, page_num, page_size):
   query += ' LIMIT ' + str((page_num-1)*page_size) + ',' + str(page_size)
   
   logging.debug(query)
-  
   cursor.execute(query)
-  
   return cursor
 
 def old_call(conn, names, page_num, page_size):
@@ -187,24 +185,17 @@ class Api(webapp.RequestHandler):
     elif call_type == "new":
       queries = map(str, search.split())
       #Check memcache for results
-      memcache_key = search
+      memcache_key = ":".join(sorted(search.split()))
       cached_mem = memcache.get(memcache_key)
       if cached_mem is not None:
         d = {}
         d['data'] = cached_mem
         d['token'] = token
-        if call_type == "old":
-          d['name'] = name
-        elif call_type == "new":
-          d['q'] = search
-        else:
-          raise
-    else:
-      raise
+        d['q'] = search
       
-      s = json.dumps(d)
-      self.response.out.write(s)
-      return
+        s = json.dumps(d)
+        self.response.out.write(s)
+        return
       
     # If not, we query Cloud SQL
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
@@ -269,9 +260,10 @@ class Api(webapp.RequestHandler):
     d['q'] = search
     
     #Add to memcache
-    memcache.add(search, l, 518400)
-    
-    logging.debug("Cache miss, adding " + search + " to MemCache")
+    if call_type == "new":
+      memcache_key = ":".join(sorted(search.split()))
+      memcache.add(memcache_key, l, 518400)
+      logging.debug("Cache miss, adding " + memcache_key + " to MemCache")
     
     s = json.dumps(d)
     self.response.out.write(s)
