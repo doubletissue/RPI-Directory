@@ -98,7 +98,7 @@ def new_call(conn, queries, page_num, page_size):
   query += ' ORDER BY first_name'
   query += ' LIMIT ' + str((page_num-1)*page_size) + ',' + str(page_size)
   
-  logging.debug(query)
+  #logging.debug(query)
   cursor.execute(query)
   return cursor
 
