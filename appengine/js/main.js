@@ -62,10 +62,11 @@ function parseServerData(data){
   }
   
   // Cache the results
-  cached_results[data.q] = data;
+  var keyword_cache = data.q + ":v2"
+  cached_results[keyword_cache] = data;
   if (local_storage_supported){
     try {
-      localStorage.setItem(data.q, JSON.stringify(data));
+      localStorage.setItem(keyword_cache, JSON.stringify(data));
     }catch (e){
       if (e == QUOTA_EXCEEDED_ERR) {
         // oh noes, out of 5 MB of localstorage...clear it out!
@@ -79,10 +80,8 @@ function parseCachedData(keyword){
   var data = null;
   if (cached_results[keyword]){
     data = cached_results[keyword];
-    //$("#output").text("JS Cached Keyword: " + keyword);
   }else if (local_storage_supported && localStorage.getItem(keyword)){
     data = JSON.parse(localStorage.getItem(keyword));
-    //$("#output").text("HTML5 Cached Keyword: " + keyword);
   }
   
 	if (data !== null && data.data !== []){
@@ -225,9 +224,12 @@ $(document).ready(function() {
  	    
  	    $("#results").show();
  	    
+ 	    //Omnibox Search
+ 	    var keyword_cache = keyword + ":v2"
+ 	    
  	    // Check cache
- 	    if (cached_results[keyword] || (local_storage_supported && localStorage.getItem(keyword))){
- 	      parseCachedData(keyword);
+ 	    if (cached_results[keyword_cache] || (local_storage_supported && localStorage.getItem(keyword_cache))){
+ 	      parseCachedData(keyword_cache);
  	    }else{  // Dim results and call the API
  	      $("#results").css("opacity", ".25");
  	      callServer(keyword);
