@@ -161,7 +161,8 @@ class Stats(webapp.RequestHandler):
                        'list_of_last_names' : list_of_last_names,
                        'list_of_searched_first_names' : list_of_searched_first_names,
                        'list_of_searched_last_names' : list_of_searched_last_names,
-                       'list_of_ips' : list_of_ips
+                       'list_of_ips' : list_of_ips,
+                       'number_people' : memcache.get("number_people")
                        }
                        
     path = os.path.join(os.path.dirname(__file__), 'stats.html')

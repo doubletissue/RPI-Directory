@@ -244,13 +244,13 @@ function drawIPChart() {
 		  <div id="searched_last_names_stats" class="chart"></div>
 		  <div id="ip_stats" class="chart"></div>
 		  {% endif %}
-		  <!--<footer>
+		  <footer>
 		    <div id="footer">
 		      <p>
-		        {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB - People in database: {{ number_people }} - <a href="http://rcos.rpi.edu/projects/rpi-directory-app/" target="_blank">An RCOS Project</a>
+		        {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB - {% if number_people %}People in database: {{ number_people }} - {% endif %}<a href="http://rcos.rpi.edu/projects/rpi-directory-app/" target="_blank">An RCOS Project</a>
 		      </p>
 		    </div>
-		  </footer>-->
+		  </footer>
   		<script type="text/javascript">
   		  var _gaq = _gaq || [];
   		  _gaq.push(['_setAccount', 'UA-25705269-1']);
