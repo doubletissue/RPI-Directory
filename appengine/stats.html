@@ -222,9 +222,9 @@ function drawIPChart() {
 			  drawFacultyChart();
 			  drawFirstNameChart();
 			  drawLastNameChart();
-			  {% if list_of_searched_first_names and list_of_searched_last_names %}
-			  drawSearchedFirstNameChart();
-			  drawSearchedLastNameChart();
+			  {% if list_of_ips %}
+			  //drawSearchedFirstNameChart();
+			  //drawSearchedLastNameChart();
 			  drawIPChart();
 			  {% endif %}
 			  
@@ -239,9 +239,9 @@ function drawIPChart() {
 		  <div id="last_name_stats" class="chart"></div>
 		  <div id="class_stats" class="chart"></div>
 		  <div id="memcache_stats" class="chart"></div>
-		  {% if list_of_searched_first_names and list_of_searched_last_names and list_of_ips %}
-		  <div id="searched_first_names_stats" class="chart"></div>
-		  <div id="searched_last_names_stats" class="chart"></div>
+		  {% if list_of_ips %}
+		  <!--<div id="searched_first_names_stats" class="chart"></div>
+		  <div id="searched_last_names_stats" class="chart"></div>-->
 		  <div id="ip_stats" class="chart"></div>
 		  {% endif %}
 		  <footer>

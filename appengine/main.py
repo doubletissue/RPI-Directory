@@ -133,6 +133,7 @@ class Stats(webapp.RequestHandler):
         list_of_last_names.append((str(row[0]).title(), row[1]))
       memcache.add(memcache_key, list_of_last_names, TIME_MEMCACHE)
     
+    '''
     #Most common first names searched
     memcache_key = "stats_first_names"
     cached_mem = memcache.get(memcache_key)
@@ -150,6 +151,7 @@ class Stats(webapp.RequestHandler):
       list_of_searched_last_names = sorted_x[:20]
     else:
       list_of_searched_last_names = None
+    ''' 
       
     #List of IPs
     memcache_key = "stats_ip"
@@ -171,8 +173,8 @@ class Stats(webapp.RequestHandler):
                        'list_of_faculty' : list_of_faculty,
                        'list_of_first_names' : list_of_first_names,
                        'list_of_last_names' : list_of_last_names,
-                       'list_of_searched_first_names' : list_of_searched_first_names,
-                       'list_of_searched_last_names' : list_of_searched_last_names,
+                       #'list_of_searched_first_names' : list_of_searched_first_names,
+                       #'list_of_searched_last_names' : list_of_searched_last_names,
                        'list_of_ips' : list_of_ips,
                        'number_people' : memcache.get("number_people")
                        }
