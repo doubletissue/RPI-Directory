@@ -8,7 +8,8 @@
 		android:layout_height="wrap_content">
 
 		<EditText android:id="@+id/searchBox" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:layout_weight="1">
+			android:layout_height="wrap_content" android:layout_weight="1" 
+			android:imeOptions="actionDone">
 		</EditText>
 
 		<!-- Button android:text="@string/Submit" android:id="@+id/submit"
@@ -17,6 +18,13 @@
 		</Button>  -->
 	</LinearLayout>
 
+	<TextView android:id="@+id/instructions_text"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:gravity="center_horizontal|center_vertical"
+	    android:text="@string/instructions">
+	</TextView>
+	
 	<ListView android:id="@+id/data_list" android:layout_width="match_parent" android:layout_height="match_parent">
 	</ListView>
 

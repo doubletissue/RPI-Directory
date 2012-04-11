@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class QueryViewActivity extends Activity {
 	private static final String TAG = "DataDisplayerActivity";
@@ -37,11 +38,14 @@ public class QueryViewActivity extends Activity {
 			}
 		});
 		*/
-
+        
+        final TextView tv = (TextView)findViewById(R.id.instructions_text);
+        
         //Automatically populate the results while the user types 
         searchBox.addTextChangedListener(new TextWatcher() {
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if( searchBox.getText().length() > 0 ){
+					tv.setVisibility(View.GONE);
 					resultsList.update( searchBox.getText().toString() );
 				}
 			}

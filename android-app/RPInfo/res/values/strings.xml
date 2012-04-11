@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">RPInfo</string>
     <string name="Submit">Submit</string>
+    <string name="instructions">Start typing in th box and watch results appear!\n\nTouch a result to see more detailed information.\n\nIn the detailed view, touch an e-mail address or phone number to send an e-mail or dial the number! Press the menu button for an option to add the person to your contacts.</string>
 </resources>
