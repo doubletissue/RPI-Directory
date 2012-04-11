@@ -3,10 +3,14 @@
 }
 
 #inputBox input {
-	width: 100%; 
-	padding: .25em;
+	padding: .5em;
 	font-size: 130%;
 	margin-bottom: 50px;
+	width: 35%;
+}
+
+.info_chart {
+  width: 100%;
 }
 
 #container {
@@ -20,11 +24,11 @@
 	display: none;
 }
 
-.full_width {
+h1 {
 	margin: 25px 5px 15px 5px;
-	font-size: 350%;
-	font-family: 'Puritan', 'Trebuchet MS', Helvetica, sans-serif;
-	text-align: center;
+  font-size: 350%;
+  font-family: 'Puritan', 'Trebuchet MS', Helvetica, sans-serif;
+  text-align: center;
 }
 
 #results {

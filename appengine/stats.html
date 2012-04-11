@@ -152,7 +152,7 @@ function drawLastNameChart() {
   chart.draw(data, options);
 }
 
-{% if list_of_searched_first_names and list_of_searched_last_names and list_of_ips %}
+{% if list_of_ips %}
 function drawSearchedFirstNameChart() {
 
   // Create the data table.
@@ -222,9 +222,9 @@ function drawIPChart() {
 			  drawFacultyChart();
 			  drawFirstNameChart();
 			  drawLastNameChart();
-			  {% if list_of_searched_first_names and list_of_searched_last_names %}
-			  drawSearchedFirstNameChart();
-			  drawSearchedLastNameChart();
+			  {% if list_of_ips %}
+			  //drawSearchedFirstNameChart();
+			  //drawSearchedLastNameChart();
 			  drawIPChart();
 			  {% endif %}
 			  
@@ -232,25 +232,25 @@ function drawIPChart() {
 		</script>
 		</head>
 		<body id="body">
-	    <div class="full_width big">RPI Directory Stats</div>
+	    <h1>RPI Directory Stats</h1>
 		  <div id="major_stats" class="chart"></div>
 		  <div id="faculty_stats" class="chart"></div>
 		  <div id="first_name_stats" class="chart"></div>
 		  <div id="last_name_stats" class="chart"></div>
 		  <div id="class_stats" class="chart"></div>
 		  <div id="memcache_stats" class="chart"></div>
-		  {% if list_of_searched_first_names and list_of_searched_last_names and list_of_ips %}
-		  <div id="searched_first_names_stats" class="chart"></div>
-		  <div id="searched_last_names_stats" class="chart"></div>
+		  {% if list_of_ips %}
+		  <!--<div id="searched_first_names_stats" class="chart"></div>
+		  <div id="searched_last_names_stats" class="chart"></div>-->
 		  <div id="ip_stats" class="chart"></div>
 		  {% endif %}
-		  <!--<footer>
+		  <footer>
 		    <div id="footer">
 		      <p>
-		        {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB - People in database: {{ number_people }} - <a href="http://rcos.rpi.edu/projects/rpi-directory-app/" target="_blank">An RCOS Project</a>
+		        {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB - {% if number_people %}People in database: {{ number_people }} - {% endif %}<a href="http://rcos.rpi.edu/projects/rpi-directory-app/" target="_blank">An RCOS Project</a>
 		      </p>
 		    </div>
-		  </footer>-->
+		  </footer>
   		<script type="text/javascript">
   		  var _gaq = _gaq || [];
   		  _gaq.push(['_setAccount', 'UA-25705269-1']);

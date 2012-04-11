@@ -98,10 +98,18 @@ def new_call(conn, queries, page_num, page_size):
   query += ' ORDER BY first_name'
   query += ' LIMIT ' + str((page_num-1)*page_size) + ',' + str(page_size)
   
-  logging.debug(query)
-  
-  cursor.execute(query)
-  
+  #logging.debug(query)
+  try:
+    cursor.execute(query)
+  except DeadlineExceededError:
+    logging.error("Database timeout error")
+    d = {}
+    d['data'] = 'Error with request, please try again'
+    d['token'] = token
+    d['q'] = search
+    s = json.dumps(d)
+    self.response.out.write(s)
+    return None
   return cursor
 
 def old_call(conn, names, page_num, page_size):
@@ -187,34 +195,30 @@ class Api(webapp.RequestHandler):
     elif call_type == "new":
       queries = map(str, search.split())
       #Check memcache for results
-      memcache_key = search
+      memcache_key = ":".join(sorted(search.split()))
       cached_mem = memcache.get(memcache_key)
       if cached_mem is not None:
         d = {}
         d['data'] = cached_mem
         d['token'] = token
-        if call_type == "old":
-          d['name'] = name
-        elif call_type == "new":
-          d['q'] = search
-        else:
-          raise
-    else:
-      raise
-      
-      s = json.dumps(d)
-      self.response.out.write(s)
-      return
+        d['q'] = search
+        s = json.dumps(d)
+        self.response.out.write(s)
+        return
       
     # If not, we query Cloud SQL
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
-
+    
     if call_type == "old":
       cursor = old_call(conn, queries, page_num, page_size)
     elif call_type == "new":
       cursor = new_call(conn, queries, page_num, page_size)
     else:
       raise
+    
+    if cursor is None:
+      #Error in DB call
+      return
     
     d = {}
     l = []
@@ -269,9 +273,10 @@ class Api(webapp.RequestHandler):
     d['q'] = search
     
     #Add to memcache
-    memcache.add(search, l, 518400)
-    
-    logging.debug("Cache miss, adding " + search + " to MemCache")
+    if call_type == "new":
+      memcache_key = ":".join(sorted(search.split()))
+      memcache.add(memcache_key, l, 518400)
+      logging.debug("Cache miss, adding " + memcache_key + " to MemCache")
     
     s = json.dumps(d)
     self.response.out.write(s)
