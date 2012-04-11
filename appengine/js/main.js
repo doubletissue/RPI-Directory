@@ -70,7 +70,6 @@ function parseServerData(data){
             window.location = "http://goo.gl/QMET";
     		  }
     		});
-    	  });
     return;
   }
   
@@ -98,7 +97,6 @@ function parseServerData(data){
             location.reload(true);
     		  }
     		});
-    	  });
     return;
   }
   
