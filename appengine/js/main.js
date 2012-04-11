@@ -48,14 +48,57 @@ function redrawCharts(class_chart_data, department_chart_data){
 function parseServerData(data){
   // Check if quota exceeded
   if (data.data !== [] && data.data == "Quota Exceeded"){
-    alert("Quota Exceeded.  Please try again in 5 minutes...");
+    jError(
+    		'You have exceeded our rate limit!  Please wait 5 minutes and try again.  In the meantime, I will send you to a fun place.  Enjoy!',
+    		{
+    		  autoHide : true, // added in v2.0
+    		  clickOverlay : false, // added in v2.0
+    		  MinWidth : 250,
+    		  TimeShown : 3000,
+    		  ShowTimeEffect : 200,
+    		  HideTimeEffect : 200,
+    		  LongTrip :20,
+    		  HorizontalPosition : 'center',
+    		  VerticalPosition : 'top',
+    		  ShowOverlay : true,
+       		  ColorOverlay : '#000',
+    		  OpacityOverlay : 0.3,
+    		  onClosed : function(){ // added in v2.0
+            window.location = "http://goo.gl/QMET";
+    		  },
+    		  onCompleted : function(){ // added in v2.0
+            window.location = "http://goo.gl/QMET";
+    		  }
+    		});
+    	  });
     return;
   }
   
   // Check if database errored out
   if (data.data !== [] && data.data == "Error with request, please try again"){
-    alert("We've encountered an error with our database...refreshing the page.");
-    location.reload(true);
+    jError(
+    		'Our database seems to be having some issues, we apologize.  Lets try refreshing the page to see if that helps.',
+    		{
+    		  autoHide : true, // added in v2.0
+    		  clickOverlay : false, // added in v2.0
+    		  MinWidth : 250,
+    		  TimeShown : 3000,
+    		  ShowTimeEffect : 200,
+    		  HideTimeEffect : 200,
+    		  LongTrip :20,
+    		  HorizontalPosition : 'center',
+    		  VerticalPosition : 'top',
+    		  ShowOverlay : true,
+       		ColorOverlay : '#000',
+    		  OpacityOverlay : 0.3,
+    		  onClosed : function(){ // added in v2.0
+            location.reload(true);
+    		  },
+    		  onCompleted : function(){ // added in v2.0
+            location.reload(true);
+    		  }
+    		});
+    	  });
     return;
   }
   
