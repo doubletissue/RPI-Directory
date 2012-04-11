@@ -52,6 +52,13 @@ function parseServerData(data){
     return;
   }
   
+  // Check if database errored out
+  if (data.data !== [] && data.data == "Error with request, please try again"){
+    alert("We've encountered an error with our database...refreshing the page.");
+    location.reload(true);
+    return;
+  }
+  
   //Empty list
   if (data.data.length == 0){
     $("#results").css("opacity", "1");

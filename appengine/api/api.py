@@ -99,7 +99,17 @@ def new_call(conn, queries, page_num, page_size):
   query += ' LIMIT ' + str((page_num-1)*page_size) + ',' + str(page_size)
   
   #logging.debug(query)
-  cursor.execute(query)
+  try:
+    cursor.execute(query)
+  except DeadlineExceededError:
+    logging.error("Database timeout error")
+    d = {}
+    d['data'] = 'Error with request, please try again'
+    d['token'] = token
+    d['q'] = search
+    s = json.dumps(d)
+    self.response.out.write(s)
+    return None
   return cursor
 
 def old_call(conn, names, page_num, page_size):
@@ -198,13 +208,17 @@ class Api(webapp.RequestHandler):
       
     # If not, we query Cloud SQL
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
-
+    
     if call_type == "old":
       cursor = old_call(conn, queries, page_num, page_size)
     elif call_type == "new":
       cursor = new_call(conn, queries, page_num, page_size)
     else:
       raise
+    
+    if cursor is None:
+      #Error in DB call
+      return
     
     d = {}
     l = []
