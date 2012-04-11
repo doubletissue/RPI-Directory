@@ -49,7 +49,7 @@ function parseServerData(data){
   // Check if quota exceeded
   if (data.data !== [] && data.data == "Quota Exceeded"){
     jError(
-    		'You have exceeded our rate limit!  Please wait 5 minutes and try again.  In the meantime, I will send you to a fun place.  Enjoy!',
+    		'You have exceeded our rate limit!  Please wait 5 minutes and try again...',
     		{
     		  clickOverlay : false, // added in v2.0
     		  MinWidth : 250,
