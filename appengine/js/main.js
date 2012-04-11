@@ -48,6 +48,7 @@ function redrawCharts(class_chart_data, department_chart_data){
 function parseServerData(data){
   // Check if quota exceeded
   if (data.data !== [] && data.data == "Quota Exceeded"){
+    _gaq.push(['_trackEvent', 'Error', 'Quota Exceeded']);
     jError(
     		'You have exceeded our rate limit!  Please wait 5 minutes and try again...',
     		{
@@ -65,6 +66,7 @@ function parseServerData(data){
   
   // Check if database errored out
   if (data.data !== [] && data.data == "Error with request, please try again"){
+    _gaq.push(['_trackEvent', 'Error', 'Server Error']);
     jError(
     		'Our database seems to be having some issues, we apologize.  Lets try refreshing the page to see if that helps.',
     		{
@@ -219,9 +221,11 @@ function animate(flag){
 function DetectLocalStorage(){
   try{
     if (window['localStorage'] !== null){
+      _gaq.push(['_trackEvent', 'Local Storage', 'True']);
       return true;
     }
   }catch(e){
+    _gaq.push(['_trackEvent', 'Local Storage', 'False']);
     return false;
   }
 }
@@ -248,6 +252,7 @@ $(document).ready(function() {
  	    //Animate text box up
    	  if ( margin != "0%" || margin != "0px" ){
    	    animate(true);
+   	    _gaq.push(['_trackEvent', 'Interaction', 'Moved Box Up']);
    	  }
  	    
  	    $("#results").show();
@@ -266,6 +271,7 @@ $(document).ready(function() {
 	    $("#results").hide();
 	    // Animate box back down
 	    if ( margin == "0%" || margin == "0px"){
+	      _gaq.push(['_trackEvent', 'Interaction', 'Moved Box Down']);
   		  animate(false);
 	    }
     }
