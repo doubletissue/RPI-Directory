@@ -3,7 +3,7 @@
 /*****************/
 #jNotify {
 	position:absolute;
-	background:#d8e6fc  url('../info.png') no-repeat 15px center;
+	background:#d8e6fc  url('images/info.png') no-repeat 15px center;
 	color:#35517c;
 	border:1px solid #a7c3f0;
 	padding:10px;
@@ -21,7 +21,7 @@
 /******************/
 #jSuccess {
 	position:absolute;
-	background:#E6EFC2  url('../success.png') no-repeat 15px center;
+	background:#E6EFC2  url('images/success.png') no-repeat 15px center;
 	color:#264409;
 	border:1px solid #C6D880;
 	padding:10px;
@@ -41,7 +41,7 @@
 /****************/
 #jError {
 	position:absolute;
-	background:#FBE3E4  url('../error.png') no-repeat 15px center;
+	background:#FBE3E4  url('images/error.png') no-repeat 15px center;
 	color:#8a1f11;
 	border:1px solid #FBC2C4;
 	padding:10px;
