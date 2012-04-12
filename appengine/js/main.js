@@ -237,7 +237,9 @@ function callServer(keyword){
   if(request_in_progress){
     request.abort();
   }
+  
   request_in_progress = true;
+  
   request = $.ajax({
     type: "GET",
     url: "/api?q=" + encodeURI(keyword) + "&token=" + last_token + "&delay=" + keybind_delay + "&source=website",
@@ -248,6 +250,26 @@ function callServer(keyword){
 }
 
 $(document).ready(function() {
+  //AJAX Setup
+  $.ajaxSetup({
+    error: function(x, e) {
+      if (x.status == 500) {
+        jError(
+        		'Our database seems to be having some issues, we apologize.  Lets try refreshing the page to see if that helps.  If not, please try again in a few minutes.',
+        		{
+        		  clickOverlay : false, // added in v2.0
+        		  MinWidth : 250,
+        		  TimeShown : 5000,
+        		  LongTrip :20,
+        		  HorizontalPosition : 'center',
+        		  onClosed : function(){ // added in v2.0
+                location.reload(true);
+        		  }
+        		});
+      }
+    }
+  });
+      
 	$("#keyword").bindWithDelay("keyup", function(event) {
 	  var keyword = $("#keyword").val().toLowerCase();
 	  var margin = $("#container").css("margin-top");
