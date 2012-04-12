@@ -8,6 +8,7 @@ var last_token = 1;
 var cached_results = {};
 var local_storage_supported;
 var query = '';
+var request; request_in_progress = false;
 
 //Chart data and charts
 var class_chart_data, department_chart_data;
@@ -46,6 +47,8 @@ function redrawCharts(class_chart_data, department_chart_data){
 }
 
 function parseServerData(data){
+  request_in_progress = false;
+  
   // Check if quota exceeded
   if (data.data !== [] && data.data == "Quota Exceeded"){
     _gaq.push(['_trackEvent', 'Error', 'Quota Exceeded']);
@@ -231,7 +234,11 @@ function DetectLocalStorage(){
 }
 
 function callServer(keyword){
-  $.ajax({
+  if(request_in_progress){
+    request.abort();
+  }
+  request_in_progress = true;
+  request = $.ajax({
     type: "GET",
     url: "/api?q=" + encodeURI(keyword) + "&token=" + last_token + "&delay=" + keybind_delay + "&source=website",
     async: true,
