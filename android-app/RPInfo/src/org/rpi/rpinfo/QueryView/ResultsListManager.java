@@ -109,7 +109,7 @@ public class ResultsListManager {
 			//Log.i(TAG, "Next Term: " + searchTermData.searchTerm);
 										
 			//Get the JSON output from the api
-			apiResult = RPInfoAPI.getInstance().request(searchTermData.searchTerm, RPInfoAPI.FIRST_PAGE, RPInfoAPI.DEFAULT_NUM_RESULTS);
+			apiResult = RPInfoAPI.getInstance(ResultsListManager.this.context).request(searchTermData.searchTerm, RPInfoAPI.FIRST_PAGE, RPInfoAPI.DEFAULT_NUM_RESULTS);
 			
 			return apiResult;
  		}
@@ -136,7 +136,7 @@ public class ResultsListManager {
 						
 						protected ArrayList<PersonModel> doInBackground(Void... arg0) {
 							//Get the new data
-							ArrayList<PersonModel> newResults = RPInfoAPI.getInstance().request(a.getSearchTerm(), a.nextPage(), RPInfoAPI.DEFAULT_NUM_RESULTS);
+							ArrayList<PersonModel> newResults = RPInfoAPI.getInstance(ResultsListManager.this.context).request(a.getSearchTerm(), a.nextPage(), RPInfoAPI.DEFAULT_NUM_RESULTS);
 							return newResults;
 						}
 						

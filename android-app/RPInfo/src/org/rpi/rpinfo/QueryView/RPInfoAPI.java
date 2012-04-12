@@ -19,6 +19,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.os.AsyncTask;
+import android.widget.Toast;
+
 //import android.util.Log;
 
 public class RPInfoAPI {
@@ -30,10 +34,14 @@ public class RPInfoAPI {
 	private static final String PARAM_SEARCH_TEXT = "q";
 	private static final String PARAM_PAGE = "page_num";
 	private static final String PARAM_NUM_RESULTS = "page_size";
+	private static final String PARAM_SOURCE = "source";
+	private static final String PARAM_SOURCE_THIS = "androidApp";
 	private static final ResultsCache cache = new ResultsCache();
 	private Object requestLock = new Object();
+	private Context context;
 
-	private RPInfoAPI(){
+	private RPInfoAPI(Context c){
+		this.context = c;
 	}
 	
 	/**
@@ -55,9 +63,9 @@ public class RPInfoAPI {
 		return url;
 	}
 	
-	public static RPInfoAPI getInstance(){
+	public static RPInfoAPI getInstance(Context c){
 		if( singleton == null ){
-			singleton = new RPInfoAPI();
+			singleton = new RPInfoAPI(c);
 		}
 		
 		return singleton;
@@ -71,7 +79,7 @@ public class RPInfoAPI {
 	 */
 	private ArrayList<PersonModel> parseApiResult(JSONObject apiResult){
 		ArrayList<PersonModel> list_items = new ArrayList<PersonModel>();
-
+		
 		JSONArray data_array;
 		try {
 			data_array = apiResult.getJSONArray("data");
@@ -85,7 +93,19 @@ public class RPInfoAPI {
 				list_items.add(new PersonModel(current));
 			}
 		} catch (JSONException e) {
-			e.printStackTrace();
+			new AsyncTask<Void, Void, Void>() {
+				@Override
+				protected void onPreExecute() {
+					Toast uhoh = Toast.makeText(RPInfoAPI.this.context, "Error: Something bad happened!\nThe search service may be down :(", Toast.LENGTH_LONG);
+					uhoh.show();
+				}
+				
+				@Override
+				protected Void doInBackground(Void... params) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+			};
 		}
 
 		return list_items;
@@ -121,6 +141,7 @@ public class RPInfoAPI {
 					params.put(PARAM_SEARCH_TEXT, searchTerm);
 					params.put(PARAM_PAGE, Integer.toString(page));
 					params.put(PARAM_NUM_RESULTS, Integer.toString(numResults));
+					params.put(PARAM_SOURCE, PARAM_SOURCE_THIS);
 					
 					String url = decorateUrl( params );
 					HttpGet httpGet = new HttpGet( url );
@@ -128,7 +149,11 @@ public class RPInfoAPI {
 					HttpResponse response = httpClient.execute( httpGet, localContext );
 					BufferedReader in = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
 					
-					rv = parseApiResult( new JSONObject(in.readLine()) );
+					try {
+						rv = parseApiResult( new JSONObject(in.readLine()) );
+					} catch(NullPointerException e) {
+						rv = new ArrayList<PersonModel>();
+					}
 					
 					//Don't cache results for other pages... yet
 					if( page == FIRST_PAGE ){
@@ -141,7 +166,7 @@ public class RPInfoAPI {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} catch (JSONException e) {
+			} catch (JSONException e){
 				e.printStackTrace();
 			}
 		}
