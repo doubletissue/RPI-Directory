@@ -188,7 +188,7 @@ class Api(webapp.RequestHandler):
         return
       memcache.replace_multi_async({ip:ipCount+1},time=600)
     else:
-      memcache.add_multi_async({ip:1},time=600)
+      memcache.add(ip,1,time=600)
 
     if call_type == "old":
       queries = map(str, name.split())
@@ -276,7 +276,7 @@ class Api(webapp.RequestHandler):
     #Add to memcache
     if call_type == "new":
       memcache_key = ":".join(sorted(search.split()))
-      memcache.add_multi_async({memcache_key: l}, 518400)
+      memcache.add(memcache_key, l, 518400)
       logging.debug("Cache miss, adding " + memcache_key + " to MemCache")
     
     s = json.dumps(d)
