@@ -176,7 +176,7 @@ class Api(webapp.RequestHandler):
         if ban_time > 7*24*60*60:
           ban_time = 7*24*60*60
         logging.info('Quota exceeded for ' + ip + ', count at ' + str(ipCount) + ', banned for ' + str(ban_time))
-        memcache.replace_multi_async({ip:ipCount+1},time=ban_time)
+        memcache.replace(ip,ipCount+1,time=ban_time)
 
         if (ipCount - 1001) % 100 == 0:
           message = mail.EmailMessage(sender="IP Banning <ip-logger@rpidirectory.appspotmail.com>",
@@ -186,7 +186,7 @@ class Api(webapp.RequestHandler):
           message.send()
           logging.info("EMail sent about ip: " + ip) 
         return
-      memcache.replace_multi_async({ip:ipCount+1},time=600)
+      memcache.replace(ip,ipCount+1,time=600)
     else:
       memcache.add(ip,1,time=600)
 
@@ -237,11 +237,11 @@ class Api(webapp.RequestHandler):
       cached_mem = memcache.get(memcache_key)
       if cached_mem is not None:
         cached_mem[ip] += 1
-        memcache.set_multi_async({memcache_key: cached_mem})
+        memcache.set(memcache_key, cached_mem)
       else:
         d = defaultdict(int)
         d[ip] += 1
-        memcache.set_multi_async({memcache_key: d})
+        memcache.set(memcache_key, d)
       
       ##Log names searched
       #if len(names) > 1 and len(names[0]) > 1 and len(names[-1]) > 1:
