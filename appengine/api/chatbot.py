@@ -17,14 +17,29 @@ class ChatHandler(webapp.RequestHandler):
     query = message.body.lower()
     search_string = urllib.quote(query)
     message.reply("Searching...try again in a few seconds if I don't get back to you :)")
-    url = 'http://rpidirectory.appspot.com/api?q=' + search_string + '&page_size=3&page_num=1'
-    result = urlfetch.fetch(url, deadline=20)
-    if result.status_code != 200:
-      message.reply("An internal error occured, please try again in a few minutes.")
+    url = 'http://rpidirectory.appspot.com/api?q=' + search_string + '&page_size=3&page_num=1&source=chatbot'
+    
+    rpc = urlfetch.create_rpc(deadline = 20)
+    urlfetch.make_fetch_call(rpc, url)
+    text = ''
+    try:
+      result = rpc.get_result()
+      if result.status_code == 200:
+          text = result.content
+      else:
+        message.reply("An internal error occured, please try again in a few minutes.")
+        return
+    except urlfetch.DownloadError:
+      message.reply("A different internal error occured, please try again in a few minutes.")
       return
     
+    #result = urlfetch.fetch(url, deadline=20)
+    #if result.status_code != 200:
+      #message.reply("An internal error occured, please try again in a few minutes.")
+      #return
+    
     s = ''
-    d = eval(result.content)
+    d = eval(text)
     
     resultCount = 3
     

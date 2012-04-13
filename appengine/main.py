@@ -53,7 +53,6 @@ class MainPage(webapp.RequestHandler):
 
 class Stats(webapp.RequestHandler):
   def get(self):
-    
     TIME_MEMCACHE = 86400
     
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
@@ -61,10 +60,19 @@ class Stats(webapp.RequestHandler):
     
     #Majors
     #Check MemCache
+    memcache_keys = ["stats_major",
+                     "stats_classes",
+                     "stats_faculty",
+                     "stats_first_name",
+                     "stats_last_name",
+                     "stats_ip",
+                     "number_people"]
+    
+    cached_mem = memcache.get_multi(memcache_keys)
+    
     memcache_key = "stats_major"
-    cached_mem = memcache.get(memcache_key)
-    if cached_mem is not None:
-      list_of_majors = cached_mem
+    if memcache_key in cached_mem:
+      list_of_majors = cached_mem[memcache_key]
     else:
       cursor.execute("SELECT major, COUNT(major) as total FROM rpidirectory GROUP BY major ORDER BY total DESC LIMIT 20")
       majors = cursor.fetchall()
@@ -79,9 +87,8 @@ class Stats(webapp.RequestHandler):
     #Classes - LIMIT 5 to eliminate NULL and NONE values
     #Check MemCache
     memcache_key = "stats_classes"
-    cached_mem = memcache.get(memcache_key)
-    if cached_mem is not None:
-      list_of_classes = cached_mem
+    if memcache_key in cached_mem:
+      list_of_classes = cached_mem[memcache_key]
     else:
       cursor.execute("SELECT year, COUNT(year) as total FROM rpidirectory GROUP BY year ORDER BY total DESC LIMIT 5")
       classes = cursor.fetchall()
@@ -93,9 +100,8 @@ class Stats(webapp.RequestHandler):
     #Faculty - LIMIT 20
     #Check MemCache
     memcache_key = "stats_faculty"
-    cached_mem = memcache.get(memcache_key)
-    if cached_mem is not None:
-      list_of_faculty = cached_mem
+    if memcache_key in cached_mem:
+      list_of_faculty = cached_mem[memcache_key]
     else:
       cursor.execute("SELECT department, COUNT(department) from rpidirectory GROUP BY department ORDER BY COUNT(department) DESC LIMIT 20")
       faculties = cursor.fetchall()
@@ -107,9 +113,8 @@ class Stats(webapp.RequestHandler):
     #First Name Stats
     #Check MemCache
     memcache_key = "stats_first_name"
-    cached_mem = memcache.get(memcache_key)
-    if cached_mem:
-      list_of_first_names = cached_mem
+    if memcache_key in cached_mem:
+      list_of_first_names = cached_mem[memcache_key]
     else:
       cursor.execute("SELECT first_name, COUNT(first_name) as total from rpidirectory WHERE first_name <> 'id=\"singledirectoryentry\">' GROUP BY first_name ORDER BY total DESC LIMIT 20")
       first_names = cursor.fetchall()
@@ -122,9 +127,8 @@ class Stats(webapp.RequestHandler):
     #Last Name Stats
     #Check MemCache
     memcache_key = "stats_last_name"
-    cached_mem = memcache.get(memcache_key)
-    if cached_mem is not None:
-      list_of_last_names = cached_mem
+    if memcache_key in cached_mem:
+      list_of_last_names = cached_mem[memcache_key]
     else:
       cursor.execute("SELECT last_name, COUNT(last_name) as total from rpidirectory  WHERE last_name NOT LIKE '<th>%' GROUP BY last_name ORDER BY total DESC LIMIT 20")
       last_names = cursor.fetchall()
@@ -155,9 +159,8 @@ class Stats(webapp.RequestHandler):
       
     #List of IPs
     memcache_key = "stats_ip"
-    cached_mem = memcache.get(memcache_key)
-    if cached_mem is not None:
-      sorted_x = sorted(cached_mem.iteritems(), key=operator.itemgetter(1), reverse=True)
+    if memcache_key in cached_mem:
+      sorted_x = sorted(cached_mem[memcache_key].iteritems(), key=operator.itemgetter(1), reverse=True)
       list_of_ips = sorted_x[:20]
     else:
       list_of_ips = None
@@ -166,6 +169,10 @@ class Stats(webapp.RequestHandler):
     #MemCache Stats
     memcache_stats = memcache.get_stats()
     memcache_stats['bytes'] /= 1000.0
+    
+    #Num people check
+    if "number_people" not in cached_mem:
+      cached_mem["number_people"] = 11519
     
     template_values = {'memcache': memcache_stats,
                        'list_of_majors' : list_of_majors,
@@ -176,7 +183,7 @@ class Stats(webapp.RequestHandler):
                        #'list_of_searched_first_names' : list_of_searched_first_names,
                        #'list_of_searched_last_names' : list_of_searched_last_names,
                        'list_of_ips' : list_of_ips,
-                       'number_people' : memcache.get("number_people")
+                       'number_people' : cached_mem["number_people"]
                        }
                        
     path = os.path.join(os.path.dirname(__file__), 'stats.html')
