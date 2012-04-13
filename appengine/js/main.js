@@ -14,6 +14,16 @@ var request; request_in_progress = false;
 var class_chart_data, department_chart_data;
 var major_chart, department_chart;
 
+function refreshTable(){
+  $("#results tr:odd").addClass("odd");
+  $("#results tr:not(.odd)").hide();
+  $("#results tr:first-child").show();
+  $("#results tr.odd").click(function(){
+      $(this).next("tr").toggle();
+      $(this).find(".arrow").toggleClass("up");
+  });
+}
+
 function resetCharts(){
   //Reset chart
   class_chart_data.removeRows(0, class_chart_data.getNumberOfRows());
@@ -165,7 +175,14 @@ function AddResultsToTable(data){
     }
     
     table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" +  email + "</td>");
-    table_row += "</tr>";
+    table_row += "</tr><tr><td colspan='4'><h4>Additional information</h4><ul>";
+    
+    // Details View
+    for (key in person){
+      table_row += ("<li>" + key + ": " + person.key + "</li>");
+    }
+    table_row += "</ul></td></tr>";
+    
     $("#results").find("tbody").append(table_row);
     
     if (person.year == undefined){
@@ -189,6 +206,8 @@ function AddResultsToTable(data){
   });
   
   $("#results").trigger("update");
+  refreshTable();
+  
   $("#results").css("opacity", "1");
   
   for (key in classes){

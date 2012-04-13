@@ -56,6 +56,28 @@ h1 {
   font-size: 80%;
 }
 
+/* Details View */
+
+#results div.arrow { 
+  background:transparent url(arrows.png) no-repeat scroll 0px -16px; 
+  width:16px; 
+  height:16px; 
+  display:block;
+}
+
+#results div.up { 
+  background-position:0px 0px;
+}
+
+#results img { 
+  float:right;
+}
+
+#results h4 {
+  margin:0px; 
+  padding:0px;
+}
+
 /* tables */
 table.tablesorter {
 	font-family:arial, sans-serif;
