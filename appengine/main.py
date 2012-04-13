@@ -53,7 +53,6 @@ class MainPage(webapp.RequestHandler):
 
 class Stats(webapp.RequestHandler):
   def get(self):
-    
     TIME_MEMCACHE = 86400
     
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
@@ -66,12 +65,13 @@ class Stats(webapp.RequestHandler):
                      "stats_faculty",
                      "stats_first_name",
                      "stats_last_name",
-                     "stats_ip"]
+                     "stats_ip",
+                     "number_people"]
     
     cached_mem = memcache.get_multi(memcache_keys)
     
     memcache_key = "stats_major"
-    if cached_mem[memcache_key] is not None:
+    if memcache_key in cached_mem:
       list_of_majors = cached_mem[memcache_key]
     else:
       cursor.execute("SELECT major, COUNT(major) as total FROM rpidirectory GROUP BY major ORDER BY total DESC LIMIT 20")
@@ -87,7 +87,7 @@ class Stats(webapp.RequestHandler):
     #Classes - LIMIT 5 to eliminate NULL and NONE values
     #Check MemCache
     memcache_key = "stats_classes"
-    if cached_mem[memcache_key] is not None:
+    if memcache_key in cached_mem:
       list_of_classes = cached_mem[memcache_key]
     else:
       cursor.execute("SELECT year, COUNT(year) as total FROM rpidirectory GROUP BY year ORDER BY total DESC LIMIT 5")
@@ -100,7 +100,7 @@ class Stats(webapp.RequestHandler):
     #Faculty - LIMIT 20
     #Check MemCache
     memcache_key = "stats_faculty"
-    if cached_mem[memcache_key] is not None:
+    if memcache_key in cached_mem:
       list_of_faculty = cached_mem[memcache_key]
     else:
       cursor.execute("SELECT department, COUNT(department) from rpidirectory GROUP BY department ORDER BY COUNT(department) DESC LIMIT 20")
@@ -113,7 +113,7 @@ class Stats(webapp.RequestHandler):
     #First Name Stats
     #Check MemCache
     memcache_key = "stats_first_name"
-    if cached_mem[memcache_key] is not None:
+    if memcache_key in cached_mem:
       list_of_first_names = cached_mem[memcache_key]
     else:
       cursor.execute("SELECT first_name, COUNT(first_name) as total from rpidirectory WHERE first_name <> 'id=\"singledirectoryentry\">' GROUP BY first_name ORDER BY total DESC LIMIT 20")
@@ -127,7 +127,7 @@ class Stats(webapp.RequestHandler):
     #Last Name Stats
     #Check MemCache
     memcache_key = "stats_last_name"
-    if cached_mem[memcache_key] is not None:
+    if memcache_key in cached_mem:
       list_of_last_names = cached_mem[memcache_key]
     else:
       cursor.execute("SELECT last_name, COUNT(last_name) as total from rpidirectory  WHERE last_name NOT LIKE '<th>%' GROUP BY last_name ORDER BY total DESC LIMIT 20")
@@ -159,7 +159,7 @@ class Stats(webapp.RequestHandler):
       
     #List of IPs
     memcache_key = "stats_ip"
-    if cached_mem[memcache_key] is not None:
+    if memcache_key in cached_mem:
       sorted_x = sorted(cached_mem[memcache_key].iteritems(), key=operator.itemgetter(1), reverse=True)
       list_of_ips = sorted_x[:20]
     else:
@@ -170,6 +170,10 @@ class Stats(webapp.RequestHandler):
     memcache_stats = memcache.get_stats()
     memcache_stats['bytes'] /= 1000.0
     
+    #Num people check
+    if "number_people" not in cached_mem:
+      cached_mem["number_people"] = 11519
+    
     template_values = {'memcache': memcache_stats,
                        'list_of_majors' : list_of_majors,
                        'list_of_classes' : list_of_classes,
@@ -179,7 +183,7 @@ class Stats(webapp.RequestHandler):
                        #'list_of_searched_first_names' : list_of_searched_first_names,
                        #'list_of_searched_last_names' : list_of_searched_last_names,
                        'list_of_ips' : list_of_ips,
-                       'number_people' : memcache.get("number_people")
+                       'number_people' : cached_mem["number_people"]
                        }
                        
     path = os.path.join(os.path.dirname(__file__), 'stats.html')
