@@ -69,7 +69,8 @@ class Stats(webapp.RequestHandler):
                      "stats_faculty",
                      "stats_first_name",
                      "stats_last_name",
-                     "stats_ip"]
+                     "stats_ip",
+                     "number_people"]
     
     cached_mem = memcache.get_multi(memcache_keys)
     
@@ -191,7 +192,7 @@ class Stats(webapp.RequestHandler):
                        #'list_of_searched_first_names' : list_of_searched_first_names,
                        #'list_of_searched_last_names' : list_of_searched_last_names,
                        'list_of_ips' : list_of_ips,
-                       'number_people' : memcache.get("number_people")
+                       'number_people' : cached_mem["number_people"]
                        }
                        
     path = os.path.join(os.path.dirname(__file__), 'stats.html')
