@@ -176,7 +176,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0430;
-				ORGANIZATIONNAME = "Naga Softworks, LLC";
+				ORGANIZATIONNAME = "Brendon Justin";
 			};
 			buildConfigurationList = 5C0D7E1D1538A027003B36B6 /* Build configuration list for PBXProject "RPI Directory" */;
 			compatibilityVersion = "Xcode 3.2";
