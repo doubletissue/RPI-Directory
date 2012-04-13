@@ -195,16 +195,17 @@ class Api(webapp.RequestHandler):
     elif call_type == "new":
       queries = map(str, search.split())
       #Check memcache for results
-      memcache_key = ":".join(sorted(search.split()))
-      cached_mem = memcache.get(memcache_key)
-      if cached_mem is not None:
-        d = {}
-        d['data'] = cached_mem
-        d['token'] = token
-        d['q'] = search
-        s = json.dumps(d)
-        self.response.out.write(s)
-        return
+      if page_num == 1:
+        memcache_key = ":".join(sorted(search.split()))
+        cached_mem = memcache.get(memcache_key)
+        if cached_mem is not None:
+          d = {}
+          d['data'] = cached_mem
+          d['token'] = token
+          d['q'] = search
+          s = json.dumps(d)
+          self.response.out.write(s)
+          return
       
     # If not, we query Cloud SQL
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
