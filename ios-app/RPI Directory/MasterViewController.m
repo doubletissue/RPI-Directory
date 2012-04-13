@@ -10,8 +10,14 @@
 
 #import "DetailViewController.h"
 
+#import "Person.h"
+
+const float SEARCH_INTERVAL = 3000.0f;
+
 @interface MasterViewController () {
-    NSMutableArray *_objects;
+    NSMutableArray  *m_people;
+    NSTimer         *m_searchTimer;
+    Boolean         m_textChanged;
 }
 @end
 
@@ -32,17 +38,19 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    self.navigationItem.leftBarButtonItem = self.editButtonItem;
-
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-    self.navigationItem.rightBarButtonItem = addButton;
+    
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    
+    m_searchTimer = nil;
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
+    
+    [m_searchTimer invalidate];
+    m_searchTimer = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -54,14 +62,34 @@
     }
 }
 
-- (void)insertNewObject:(id)sender
+- (void)search
 {
-    if (!_objects) {
-        _objects = [[NSMutableArray alloc] init];
+    //  Search if the search text has changed since last call,
+    //  then set the timer between searches
+    if (m_textChanged) {
+        
     }
-    [_objects insertObject:[NSDate date] atIndex:0];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    m_searchTimer = [NSTimer timerWithTimeInterval:SEARCH_INTERVAL 
+                                            target:self 
+                                          selector:@selector(search) 
+                                          userInfo:nil 
+                                           repeats:NO];
+}
+
+#pragma mark - Search Delegate
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    if (!m_searchTimer) {
+        //  Search
+        m_textChanged = YES;
+        [self search];
+        
+        m_textChanged = NO;
+    } else {
+        m_textChanged = YES;
+    }
 }
 
 #pragma mark - Table View
@@ -73,54 +101,28 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _objects.count;
+    return m_people.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
 
-    NSDate *object = [_objects objectAtIndex:indexPath.row];
-    cell.textLabel.text = [object description];
+    Person *person = [m_people objectAtIndex:indexPath.row];
+    cell.textLabel.text = [person description];
     return cell;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
-    return YES;
+    return NO;
 }
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [_objects removeObjectAtIndex:indexPath.row];
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
-    }
-}
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        NSDate *object = [_objects objectAtIndex:indexPath.row];
+        NSDate *object = [m_people objectAtIndex:indexPath.row];
         self.detailViewController.detailItem = object;
     }
 }
@@ -129,7 +131,7 @@
 {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSDate *object = [_objects objectAtIndex:indexPath.row];
+        NSDate *object = [m_people objectAtIndex:indexPath.row];
         [[segue destinationViewController] setDetailItem:object];
     }
 }

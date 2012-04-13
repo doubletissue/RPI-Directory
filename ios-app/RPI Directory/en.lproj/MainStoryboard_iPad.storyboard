@@ -43,7 +43,7 @@
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Detail" id="53"/>
+                    <navigationItem key="navigationItem" title="Details" id="53"/>
                     <connections>
                         <outlet property="detailDescriptionLabel" destination="27" id="29"/>
                     </connections>
@@ -112,7 +112,7 @@
                             <outlet property="delegate" destination="19" id="21"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Master" id="40"/>
+                    <navigationItem key="navigationItem" title="RPI Directory" id="40"/>
                     <connections>
                         <outlet property="searchDisplayController" destination="K8U-fD-mcX" id="K5M-hV-KgP"/>
                     </connections>
