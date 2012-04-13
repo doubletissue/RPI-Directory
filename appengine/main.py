@@ -52,12 +52,15 @@ class MainPage(webapp.RequestHandler):
     self.response.out.write(template.render(path, template_values))
 
 class Stats(webapp.RequestHandler):
+  def sql_connection():
+    conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
+    cursor = conn.cursor()
+    return cursor
+
   def get(self):
     
     TIME_MEMCACHE = 86400
-    
-    conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
-    cursor = conn.cursor()
+    cursor = None
     
     #Majors
     #Check MemCache
@@ -66,6 +69,7 @@ class Stats(webapp.RequestHandler):
     if cached_mem is not None:
       list_of_majors = cached_mem
     else:
+      cursor = sql_connection()
       cursor.execute("SELECT major, COUNT(major) as total FROM rpidirectory GROUP BY major ORDER BY total DESC LIMIT 20")
       majors = cursor.fetchall()
       list_of_majors = []
@@ -83,6 +87,8 @@ class Stats(webapp.RequestHandler):
     if cached_mem is not None:
       list_of_classes = cached_mem
     else:
+      if cursor is None:
+        cursor = sql_connection()
       cursor.execute("SELECT year, COUNT(year) as total FROM rpidirectory GROUP BY year ORDER BY total DESC LIMIT 5")
       classes = cursor.fetchall()
       list_of_classes = []
@@ -97,6 +103,8 @@ class Stats(webapp.RequestHandler):
     if cached_mem is not None:
       list_of_faculty = cached_mem
     else:
+      if cursor is None:
+        cursor = sql_connection()
       cursor.execute("SELECT department, COUNT(department) from rpidirectory GROUP BY department ORDER BY COUNT(department) DESC LIMIT 20")
       faculties = cursor.fetchall()
       list_of_faculty = []
@@ -111,6 +119,8 @@ class Stats(webapp.RequestHandler):
     if cached_mem:
       list_of_first_names = cached_mem
     else:
+      if cursor is None:
+        cursor = sql_connection()
       cursor.execute("SELECT first_name, COUNT(first_name) as total from rpidirectory WHERE first_name <> 'id=\"singledirectoryentry\">' GROUP BY first_name ORDER BY total DESC LIMIT 20")
       first_names = cursor.fetchall()
       list_of_first_names = []
@@ -126,6 +136,8 @@ class Stats(webapp.RequestHandler):
     if cached_mem is not None:
       list_of_last_names = cached_mem
     else:
+      if cursor is None:
+        cursor = sql_connection()
       cursor.execute("SELECT last_name, COUNT(last_name) as total from rpidirectory  WHERE last_name NOT LIKE '<th>%' GROUP BY last_name ORDER BY total DESC LIMIT 20")
       last_names = cursor.fetchall()
       list_of_last_names = []
@@ -181,8 +193,6 @@ class Stats(webapp.RequestHandler):
                        
     path = os.path.join(os.path.dirname(__file__), 'stats.html')
     self.response.out.write(template.render(path, template_values))
-    
-    conn.close()
 
 application = webapp.WSGIApplication(
   [('/', MainPage),
