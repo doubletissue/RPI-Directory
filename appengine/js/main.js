@@ -14,11 +14,16 @@ var request; request_in_progress = false;
 var class_chart_data, department_chart_data;
 var major_chart, department_chart;
 
+//Capitalize function
+String.prototype.capitalize = function(){
+   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
+  };
+
 function refreshTable(){
-  $("#results tr:odd").addClass("odd");
-  $("#results tr:not(.odd)").hide();
+  $("#results tr:odd").addClass("odd-expand");
+  $("#results tr:not(.odd-expand)").hide();
   $("#results tr:first-child").show();
-  $("#results tr.odd").click(function(){
+  $("#results tr.odd-expand").click(function(){
       $(this).next("tr").toggle();
       $(this).find(".arrow").toggleClass("up");
   });
@@ -179,7 +184,9 @@ function AddResultsToTable(data){
     
     // Details View
     for (key in person){
-      table_row += ("<li>" + key + ": " + person.key + "</li>");
+      if (key != "email" && key != "rcsid"){
+        table_row += ("<li>" + key.capitalize() + ": " + person[key] + "</li>"); 
+      }
     }
     table_row += "</ul></td></tr>";
     
