@@ -3,6 +3,7 @@ build/
 android-app/built/
 email-info
 xcuserdata/
+old-icons/
 *.xcworkspacedata
 
 .DS_Store
