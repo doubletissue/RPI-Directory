@@ -26,6 +26,7 @@
 		5C0D7E8D1538A7A9003B36B6 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C0D7E831538A7A9003B36B6 /* Icon-Small.png */; };
 		5C0D7E8E1538A7A9003B36B6 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C0D7E841538A7A9003B36B6 /* Icon-Small@2x.png */; };
 		5C0D7E911538A7A9003B36B6 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 5C0D7E871538A7A9003B36B6 /* iTunesArtwork */; };
+		5C0D7E991538C4A3003B36B6 /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D7E981538C4A3003B36B6 /* Person.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,8 @@
 		5C0D7E831538A7A9003B36B6 /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
 		5C0D7E841538A7A9003B36B6 /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small@2x.png"; sourceTree = "<group>"; };
 		5C0D7E871538A7A9003B36B6 /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
+		5C0D7E971538C4A3003B36B6 /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
+		5C0D7E981538C4A3003B36B6 /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +111,8 @@
 				5C0D7E371538A028003B36B6 /* AppDelegate.m */,
 				5C0D7E391538A028003B36B6 /* MainStoryboard_iPhone.storyboard */,
 				5C0D7E3C1538A028003B36B6 /* MainStoryboard_iPad.storyboard */,
+				5C0D7E971538C4A3003B36B6 /* Person.h */,
+				5C0D7E981538C4A3003B36B6 /* Person.m */,
 				5C0D7E3F1538A028003B36B6 /* MasterViewController.h */,
 				5C0D7E401538A028003B36B6 /* MasterViewController.m */,
 				5C0D7E421538A028003B36B6 /* DetailViewController.h */,
@@ -226,6 +231,7 @@
 				5C0D7E381538A028003B36B6 /* AppDelegate.m in Sources */,
 				5C0D7E411538A028003B36B6 /* MasterViewController.m in Sources */,
 				5C0D7E441538A028003B36B6 /* DetailViewController.m in Sources */,
+				5C0D7E991538C4A3003B36B6 /* Person.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
