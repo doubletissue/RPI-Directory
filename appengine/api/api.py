@@ -79,6 +79,7 @@ def parse_int(i, default):
   else:
     return int(i)
 
+"""
 def new_call(conn, queries, page_num, page_size):
   # If not, we query Cloud SQL
   cursor = conn.cursor()
@@ -111,7 +112,9 @@ def new_call(conn, queries, page_num, page_size):
     self.response.out.write(s)
     return None
   return cursor
+"""
 
+"""
 def old_call(conn, names, page_num, page_size):
   cursor = conn.cursor()
 
@@ -142,6 +145,7 @@ def old_call(conn, names, page_num, page_size):
       cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, page_size))
 
   return cursor
+"""
 
 class Api(webapp.RequestHandler):
   def get(self):
@@ -153,9 +157,7 @@ class Api(webapp.RequestHandler):
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
 
     if search == "":
-      call_type = "old"
-    else:
-      call_type = "new"
+      search = name
     
     if page_size > 20:
       page_size = 20
@@ -190,32 +192,53 @@ class Api(webapp.RequestHandler):
     else:
       memcache.add(ip,1,time=600)
 
-    if call_type == "old":
-      queries = map(str, name.split())
-    elif call_type == "new":
-      queries = map(str, search.split())
-      #Check memcache for results
-      if page_num == 1:
-        memcache_key = ":".join(sorted(search.split()))
-        cached_mem = memcache.get(memcache_key)
-        if cached_mem is not None:
-          d = {}
-          d['data'] = cached_mem
-          d['token'] = token
-          d['q'] = search
-          s = json.dumps(d)
-          self.response.out.write(s)
-          return
+    queries = map(str, search.split())
+    #Check memcache for results
+    if page_num == 1:
+      memcache_key = ":".join(sorted(search.split()))
+      cached_mem = memcache.get(memcache_key)
+      if cached_mem is not None:
+        d = {}
+        d['data'] = cached_mem
+        d['token'] = token
+        d['q'] = search
+        s = json.dumps(d)
+        self.response.out.write(s)
+        return
       
     # If not, we query Cloud SQL
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     
-    if call_type == "old":
-      cursor = old_call(conn, queries, page_num, page_size)
-    elif call_type == "new":
-      cursor = new_call(conn, queries, page_num, page_size)
-    else:
-      raise
+    # If not, we query Cloud SQL
+    cursor = conn.cursor()
+
+    query = 'SELECT ' + ",".join(row_attributes) + ' from rpidirectory WHERE ' 
+
+    for word in queries:
+      query += '('
+      for field in query_attributes:
+        query += field + ' LIKE ' + "'%" + word + "%'"
+        if field is not query_attributes[-1]:
+          query += ' OR '
+      query += ')'
+      if word is not queries[-1]:
+        query += ' AND '
+        
+    query += ' ORDER BY first_name'
+    query += ' LIMIT ' + str((page_num-1)*page_size) + ',' + str(page_size)
+    
+    #logging.debug(query)
+    try:
+      cursor.execute(query)
+    except DeadlineExceededError:
+      logging.error("Database timeout error")
+      d = {}
+      d['data'] = 'Error with request, please try again'
+      d['token'] = token
+      d['q'] = search
+      s = json.dumps(d)
+      self.response.out.write(s)
+      return None
     
     if cursor is None:
       #Error in DB call
