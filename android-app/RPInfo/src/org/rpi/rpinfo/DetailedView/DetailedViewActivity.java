@@ -142,7 +142,7 @@ public class DetailedViewActivity extends Activity {
 			//Log.i(TAG, "Person does not have a e-mail address.");
 		}
 		
-		String personPhoneNumber = selectedPerson.getElement("email", null);
+		String personPhoneNumber = selectedPerson.getElement("phone", null);
 		if( personEmail != null ){
 			ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
 					.withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, contact_index)

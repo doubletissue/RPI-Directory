@@ -1,3 +1,4 @@
 bin/*
 !bin/*.apk
 gen/
+project.properties
