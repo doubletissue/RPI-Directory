@@ -79,74 +79,6 @@ def parse_int(i, default):
   else:
     return int(i)
 
-"""
-def new_call(conn, queries, page_num, page_size):
-  # If not, we query Cloud SQL
-  cursor = conn.cursor()
-
-  query = 'SELECT ' + ",".join(row_attributes) + ' from rpidirectory WHERE ' 
-
-  for word in queries:
-    query += '('
-    for field in query_attributes:
-      query += field + ' LIKE ' + "'%" + word + "%'"
-      if field is not query_attributes[-1]:
-        query += ' OR '
-    query += ')'
-    if word is not queries[-1]:
-      query += ' AND '
-      
-  query += ' ORDER BY first_name'
-  query += ' LIMIT ' + str((page_num-1)*page_size) + ',' + str(page_size)
-  
-  #logging.debug(query)
-  try:
-    cursor.execute(query)
-  except DeadlineExceededError:
-    logging.error("Database timeout error")
-    d = {}
-    d['data'] = 'Error with request, please try again'
-    d['token'] = token
-    d['q'] = search
-    s = json.dumps(d)
-    self.response.out.write(s)
-    return None
-  return cursor
-"""
-
-"""
-def old_call(conn, names, page_num, page_size):
-  cursor = conn.cursor()
-
-  #Get the first name and the last name. Ignore other things.
-  if len(names) == 1:
-    #Check for RCS ID
-    #logging.debug("Checking RCS ID...")
-    rcsid_candidate = names[0]
-    cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE rcsid = %s LIMIT %s,%s", (rcsid_candidate, (page_num-1)*20, page_size))
-
-    if cursor.rowcount == 0:
-      #Check for partial name match
-      #logging.debug("No RCS ID, checking name...")
-      name_part = names[0] + '%'
-      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s OR last_name LIKE %s LIMIT %s,%s", (name_part, name_part, (page_num-1)*20, page_size))
-  elif len(names) > 1:
-    #Check for exact name match
-    #logging.debug("Checking exact name match...")
-    first_name = names[0]
-    last_name = names[-1]
-    cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name = %s AND last_name = %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, page_size))
-    
-    if cursor.rowcount == 0:
-      #Check for partial name match
-      #logging.debug("No exact name match, checking partial name match...")
-      first_name = names[0] + '%'
-      last_name = names[-1] + '%'
-      cursor.execute("SELECT " + ",".join(row_attributes) + " FROM rpidirectory WHERE first_name LIKE %s AND last_name LIKE %s LIMIT %s,%s", (first_name, last_name, (page_num-1)*20, page_size))
-
-  return cursor
-"""
-
 class Api(webapp.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
@@ -289,7 +221,6 @@ class Api(webapp.RequestHandler):
           #d = defaultdict(int)
           #d[names[-1].title()] += 1
           #memcache.set(memcache_key, d)
-    
     
     d = {}
     d['data'] = l
