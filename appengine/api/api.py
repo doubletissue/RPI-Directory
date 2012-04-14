@@ -228,10 +228,9 @@ class Api(webapp.RequestHandler):
     d['q'] = search
     
     #Add to memcache
-    if call_type == "new":
-      memcache_key = ":".join(sorted(search.split()))
-      memcache.add(memcache_key, l, 518400)
-      logging.debug("Cache miss, adding " + memcache_key + " to MemCache")
+    memcache_key = ":".join(sorted(search.split()))
+    memcache.add(memcache_key, l, 518400)
+    logging.debug("Cache miss, adding " + memcache_key + " to MemCache")
     
     s = json.dumps(d)
     self.response.out.write(s)
