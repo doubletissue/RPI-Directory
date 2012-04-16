@@ -188,12 +188,21 @@ const NSTimeInterval SEARCH_INTERVAL = 3.0f;                                //  
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PersonCell"];
 
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle 
                                       reuseIdentifier:@"PersonCell"];
     }
     
     Person *person = [m_people objectAtIndex:indexPath.row];
     cell.textLabel.text = [person name];
+    
+    NSString *subtitle = [[person details] objectForKey:@"year"];
+    if (subtitle == nil) {
+        subtitle = [[person details] objectForKey:@"title"];
+    }
+    
+    if (subtitle != nil) {
+        cell.detailTextLabel.text = subtitle;
+    }
     return cell;
 }
 
