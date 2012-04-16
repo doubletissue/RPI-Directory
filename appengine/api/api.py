@@ -88,10 +88,19 @@ class Api(webapp.RequestHandler):
     page_num  = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
 
+    if search + name == "":
+      d = {}
+      d['data'] = []
+      d['token'] = token
+      d['q'] = ""
+      s = json.dumps(d)
+      self.response.out.write(s)
+      return
+
     if search == "":
       search = name
     
-    if page_size > 20:
+    if page_size > 20 or page_size < 1:
       page_size = 20
     
     # Flood Prevention
