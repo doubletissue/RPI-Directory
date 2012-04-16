@@ -12,13 +12,23 @@
 
 #import "Person.h"
 
-const float SEARCH_INTERVAL = 3000.0f;
+const NSString *SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
+const NSTimeInterval SEARCH_INTERVAL = 3;
 
 @interface MasterViewController () {
-    NSMutableArray  *m_people;
-    NSTimer         *m_searchTimer;
-    Boolean         m_textChanged;
+    NSMutableArray      *m_people;
+    NSTimer             *m_searchTimer;
+    NSString            *m_searchString;
+    NSString            *m_lastString;
+    
+    dispatch_queue_t    m_queue;
+    
+    Boolean             m_textChanged;
 }
+
+- (void)search;
+- (void)searchTimerFunc;
+
 @end
 
 @implementation MasterViewController
@@ -42,6 +52,16 @@ const float SEARCH_INTERVAL = 3000.0f;
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
     m_searchTimer = nil;
+    m_queue = nil;
+    
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"QueryResult" 
+                                                      object:nil 
+                                                       queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:^(NSNotification *notification) {
+                                                      m_people = [notification object];
+                                                      [self.searchDisplayController.searchResultsTableView reloadData];
+                                                      [self.tableView reloadData];
+                                                  }];
 }
 
 - (void)viewDidUnload
@@ -49,8 +69,12 @@ const float SEARCH_INTERVAL = 3000.0f;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     [m_searchTimer invalidate];
     m_searchTimer = nil;
+    
+    dispatch_release(m_queue);
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -66,29 +90,81 @@ const float SEARCH_INTERVAL = 3000.0f;
 {
     //  Search if the search text has changed since last call,
     //  then set the timer between searches
-    if (m_textChanged) {
-        
+    if (m_queue == nil) {
+        m_queue = dispatch_queue_create("com.brendonjustin.searchqueue", NULL);
     }
     
-    m_searchTimer = [NSTimer timerWithTimeInterval:SEARCH_INTERVAL 
-                                            target:self 
-                                          selector:@selector(search) 
-                                          userInfo:nil 
-                                           repeats:NO];
+    dispatch_async(m_queue, ^{
+        NSError *err = nil;
+        NSString *query = [m_searchString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+        NSString *searchUrl = [SEARCH_URL stringByAppendingString:query];
+        NSString *resultString = [NSString stringWithContentsOfURL:[NSURL URLWithString:searchUrl]
+                                                    encoding:NSUTF8StringEncoding
+                                                       error:&err];
+        
+        NSLog(@"Search URL: %@", searchUrl);
+        if (err != nil) {
+            NSLog(@"Error retrieving search results for string: %@", m_searchString);
+        } else {
+            NSData *resultData = [resultString dataUsingEncoding:NSUTF8StringEncoding];
+            id results = [NSJSONSerialization JSONObjectWithData:resultData
+                                                         options:NSJSONReadingMutableLeaves
+                                                           error:&err];
+            
+            if (results && [results isKindOfClass:[NSDictionary class]]) {
+                NSMutableArray *people = [NSMutableArray array];
+                
+                for (NSDictionary *personDict in [results objectForKey:@"data"]) {
+                    NSMutableDictionary *editDict;
+                    Person *person = [[Person alloc] init];
+                    person.name = [personDict objectForKey:@"name"];
+                    
+                    //  Remove the 'name' field from the details dictionary
+                    //  as it is redundant.
+                    editDict = [personDict mutableCopy];
+                    if ([editDict objectForKey:@"name"] != nil) {
+                        [editDict removeObjectForKey:@"name"];
+                    }
+                    person.details = editDict;
+                    
+                    [people addObject:person];
+                }
+                
+                NSNotification *notification = [NSNotification notificationWithName:@"QueryResult"
+                                                                             object:people];
+                
+                [[NSNotificationCenter defaultCenter] postNotification:notification];
+            }
+        }
+    });
+}
+
+- (void)searchTimerFunc
+{
+    m_searchTimer = nil;
+    
+    if (![m_lastString isEqualToString:m_searchString]) {
+        m_searchString = m_lastString;
+        
+        [self search];
+    }
 }
 
 #pragma mark - Search Delegate
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-    if (!m_searchTimer) {
+    m_lastString = searchText;
+    if (m_searchTimer == nil) {
         //  Search
-        m_textChanged = YES;
+        m_searchString = searchText;
         [self search];
         
-        m_textChanged = NO;
-    } else {
-        m_textChanged = YES;
+        m_searchTimer = [NSTimer scheduledTimerWithTimeInterval:SEARCH_INTERVAL 
+                                                         target:self 
+                                                       selector:@selector(searchTimerFunc) 
+                                                       userInfo:nil 
+                                                        repeats:NO];
     }
 }
 
@@ -106,10 +182,15 @@ const float SEARCH_INTERVAL = 3000.0f;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PersonCell"];
 
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
+                                      reuseIdentifier:@"PersonCell"];
+    }
+    
     Person *person = [m_people objectAtIndex:indexPath.row];
-    cell.textLabel.text = [person description];
+    cell.textLabel.text = [person name];
     return cell;
 }
 
@@ -122,8 +203,10 @@ const float SEARCH_INTERVAL = 3000.0f;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        NSDate *object = [m_people objectAtIndex:indexPath.row];
-        self.detailViewController.detailItem = object;
+        Person *person = [m_people objectAtIndex:indexPath.row];
+        self.detailViewController.person = person;
+    } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        [self performSegueWithIdentifier:@"showDetail" sender:self];
     }
 }
 
@@ -131,8 +214,8 @@ const float SEARCH_INTERVAL = 3000.0f;
 {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSDate *object = [m_people objectAtIndex:indexPath.row];
-        [[segue destinationViewController] setDetailItem:object];
+        Person *person = [m_people objectAtIndex:indexPath.row];
+        [[segue destinationViewController] setPerson:person];
     }
 }
 
