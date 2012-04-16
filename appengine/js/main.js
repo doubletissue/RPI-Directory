@@ -21,10 +21,10 @@ String.prototype.capitalize = function(){
 
 function generateMap(address, div_to_map){
   var geocoder = new google.maps.Geocoder();
-  geocoder.geocode( { 'address': address}, 
+  geocoder.geocode({ 'address': address}, 
     function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        $("div_to_map").text("");
+        $("#" + div_to_map).text("");
         var myOptions = {
           zoom: 16,
           center: results[0].geometry.location,
@@ -36,7 +36,7 @@ function generateMap(address, div_to_map){
                     position: results[0].geometry.location
         });
       }else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
-        $("div_to_map").text("Loading Map...");
+        $("#" + div_to_map).text("Loading Map...");
         setTimeout(function() {
                         generateMap(address, div_to_map);
                     }, 1000);
@@ -57,9 +57,11 @@ function refreshTable(){
       //Generate Map if they have address
       
       var person = $(this).data('person');
+      var number = $(this).data('number')
       
       if (person.mailing_address != undefined){
-       generateMap(person.mailing_address, "map" + $(this).data('number')); 
+        console.log(person.mailing_address + " for: map" + number)
+        generateMap(person.mailing_address, "map" + number); 
       }
   });
 }
