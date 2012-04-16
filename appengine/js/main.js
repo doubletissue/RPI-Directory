@@ -19,6 +19,33 @@ String.prototype.capitalize = function(){
    return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
   };
 
+function generateMap(address, div_to_map){
+  var geocoder = new google.maps.Geocoder();
+  geocoder.geocode( { 'address': address}, 
+    function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        $("div_to_map").text("");
+        var myOptions = {
+          zoom: 16,
+          center: results[0].geometry.location,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        var map = new google.maps.Map(document.getElementById(div_to_map), myOptions);
+        var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+        });
+      }else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
+        $("div_to_map").text("Loading Map...");
+        setTimeout(function() {
+                        generateMap(address, div_to_map);
+                    }, 1000);
+      }else{
+        console.log("Geocode was not successful for the following reason: " + status);
+      }
+    });
+}
+
 function refreshTable(){
   $("#results tr:odd").addClass("odd-expand");
   $("#results tr:not(.odd-expand)").hide();
@@ -26,6 +53,14 @@ function refreshTable(){
   $("#results tr.odd-expand").click(function(){
       $(this).next("tr").toggle();
       $(this).find(".arrow").toggleClass("up");
+      
+      //Generate Map if they have address
+      
+      var person = $(this).data('person');
+      
+      if (person.mailing_address != undefined){
+       generateMap(person.mailing_address, "map" + $(this).data('number')); 
+      }
   });
 }
 
@@ -151,7 +186,7 @@ function AddResultsToTable(data){
   
   // Loop through JSON
   $.each(data.data, function(i, person){
-    var table_row = "<tr>";
+    var table_row = "<tr id='row" + i + "'>";
     
     //Professor Check
     if (person.major == undefined && person.department == undefined){
@@ -180,7 +215,7 @@ function AddResultsToTable(data){
     }
     
     table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" +  email + "</td>");
-    table_row += "</tr><tr><td colspan='4'><h4>Additional information</h4><ul>";
+    table_row += ("</tr><tr><td colspan='4'><h4>Additional information</h4><div style='float:right; width:200px; height:200px;' id='map" + i + "'></div><ul style='float:left'>");
     
     // Details View
     for (key in person){
@@ -210,9 +245,11 @@ function AddResultsToTable(data){
       departments[person.major] += 1;
     }
     
+    //Set person data
+    $("#row" + i).data('person', person);
+    $("#row" + i).data('number', i);
   });
   
-  $("#results").trigger("update");
   refreshTable();
   
   $("#results").css("opacity", "1");
@@ -276,6 +313,9 @@ function callServer(keyword){
 }
 
 $(document).ready(function() {
+  //Focus on textbox
+	$("#keyword").focus();
+	
   //AJAX Setup
   $.ajaxSetup({
     error: function(x, e) {
@@ -331,12 +371,6 @@ $(document).ready(function() {
 	    }
     }
   }, keybind_delay);
-  
-  //Make table sortable
-  $("#results").tablesorter();
-  
-	//Focus on textbox
-	$("#keyword").focus();
 	
 	//Detect LocalStorage (HTML5 Cache)
 	local_storage_supported = DetectLocalStorage();
