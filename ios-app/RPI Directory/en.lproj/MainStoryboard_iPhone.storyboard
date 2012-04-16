@@ -68,7 +68,7 @@
                             <outlet property="delegate" destination="12" id="15"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Search RPI" id="36"/>
+                    <navigationItem key="navigationItem" title="RPI Directory" id="36"/>
                     <connections>
                         <outlet property="searchDisplayController" destination="yCv-3Y-41f" id="Run-PM-yLH"/>
                     </connections>

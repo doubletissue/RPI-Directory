@@ -12,8 +12,8 @@
 
 #import "Person.h"
 
-const NSString *SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
-const NSTimeInterval SEARCH_INTERVAL = 3;
+const NSString *SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";     //  Base search URL
+const NSTimeInterval SEARCH_INTERVAL = 3.0f;                                //  3 seconds
 
 @interface MasterViewController () {
     NSMutableArray      *m_people;
@@ -55,6 +55,8 @@ const NSTimeInterval SEARCH_INTERVAL = 3;
     m_searchTimer = nil;
     m_queue = nil;
     
+    //  Update the array of people on the main thread, when a new array is available.
+    //  Also make both table views reflect the new data.
     [[NSNotificationCenter defaultCenter] addObserverForName:@"QueryResult" 
                                                       object:nil 
                                                        queue:[NSOperationQueue mainQueue]
@@ -81,16 +83,15 @@ const NSTimeInterval SEARCH_INTERVAL = 3;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+        return (interfaceOrientation == UIInterfaceOrientationPortrait);
     } else {
         return YES;
     }
 }
 
+//  Asynchronously search for people with the current query.
 - (void)search
 {
-    //  Search if the search text has changed since last call,
-    //  then set the timer between searches
     if (m_queue == nil) {
         m_queue = dispatch_queue_create("com.brendonjustin.searchqueue", NULL);
     }
@@ -103,7 +104,6 @@ const NSTimeInterval SEARCH_INTERVAL = 3;
                                                     encoding:NSUTF8StringEncoding
                                                        error:&err];
         
-        NSLog(@"Search URL: %@", searchUrl);
         if (err != nil) {
             NSLog(@"Error retrieving search results for string: %@", m_searchString);
         } else {
@@ -153,6 +153,8 @@ const NSTimeInterval SEARCH_INTERVAL = 3;
 
 #pragma mark - Search Delegate
 
+//  Search if the search text has changed since last call of this function,
+//  then set the timer between searches.
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     m_lastString = searchText;

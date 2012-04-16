@@ -130,7 +130,7 @@
                             <outlet property="delegate" destination="19" id="21"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Search RPI" id="40"/>
+                    <navigationItem key="navigationItem" title="RPI Directory" id="40"/>
                     <connections>
                         <outlet property="searchDisplayController" destination="K8U-fD-mcX" id="K5M-hV-KgP"/>
                     </connections>
