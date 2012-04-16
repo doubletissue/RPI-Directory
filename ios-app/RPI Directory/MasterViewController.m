@@ -20,6 +20,7 @@ const NSTimeInterval SEARCH_INTERVAL = 3;
     NSTimer             *m_searchTimer;
     NSString            *m_searchString;
     NSString            *m_lastString;
+    UITableView         *m_currentTableView;
     
     dispatch_queue_t    m_queue;
     
@@ -202,6 +203,7 @@ const NSTimeInterval SEARCH_INTERVAL = 3;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    m_currentTableView = tableView;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         Person *person = [m_people objectAtIndex:indexPath.row];
         self.detailViewController.person = person;
@@ -213,7 +215,7 @@ const NSTimeInterval SEARCH_INTERVAL = 3;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+        NSIndexPath *indexPath = [m_currentTableView indexPathForSelectedRow];
         Person *person = [m_people objectAtIndex:indexPath.row];
         [[segue destinationViewController] setPerson:person];
     }
