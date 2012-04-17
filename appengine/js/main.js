@@ -21,7 +21,7 @@ String.prototype.capitalize = function(){
 
 function generateMap(address, div_to_map){
   var geocoder = new google.maps.Geocoder();
-  geocoder.geocode({ 'address': address}, 
+  geocoder.geocode( { 'address': address}, 
     function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         $("#" + div_to_map).text("");
@@ -60,8 +60,8 @@ function refreshTable(){
       var number = $(this).data('number')
       
       if (person.mailing_address != undefined){
-        console.log(person.mailing_address + " for: map" + number)
-        generateMap(person.mailing_address, "map" + number); 
+        console.log(person.office_location + ", 12180 for: map" + number)
+        generateMap(person.office_location + ", 12180", "map" + number); 
       }
   });
 }
