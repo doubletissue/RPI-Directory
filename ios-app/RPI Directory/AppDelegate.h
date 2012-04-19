@@ -1,5 +1,5 @@
 //
-//  Person.h
+//  AppDelegate.h
 //  RPI Directory
 //
 //  Created by Brendon Justin on 4/13/12.
@@ -8,9 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface Person : NSObject
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (strong, nonatomic) NSString *name;
-@property (strong, nonatomic) NSDictionary *details;
+@property (strong, nonatomic) UIWindow *window;
 
 @end
