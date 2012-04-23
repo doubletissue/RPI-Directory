@@ -53,10 +53,9 @@ class MainPage(webapp.RequestHandler):
 
 class Stats(webapp.RequestHandler):
   def get(self):
-    TIME_MEMCACHE = 86400
+    TIME_MEMCACHE = 172800
     
-    conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
-    cursor = conn.cursor()
+    cursor = None
     
     #Majors
     #Check MemCache
@@ -74,6 +73,8 @@ class Stats(webapp.RequestHandler):
     if memcache_key in cached_mem:
       list_of_majors = cached_mem[memcache_key]
     else:
+      conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
+      cursor = conn.cursor()
       cursor.execute("SELECT major, COUNT(major) as total FROM rpidirectory GROUP BY major ORDER BY total DESC LIMIT 20")
       majors = cursor.fetchall()
       list_of_majors = []
@@ -90,6 +91,9 @@ class Stats(webapp.RequestHandler):
     if memcache_key in cached_mem:
       list_of_classes = cached_mem[memcache_key]
     else:
+      if not cursor:
+        conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
+        cursor = conn.cursor()
       cursor.execute("SELECT year, COUNT(year) as total FROM rpidirectory GROUP BY year ORDER BY total DESC LIMIT 5")
       classes = cursor.fetchall()
       list_of_classes = []
@@ -103,6 +107,9 @@ class Stats(webapp.RequestHandler):
     if memcache_key in cached_mem:
       list_of_faculty = cached_mem[memcache_key]
     else:
+      if not cursor:
+        conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
+        cursor = conn.cursor()
       cursor.execute("SELECT department, COUNT(department) from rpidirectory GROUP BY department ORDER BY COUNT(department) DESC LIMIT 20")
       faculties = cursor.fetchall()
       list_of_faculty = []
@@ -116,6 +123,9 @@ class Stats(webapp.RequestHandler):
     if memcache_key in cached_mem:
       list_of_first_names = cached_mem[memcache_key]
     else:
+      if not cursor:
+        conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
+        cursor = conn.cursor()
       cursor.execute("SELECT first_name, COUNT(first_name) as total from rpidirectory WHERE first_name <> 'id=\"singledirectoryentry\">' GROUP BY first_name ORDER BY total DESC LIMIT 20")
       first_names = cursor.fetchall()
       list_of_first_names = []
@@ -130,6 +140,9 @@ class Stats(webapp.RequestHandler):
     if memcache_key in cached_mem:
       list_of_last_names = cached_mem[memcache_key]
     else:
+      if not cursor:
+        conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
+        cursor = conn.cursor()
       cursor.execute("SELECT last_name, COUNT(last_name) as total from rpidirectory  WHERE last_name NOT LIKE '<th>%' GROUP BY last_name ORDER BY total DESC LIMIT 20")
       last_names = cursor.fetchall()
       list_of_last_names = []
