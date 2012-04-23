@@ -59,10 +59,13 @@ function refreshTable(){
       var person = $(this).data('person');
       var number = $(this).data('number')
       
+      //Google Maps not working now
+      /*
       if (person.mailing_address != undefined){
         console.log(person.office_location + ", 12180 for: map" + number)
         generateMap(person.office_location + ", 12180", "map" + number); 
       }
+      */
   });
 }
 
