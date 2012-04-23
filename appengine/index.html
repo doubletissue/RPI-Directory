@@ -1,19 +1,7 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<meta name="description" content="Welcome to the RPI Directory.  Here you'll be able to find anyone in the RPI community at instant speed." />
-		<meta name="google-site-verification" content="1pEFJtcy0RaGDjsrhsGQw58eXJjj0NhJHfEqgJ1VPdE" />
-		<meta name="robots" content="noarchive" />
-		<title>RPI Directory</title>
-		<link href='http://fonts.googleapis.com/css?family=Puritan:700' rel='stylesheet' type='text/css'>
-		<link href='css/bootstrap.min.css' rel='stylesheet' type='text/css'>
-		<link href='css/bootstrap-responsive.min.css' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" type="text/css" href="css/jNotify.jquery.css" media="screen" />
-		<link href='css/main.css' rel='stylesheet' type='text/css'>
-		</head>
-		<body id="body">
-		  <div id="container" class="container-fluid">
+{% extends "base.html" %}
+
+{% block content %}
+<div id="container" class="container-fluid">
 		    <h1>RPI Directory</h1>
 		    <div id="inputBox">
 			    <input type="search" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
@@ -43,45 +31,8 @@
     		<div id="qr">
     		  <p>
     		    <a href="http://play.google.com/store/apps/details?id=org.rpi.rpinfo">
-              <img alt="Android app on Google Play"
-                   src="http://www.android.com/images/brand/android_app_on_play_logo_large.png" />
+              <img alt="Android app on Google Play" src="http://www.android.com/images/brand/android_app_on_play_logo_large.png" />
             </a>
     		  </p>
     		</div>
-    		<footer>
-  		    <div id="footer">
-  		      <p>
-  		        People in database: {{ number_people }} - <a href="/stats" target="_blank">Additional Stats</a> - <a href="http://rcos.rpi.edu/projects/rpi-directory-app/" target="_blank">An RCOS Project</a>
-  		      </p>
-  		    </div>
-  		  </footer>
-		  </div>
-			<script type="text/javascript" language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  		<script type="text/javascript" src="js/bindwithdelay.js"></script>
-  		<script type="text/javascript" src="js/main.js"></script>
-  		<script type="text/javascript" src="js/bootstrap.min.js"></script>
-  		<script type="text/javascript" src="js/jNotify.jquery.min.js"></script>
-  		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-  		<script type="text/javascript">
-  		  var _gaq = _gaq || [];
-  		  _gaq.push(['_setAccount', 'UA-25705269-1']);
-  		  _gaq.push(['_trackPageview']);
-
-  		  (function() {
-  		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  		  })();
-
-  		  // Error Logging
-        window.onerror = function(message, file, line) { 
-           var sFormattedMessage = '[' + file + ' (' + line + ')] ' + message; 
-           _gaq.push(['_trackEvent', 'Exceptions', 'Application', sFormattedMessage, null, true]);
-        }
-
-        // Load the Visualization API and the piechart package.
-        google.load('visualization', '1.0', {'packages':['corechart']});
-  		</script>
-		</body>
-</html>
+{% endblock %}

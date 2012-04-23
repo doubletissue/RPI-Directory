@@ -1,12 +1,7 @@
+{% extends "base.html" %}
+{%block title %}RPI Directory Stats{% endblock %}
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<title>RPI Directory Stats</title>
-		<link href='http://fonts.googleapis.com/css?family=Puritan:700' rel='stylesheet' type='text/css'>
-		<link href='css/960.css' rel='stylesheet' type='text/css'>
-		<link href='css/main.css' rel='stylesheet' type='text/css'>
+{% block add_head %}
 		<style type="text/css">
 		  .chart {
 		    height: 500px;
@@ -21,7 +16,7 @@
         font-size: 80%;
       }
 		 </style>
-		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<!--Load the AJAX API-->
 		    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		    <script type="text/javascript">
@@ -230,8 +225,9 @@ function drawIPChart() {
 			  
 		  });
 		</script>
-		</head>
-		<body id="body">
+{% endblock %}
+
+{% block content %}
 	    <h1>RPI Directory Stats</h1>
 		  <div id="major_stats" class="chart"></div>
 		  <div id="faculty_stats" class="chart"></div>
@@ -244,23 +240,4 @@ function drawIPChart() {
 		  <div id="searched_last_names_stats" class="chart"></div>-->
 		  <div id="ip_stats" class="chart"></div>
 		  {% endif %}
-		  <footer>
-		    <div id="footer">
-		      <p>
-		        {{ memcache.items }} items in MemCache, totaling {{ memcache.bytes|floatformat:"-3" }} KB - {% if number_people %}People in database: {{ number_people }} - {% endif %}<a href="http://rcos.rpi.edu/projects/rpi-directory-app/" target="_blank">An RCOS Project</a>
-		      </p>
-		    </div>
-		  </footer>
-  		<script type="text/javascript">
-  		  var _gaq = _gaq || [];
-  		  _gaq.push(['_setAccount', 'UA-25705269-1']);
-  		  _gaq.push(['_trackPageview']);
-
-  		  (function() {
-  		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  		  })();
-  		</script>
-		</body>
-</html>
+{% endblock %}

@@ -182,6 +182,22 @@ function AddResultsToTable(data){
   
   resetCharts();
   
+  //If no data, display notification
+  if (data.data.length < 1){
+    jNotify(
+    		'No results...try broadening your search?',
+    		{
+    		  clickOverlay : true, // added in v2.0
+    		  MinWidth : 250,
+    		  TimeShown : 1250,
+    		  LongTrip :20,
+    		  ShowOverlay : false,
+    		  HorizontalPosition : 'center',
+    		  VerticalPosition : 'center',
+    		});
+    return;
+  }
+  
   //Track data
   var classes = {};
   var departments = {};
