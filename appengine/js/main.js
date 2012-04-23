@@ -236,7 +236,11 @@ function AddResultsToTable(data){
     }
     
     table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" +  email + "</td>");
-    table_row += ("</tr><tr><td colspan='4'><h4>Additional information</h4><div style='float:right; width:200px; height:200px;' id='map" + i + "'></div><ul style='float:left'>");
+    
+    // Removed Google Maps
+    //table_row += ("</tr><tr><td colspan='4'><h4>Additional information</h4><div style='float:right; width:200px; height:200px;' id='map" + i + "'></div><ul style='float:left'>");
+    
+    table_row += ("</tr><tr><td colspan='4'><h4>Additional information</h4><ul style='float:left'>");
     
     // Details View
     for (key in person){
