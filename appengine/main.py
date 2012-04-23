@@ -56,6 +56,7 @@ class Stats(webapp.RequestHandler):
     TIME_MEMCACHE = 172800
     
     cursor = None
+    conn = None
     
     #Majors
     #Check MemCache
@@ -202,7 +203,8 @@ class Stats(webapp.RequestHandler):
     path = os.path.join(os.path.dirname(__file__), 'stats.html')
     self.response.out.write(template.render(path, template_values))
     
-    conn.close()
+    if conn:
+      conn.close()
 
 application = webapp.WSGIApplication(
   [('/', MainPage),
