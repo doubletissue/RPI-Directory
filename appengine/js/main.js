@@ -191,7 +191,7 @@ function AddResultsToTable(data){
     		  MinWidth : 250,
     		  TimeShown : 1250,
     		  LongTrip :20,
-    		  ShowOverlay : false,
+    		  ShowOverlay : true,
     		  HorizontalPosition : 'center',
     		  VerticalPosition : 'center',
     		});
