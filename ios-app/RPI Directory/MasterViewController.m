@@ -99,6 +99,8 @@ const NSTimeInterval SEARCH_INTERVAL = 0.5f;
 //  Asynchronously search for people with the current query.
 - (void)search
 {
+    [m_queue cancelAllOperations];
+    
     [m_queue addOperationWithBlock:^{
         NSError *err = nil;
         NSString *query = [m_searchString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
@@ -161,7 +163,7 @@ const NSTimeInterval SEARCH_INTERVAL = 0.5f;
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     m_lastString = searchText;
-    if (m_searchTimer == nil) {
+    if (m_searchTimer == nil && ![m_lastString isEqualToString:@""]) {
         //  Search
         m_searchString = searchText;
         [self search];
