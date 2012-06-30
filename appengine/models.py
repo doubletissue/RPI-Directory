@@ -1,34 +1,34 @@
 #App Engine Models
 
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 import string
 
-class Person(db.Model):
+class Person(ndb.Model):
   """Models a person in the RPI directory."""
-  first_name      = db.StringProperty()
-  middle_name     = db.StringProperty()
-  last_name       = db.StringProperty()
-  department      = db.StringProperty()
-  email           = db.StringProperty()
-  rcsid           = db.StringProperty()
-  year            = db.StringProperty()
-  major           = db.StringProperty()
-  title           = db.StringProperty()
-  phone           = db.StringProperty()
-  fax             = db.StringProperty()
-  homepage        = db.StringProperty()
-  office_location = db.StringProperty(multiline=True)
-  campus_mailstop = db.StringProperty(multiline=True)
-  mailing_address = db.StringProperty(multiline=True)
-  date_crawled    = db.DateTimeProperty(auto_now=True)
-  directory_id    = 0
+  first_name = ndb.StringProperty()
+  middle_name = ndb.StringProperty()
+  last_name = ndb.StringProperty()
+  department = ndb.StringProperty()
+  email = ndb.StringProperty()
+  rcsid = ndb.StringProperty()
+  year = ndb.StringProperty()
+  major = ndb.StringProperty()
+  title = ndb.StringProperty()
+  phone = ndb.StringProperty()
+  fax = ndb.StringProperty()
+  homepage = ndb.StringProperty()
+  office_location = ndb.StringProperty(multiline=True)
+  campus_mailstop = ndb.StringProperty(multiline=True)
+  mailing_address = ndb.StringProperty(multiline=True)
+  date_crawled = ndb.DateTimeProperty(auto_now=True)
+  directory_id = 0
   
   @staticmethod
   def buildPerson(d):
     person = Person()
     
     if 'email' in d:
-      rcsid = string.rsplit(d['email'],'@',1)[0]
+      rcsid = string.rsplit(d['email'],'@', 1)[0]
       person = Person(key_name = rcsid)
       person.rcsid = rcsid
     elif 'name' in d:
