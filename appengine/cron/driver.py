@@ -24,7 +24,7 @@ NUM_THREADS = 100
 
 #Creates a person and stores it
 def putResult(d):
-  """
+  
   person = Person.buildPerson(d)
   #if person.department:
     #DepartmentKeyword.buildKeywords(person.department)
@@ -41,7 +41,7 @@ def putResult(d):
   logging.info(repr(args))
   cursor.execute(query, args)
   conn.close()
-
+  """
 def crawlPerson(index):
   logging.info("In CrawlPerson")
   result = Crawler().getMap(index)
