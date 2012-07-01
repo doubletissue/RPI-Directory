@@ -17,9 +17,9 @@ class Person(ndb.Model):
   phone = ndb.StringProperty()
   fax = ndb.StringProperty()
   homepage = ndb.StringProperty()
-  office_location = ndb.StringProperty(multiline=True)
-  campus_mailstop = ndb.StringProperty(multiline=True)
-  mailing_address = ndb.StringProperty(multiline=True)
+  office_location = ndb.StringProperty()
+  campus_mailstop = ndb.StringProperty()
+  mailing_address = ndb.StringProperty()
   date_crawled = ndb.DateTimeProperty(auto_now=True)
   directory_id = 0
   
@@ -29,10 +29,10 @@ class Person(ndb.Model):
     
     if 'email' in d:
       rcsid = string.rsplit(d['email'],'@', 1)[0]
-      person = Person(key_name = rcsid)
+      person = Person(id = rcsid)
       person.rcsid = rcsid
     elif 'name' in d:
-      person = Person(key_name = d['name'])
+      person = Person(id = d['name'])
       person.rcsid = d['name']
     else:
       # No name for the person, no point in making them
@@ -49,7 +49,7 @@ class Person(ndb.Model):
         #person.middle_name = names[1]
     if 'email' in d:
       person.email = d['email']
-      person.key_name = d['email']
+      person.id = d['email']
     if 'year' in d:
       person.year = d['year']
     if 'major' in d:
@@ -132,9 +132,9 @@ class Person(ndb.Model):
   
   
 
-class SearchPosition(db.Model):
+class SearchPosition(ndb.Model):
   """Model to store Crawler position."""
-  position = db.IntegerProperty()
+  position = ndb.IntegerProperty()
 
 #class DepartmentKeyword(db.Model):
   #"""Model to store a single work from a major, for searching purposes"""

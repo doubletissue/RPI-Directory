@@ -1,6 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-from google.appengine.api import rdbms
+#from google.appengine.api import rdbms
 from google.appengine.api import memcache
 from google.appengine.api import mail
 import logging
@@ -9,6 +9,8 @@ import urllib
 from models import Person
 from collections import defaultdict
 from django.utils import simplejson as json
+
+from google.appengine.api import search
 
 _INSTANCE_NAME = 'christianjohnson.org:rpidirectory:christianjohnson'
 
@@ -146,7 +148,7 @@ class Api(webapp.RequestHandler):
         s = json.dumps(d)
         self.response.out.write(s)
         return
-      
+    
     # If not, we query Cloud SQL
     conn = rdbms.connect(instance=_INSTANCE_NAME, database='rpidirectory')
     
