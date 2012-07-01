@@ -21,7 +21,7 @@ class Person(ndb.Model):
   campus_mailstop = ndb.StringProperty()
   mailing_address = ndb.StringProperty()
   date_crawled = ndb.DateTimeProperty(auto_now=True)
-  directory_id = 0
+  directory_id = ndb.IntegerProperty()
   
   @staticmethod
   def buildPerson(d):
