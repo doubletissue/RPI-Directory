@@ -1,18 +1,10 @@
 from cron.crawler import Crawler
 from models import SearchPosition
 from models import Person
-#from models import DepartmentKeyword
 
 import cgi
-import datetime
-import urllib
-import wsgiref.handlers
 import logging
-import string
 
-from google.appengine.ext import db
-#from google.appengine.api import rdbms
-from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.api import taskqueue
 from google.appengine.api import memcache
@@ -27,7 +19,7 @@ _INDEX_NAME = 'person'
 
 #Creates a person and stores it
 def createDocument(person):
-    fields=[]
+    fields = []
     if person.first_name:
         fields.append(search.TextField(name='first_name', value=person.first_name))
     if person.middle_name:
@@ -62,33 +54,21 @@ def createDocument(person):
         fields.append(search.DateField(name='date_crawled', value=person.date_crawled.date()))
     if person.directory_id:
         fields.append(search.NumberField(name='directory_id', value=person.directory_id))
-                
+
     return search.Document(doc_id=person.rcsid or None, fields=fields)
 
 def putResult(d):
-  
   person = Person.buildPerson(d)
   #if person.department:
     #DepartmentKeyword.buildKeywords(person.department)
   person.put()
   search.Index(name=_INDEX_NAME).add(createDocument(person))
-  """
-  
-  person = Person.buildPerson(d)
-    
-  conn = rdbms.connect(instance=_INSTANCE_NAME, database="rpidirectory")
-  cursor = conn.cursor()
-  query = 'REPLACE INTO rpidirectory (`name`, `campus_mailstop`, `department`, `email`, `fax`, `first_name`, `homepage`, `last_name`, `mailing_address`, `major`, `office_location`, `phone`, `rcsid`, `title`, `year`, `directory_id`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-  args = (person.rcsid, person.campus_mailstop, person.department, person.email, person.fax, person.first_name, person.homepage, person.last_name, person.mailing_address, person.major, person.office_location, person.phone, person.rcsid, person.title, person.year, str(person.directory_id))
-  logging.info(query)
-  logging.info(repr(args))
-  cursor.execute(query, args)
-  conn.close()
-  """
+
+
 def crawlPerson(index):
   logging.info("In CrawlPerson")
   result = Crawler().getMap(index)
-  
+
   if 'error' in result.keys():
     logging.warn("error at index" + str(index) + ", error is " + result['error'])
     if result['error'] == 'page_not_found':
@@ -101,7 +81,7 @@ def crawlPerson(index):
   else:
     logging.info("putting results")
     putResult(result)
-  
+
   #if int(index) > 15000:
     #logging.info("At end of database, reseting " + str(index))
     #memcache.set("index", 1, 86400)
@@ -110,7 +90,6 @@ def crawlPerson(index):
 class Driver(webapp.RequestHandler):
   def get(self):
     index = memcache.get("index")
-
     if not index:
       index_from_ds = SearchPosition.get_by_id("index")
       if not index_from_ds:
@@ -120,7 +99,7 @@ class Driver(webapp.RequestHandler):
       else:
         index = index_from_ds.position
       memcache.add("index", index, 86400)
-  
+
     #Spawn tasks
     for i in range(index, index + NUM_THREADS):
       taskqueue.add(url='/crawl/worker', params={'index': i}) #, target='backend'
@@ -128,8 +107,8 @@ class Driver(webapp.RequestHandler):
       if not memcache.incr("index"):
         logging.error("Memcache set failed")
     #crawlPerson(index)
-      
-    
+
+
     #Update Datastore
     index_from_ds = SearchPosition.get_by_id("index")
     if index_from_ds:
@@ -143,12 +122,12 @@ class DriverWorker(webapp.RequestHandler):
     logging.info("In DriverWorker")
     index = cgi.escape(self.request.get('index'))
     crawlPerson(index)
-    
+
   def get(self):
     logging.info("In DriverWorker")
     index = cgi.escape(self.request.get('index'))
     crawlPerson(index)
-	
+
 class FixBroken(webapp.RequestHandler):
   def get(self):
     logging.info("Fixing Broken Ones...")
@@ -159,10 +138,10 @@ class FixBroken(webapp.RequestHandler):
     logging.info("Found " + str(cursor.rowcount) + " broken entries")
     if cursor.rowcount > 0:
       for row in cursor.fetchall():
-        taskqueue.add(url='/crawl/worker', params={'index': str(row[0])}) 
+        taskqueue.add(url='/crawl/worker', params={'index': str(row[0])})
     conn.close()
-    
-	
+
+
 application = webapp.WSGIApplication([
   ("/crawl/main", Driver),
   ("/crawl/worker", DriverWorker),
