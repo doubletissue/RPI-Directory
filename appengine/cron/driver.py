@@ -20,7 +20,8 @@ import string
 _INDEX_NAME = 'person'
 
 def split_words(field_name, s):
-    s = string.translate(str(s), None, string.punctuation)
+    for c in string.punctuation:
+        s = s.replace(c,'')
     l = s.replace('\n', ' ').split()
     r = []
     for i in range(len(l)):
