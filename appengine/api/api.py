@@ -1,5 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.ext import ndb
 #from google.appengine.api import rdbms
 from google.appengine.api import memcache
 from google.appengine.api import mail
@@ -137,13 +138,19 @@ class Api(webapp.RequestHandler):
       memcache.add(ip, 1, time=600)
 
     queries = map(str, search_query.split())
-    results = search.Index(name=_INDEX_NAME).search(search_query.split()[0])
+    query_string = ' AND '.join(queries)
+    results = search.Index(name=_INDEX_NAME).search(query_string)
 
     d = {}
-    d['data'] = results.results
+    d['data'] = []
     d['token'] = token
     d['q'] = search_query
-    #s = json.dumps(d)
+    for result in results:
+        rcsid = result.doc_id
+        r = Person.get_by_id(rcsid)
+        if r:
+            d['data'].append(Person.buildMap(r))
+    s = json.dumps(d)
     self.response.out.write(d)
 
 

@@ -63,7 +63,7 @@ def createDocument(person):
     if person.directory_id:
         fields.append(search.NumberField(name='directory_id', value=person.directory_id))
                 
-    return search.Document(fields=fields)
+    return search.Document(doc_id=person.rcsid or None, fields=fields)
 
 def putResult(d):
   
