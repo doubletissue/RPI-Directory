@@ -1,6 +1,5 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-from google.appengine.ext import ndb
 #from google.appengine.api import rdbms
 from google.appengine.api import memcache
 from google.appengine.api import mail
@@ -8,7 +7,6 @@ import logging
 import cgi
 import urllib
 from models import Person
-from collections import defaultdict
 from django.utils import simplejson as json
 
 from google.appengine.api import search
