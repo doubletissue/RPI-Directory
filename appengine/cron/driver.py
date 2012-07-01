@@ -19,9 +19,9 @@ import string
 
 _INDEX_NAME = 'person'
 
-def split_words(field_name,s):
-    s = string.translate(str(s),None,string.punctuation)
-    l = s.replace('\n',' ').split()
+def split_words(field_name, s):
+    s = string.translate(str(s), None, string.punctuation)
+    l = s.replace('\n', ' ').split()
     r = []
     for i in range(len(l)):
         try:
@@ -29,7 +29,7 @@ def split_words(field_name,s):
             continue
         except:
             pass
-        r.append(search.TextField(name=field_name+str(i), value=l[i]))
+        r.append(search.TextField(name=field_name + str(i), value=l[i]))
     return r
 
 #Creates a person and stores it
@@ -37,38 +37,38 @@ def createDocument(person):
     fields = []
     if person.first_name:
         for i in range(len(person.first_name)):
-            for j in range(i+1,len(person.first_name)+1):
-                fields.append(search.TextField(name='first_name'+str(i)+'to'+str(j), value=person.first_name[i:j]))
+            for j in range(i + 1, len(person.first_name) + 1):
+                fields.append(search.TextField(name='first_name' + str(i) + 'to' + str(j), value=person.first_name[i:j]))
     if person.middle_name:
         fields.append(search.TextField(name='middle_name', value=person.middle_name))
     if person.last_name:
         for i in range(len(person.last_name)):
-            for j in range(i+1,len(person.last_name)+1):
-                fields.append(search.TextField(name='last_name'+str(i)+'to'+str(j), value=person.last_name[i:j]))
+            for j in range(i + 1, len(person.last_name) + 1):
+                fields.append(search.TextField(name='last_name' + str(i) + 'to' + str(j), value=person.last_name[i:j]))
     if person.department:
-        fields.extend(split_words('department',person.department))
+        fields.extend(split_words('department', person.department))
     if person.email:
-        fields.extend(split_words('email',person.email))
+        fields.extend(split_words('email', person.email))
     if person.rcsid:
-        fields.extend(split_words('rcsid',person.rcsid))
+        fields.extend(split_words('rcsid', person.rcsid))
     if person.year:
-        fields.extend(split_words('year',person.year))
+        fields.extend(split_words('year', person.year))
     if person.major:
-        fields.extend(split_words('major',person.major))
+        fields.extend(split_words('major', person.major))
     if person.title:
-        fields.extend(split_words('title',person.title))
+        fields.extend(split_words('title', person.title))
     if person.phone:
-        fields.extend(split_words('phone',person.phone))
+        fields.extend(split_words('phone', person.phone))
     if person.fax:
-        fields.extend(split_words('fax',person.fax))
+        fields.extend(split_words('fax', person.fax))
     if person.homepage:
-        fields.extend(split_words('homepage',person.homepage))
+        fields.extend(split_words('homepage', person.homepage))
     if person.office_location:
-        fields.extend(split_words('office_location',person.office_location))
+        fields.extend(split_words('office_location', person.office_location))
     if person.campus_mailstop:
-        fields.extend(split_words('campus_mailstop',person.campus_mailstop))
+        fields.extend(split_words('campus_mailstop', person.campus_mailstop))
     if person.mailing_address:
-        fields.extend(split_words('mailing_address',person.mailing_address))
+        fields.extend(split_words('mailing_address', person.mailing_address))
 
     return search.Document(doc_id=person.rcsid or None, fields=fields)
 
@@ -143,8 +143,7 @@ class DriverWorker(webapp.RequestHandler):
 
 application = webapp.WSGIApplication([
   ("/crawl/main", Driver),
-  ("/crawl/worker", DriverWorker),
-  ("/crawl/fix", FixBroken)])
+  ("/crawl/worker", DriverWorker)])
 
 def main():
   run_wsgi_app(application)
