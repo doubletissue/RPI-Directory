@@ -15,6 +15,7 @@ from google.appengine.api import search
 
 _INSTANCE_NAME = 'christianjohnson.org:rpidirectory:christianjohnson'
 _INDEX_NAME = 'person'
+_PAGE_SIZE = 20
 
 row_attributes = (['first_name',
                    'last_name',
@@ -104,8 +105,8 @@ class Api(webapp.RequestHandler):
     if search_query == "":
       search_query = name
 
-    if page_size > 20 or page_size < 1:
-      page_size = 20
+    if page_size > _PAGE_SIZE or page_size < 1:
+      page_size = _PAGE_SIZE
 
     # Flood Prevention
     ip = str(self.request.remote_addr)
@@ -139,7 +140,16 @@ class Api(webapp.RequestHandler):
 
     queries = map(str, search_query.split())
     query_string = ' AND '.join(queries)
-    results = search.Index(name=_INDEX_NAME).search(query_string)
+    #Sort results by first name descending
+    expr_list = [search.SortExpression(
+            expression='first_name', default_value='',
+            direction=search.SortExpression.DESCENDING)]
+    # construct the sort options 
+    sort_opts = search.SortOptions(expressions=expr_list)
+    offset_num = (page_num - 1) * _PAGE_SIZE
+    query_options = search.QueryOptions(limit=_PAGE_SIZE, offset=offset_num, sort_options=sort_opts)
+    results = search.Index(name=_INDEX_NAME).search(query=search.Query(
+        query_string=query_string, options=query_options))
 
     d = {}
     d['data'] = []
