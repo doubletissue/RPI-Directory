@@ -15,45 +15,60 @@ _INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
 NUM_THREADS = 100
 
+import string
+
 _INDEX_NAME = 'person'
+
+def split_words(field_name,s):
+    s = string.translate(str(s),None,string.punctuation)
+    l = s.replace('\n',' ').split()
+    r = []
+    for i in range(len(l)):
+        try:
+            int(l[i])
+            continue
+        except:
+            pass
+        r.append(search.TextField(name=field_name+str(i), value=l[i]))
+    return r
 
 #Creates a person and stores it
 def createDocument(person):
     fields = []
     if person.first_name:
-        fields.append(search.TextField(name='first_name', value=person.first_name))
+        for i in range(len(person.first_name)):
+            for j in range(i+1,len(person.first_name)+1):
+                fields.append(search.TextField(name='first_name'+str(i)+'to'+str(j), value=person.first_name[i:j]))
     if person.middle_name:
         fields.append(search.TextField(name='middle_name', value=person.middle_name))
     if person.last_name:
-        fields.append(search.TextField(name='last_name', value=person.last_name))
+        for i in range(len(person.last_name)):
+            for j in range(i+1,len(person.last_name)+1):
+                fields.append(search.TextField(name='last_name'+str(i)+'to'+str(j), value=person.last_name[i:j]))
     if person.department:
-        fields.append(search.TextField(name='department', value=person.department))
+        fields.extend(split_words('department',person.department))
     if person.email:
-        fields.append(search.TextField(name='email', value=person.email))
+        fields.extend(split_words('email',person.email))
     if person.rcsid:
-        fields.append(search.TextField(name='rcsid', value=person.rcsid))
+        fields.extend(split_words('rcsid',person.rcsid))
     if person.year:
-        fields.append(search.TextField(name='year', value=person.year))
+        fields.extend(split_words('year',person.year))
     if person.major:
-        fields.append(search.TextField(name='major', value=person.major))
+        fields.extend(split_words('major',person.major))
     if person.title:
-        fields.append(search.TextField(name='title', value=person.title))
+        fields.extend(split_words('title',person.title))
     if person.phone:
-        fields.append(search.TextField(name='phone', value=person.phone))
+        fields.extend(split_words('phone',person.phone))
     if person.fax:
-        fields.append(search.TextField(name='fax', value=person.fax))
+        fields.extend(split_words('fax',person.fax))
     if person.homepage:
-        fields.append(search.TextField(name='homepage', value=person.homepage))
+        fields.extend(split_words('homepage',person.homepage))
     if person.office_location:
-        fields.append(search.TextField(name='office_location', value=person.office_location))
+        fields.extend(split_words('office_location',person.office_location))
     if person.campus_mailstop:
-        fields.append(search.TextField(name='campus_mailstop', value=person.campus_mailstop))
+        fields.extend(split_words('campus_mailstop',person.campus_mailstop))
     if person.mailing_address:
-        fields.append(search.TextField(name='mailing_address', value=person.mailing_address))
-    if person.date_crawled:
-        fields.append(search.DateField(name='date_crawled', value=person.date_crawled.date()))
-    if person.directory_id:
-        fields.append(search.NumberField(name='directory_id', value=person.directory_id))
+        fields.extend(split_words('mailing_address',person.mailing_address))
 
     return search.Document(doc_id=person.rcsid or None, fields=fields)
 
