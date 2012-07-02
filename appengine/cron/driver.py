@@ -20,6 +20,8 @@ import string
 _INDEX_NAME = 'person'
 
 def split_words(field_name, s):
+    field_name = str(field_name)
+    s = str(s)
     for c in string.punctuation:
         s = s.replace(c,'')
     l = s.replace('\n', ' ').split()
@@ -39,13 +41,13 @@ def createDocument(person):
     if person.first_name:
         for i in range(len(person.first_name)):
             for j in range(i + 1, len(person.first_name) + 1):
-                fields.append(search.TextField(name='first_name' + str(i) + 'to' + str(j), value=person.first_name[i:j]))
+                fields.append(search.TextField(name='first_name' + str(i) + 'to' + str(j), value=str(person.first_name[i:j])))
     if person.middle_name:
-        fields.append(search.TextField(name='middle_name', value=person.middle_name))
+        fields.append(search.TextField(name='middle_name', value=str(person.middle_name)))
     if person.last_name:
         for i in range(len(person.last_name)):
             for j in range(i + 1, len(person.last_name) + 1):
-                fields.append(search.TextField(name='last_name' + str(i) + 'to' + str(j), value=person.last_name[i:j]))
+                fields.append(search.TextField(name='last_name' + str(i) + 'to' + str(j), value=str(person.last_name[i:j])))
     if person.department:
         fields.extend(split_words('department', person.department))
     if person.email:
@@ -71,7 +73,7 @@ def createDocument(person):
     if person.mailing_address:
         fields.extend(split_words('mailing_address', person.mailing_address))
 
-    return search.Document(doc_id=person.rcsid or None, fields=fields)
+    return search.Document(doc_id=str(person.rcsid.split()[0]) or str(person.first_name + ' ' + person.last_name), fields=fields)
 
 def putResult(d):
   person = Person.buildPerson(d)

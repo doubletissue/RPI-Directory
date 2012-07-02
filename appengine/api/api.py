@@ -137,17 +137,21 @@ class Api(webapp.RequestHandler):
       memcache.add(ip, 1, time=600)
 
     queries = map(str, search_query.split())
+    queries = sorted(queries)
     query_string = ' AND '.join(queries)
-    #Sort results by first name descending
-    expr_list = [search.SortExpression(
-            expression='first_name', default_value='',
-            direction=search.SortExpression.DESCENDING)]
-    # construct the sort options 
-    sort_opts = search.SortOptions(expressions=expr_list)
-    offset_num = (page_num - 1) * page_size
-    query_options = search.QueryOptions(limit=page_size, offset=offset_num, ids_only=True, sort_options=sort_opts)
-    results = search.Index(name=_INDEX_NAME).search(query=search.Query(
-        query_string=query_string, options=query_options))
+    results = memcache.get(query_string)
+    if not results:
+        #Sort results by first name descending
+        expr_list = [search.SortExpression(
+                expression='first_name', default_value='',
+                direction=search.SortExpression.DESCENDING)]
+        # construct the sort options 
+        sort_opts = search.SortOptions(expressions=expr_list)
+        offset_num = (page_num - 1) * page_size
+        query_options = search.QueryOptions(limit=page_size, offset=offset_num, ids_only=True, sort_options=sort_opts)
+        results = search.Index(name=_INDEX_NAME).search(query=search.Query(
+            query_string=query_string, options=query_options))
+        memcache.add(query_string,results,time=2419200)
 
     d = {}
     d['data'] = []
