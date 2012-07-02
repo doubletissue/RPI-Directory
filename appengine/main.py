@@ -31,13 +31,13 @@ class MainPage(webapp.RequestHandler):
     #Store it in MemCache
     memcache.add(memcache_key, number_people, 43200)
 
-      #Commify number
-      r = []
-      for i, c in enumerate(str(number_people)[::-1]):
-        if i and (not (i % 3)):
-          r.insert(0, ',')
-        r.insert(0, c)
-      number_people = ''.join(r)
+    #Commify number
+    r = []
+    for i, c in enumerate(str(number_people)[::-1]):
+      if i and (not (i % 3)):
+        r.insert(0, ',')
+      r.insert(0, c)
+    number_people = ''.join(r)
 
     template_values = {"number_people": number_people}
     path = os.path.join(os.path.dirname(__file__), 'index.html')
