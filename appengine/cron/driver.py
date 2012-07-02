@@ -4,8 +4,8 @@ from models import Person
 
 import cgi
 import logging
+import webapp2
 
-from google.appengine.ext import webapp
 from google.appengine.api import taskqueue
 from google.appengine.api import memcache
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -23,7 +23,7 @@ def split_words(field_name, s):
     field_name = str(field_name)
     s = str(s)
     for c in string.punctuation:
-        s = s.replace(c,'')
+        s = s.replace(c, '')
     l = s.replace('\n', ' ').split()
     r = []
     for i in range(len(l)):
@@ -105,7 +105,7 @@ def crawlPerson(index):
     #memcache.set("index", 1, 86400)
     #SearchPosition(key_name="index", position=1).put()
 
-class Driver(webapp.RequestHandler):
+class Driver(webapp2.RequestHandler):
   def get(self):
     index = memcache.get("index")
     if not index:
@@ -133,7 +133,7 @@ class Driver(webapp.RequestHandler):
       index_from_ds = SearchPosition(id="index", position=index)
     index_from_ds.put()
 
-class DriverWorker(webapp.RequestHandler):
+class DriverWorker(webapp2.RequestHandler):
   def post(self):
     logging.info("In DriverWorker")
     index = cgi.escape(self.request.get('index'))
@@ -144,12 +144,6 @@ class DriverWorker(webapp.RequestHandler):
     index = cgi.escape(self.request.get('index'))
     crawlPerson(index)
 
-application = webapp.WSGIApplication([
+app = webapp2.WSGIApplication([
   ("/crawl/main", Driver),
   ("/crawl/worker", DriverWorker)])
-
-def main():
-  run_wsgi_app(application)
-
-if __name__ == "__main__":
-  main()

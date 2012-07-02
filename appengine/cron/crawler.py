@@ -1,11 +1,11 @@
 from google.appengine.api import urlfetch
-from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 import logging
 import cgi
 import re
+import webapp2
 
-class Crawler(webapp.RequestHandler):
+class Crawler(webapp2.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
     d = self.parseData(cgi.escape(self.request.get('key')))
@@ -145,11 +145,5 @@ class Crawler(webapp.RequestHandler):
     d['directory_id'] = int(key)
     return d
 
-application = webapp.WSGIApplication(
+app = webapp2.WSGIApplication(
   [("/debugcrawl.*", Crawler)])
-
-def main():
-  run_wsgi_app(application)
-
-if __name__ == "__main__":
-  main()

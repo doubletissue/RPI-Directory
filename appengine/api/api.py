@@ -1,13 +1,12 @@
-from google.appengine.ext import webapp
+import webapp2
 from google.appengine.ext.webapp.util import run_wsgi_app
-#from google.appengine.api import rdbms
 from google.appengine.api import memcache
 from google.appengine.api import mail
 import logging
 import cgi
 import urllib
 from models import Person
-from django.utils import simplejson as json
+import json
 
 from google.appengine.api import search
 
@@ -82,7 +81,7 @@ def parse_int(i, default):
   else:
     return int(i)
 
-class Api(webapp.RequestHandler):
+class Api(webapp2.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
     search_query = str(urllib.unquote(cgi.escape(self.request.get('q')).lower()[:100]))
@@ -151,7 +150,7 @@ class Api(webapp.RequestHandler):
         query_options = search.QueryOptions(limit=page_size, offset=offset_num, ids_only=True, sort_options=sort_opts)
         results = search.Index(name=_INDEX_NAME).search(query=search.Query(
             query_string=query_string, options=query_options))
-        memcache.add(query_string,results,time=2419200)
+        memcache.add(query_string, results, time=2419200)
 
     d = {}
     d['data'] = []
@@ -166,12 +165,7 @@ class Api(webapp.RequestHandler):
     self.response.out.write(d)
 
 
-application = webapp.WSGIApplication([
+app = webapp2.WSGIApplication([
     ("/api", Api)
   ])
 
-def main():
-  run_wsgi_app(application)
-
-if __name__ == "__main__":
-  main()

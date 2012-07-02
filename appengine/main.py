@@ -1,5 +1,4 @@
-
-from google.appengine.ext import webapp
+import webapp2
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import memcache
 import os
@@ -9,7 +8,7 @@ import operator
 
 _INSTANCE_NAME = 'christianjohnson.org:rpidirectory:christianjohnson'
 
-class MainPage(webapp.RequestHandler):
+class MainPage(webapp2.RequestHandler):
   def get(self):
     #Check for mobile browser, send them to the Play Store
     #user_agent = self.request.headers['User-Agent']
@@ -43,7 +42,7 @@ class MainPage(webapp.RequestHandler):
     path = os.path.join(os.path.dirname(__file__), 'index.html')
     self.response.out.write(template.render(path, template_values))
 
-class Stats(webapp.RequestHandler):
+class Stats(webapp2.RequestHandler):
   def get(self):
     TIME_MEMCACHE = 172800
     cursor = None
@@ -175,12 +174,6 @@ class Stats(webapp.RequestHandler):
     if conn:
       conn.close()
 
-application = webapp.WSGIApplication(
+app = webapp2.WSGIApplication(
   [('/', MainPage),
    ('/stats', Stats), ])
-
-def main():
-  run_wsgi_app(application)
-
-if __name__ == "__main__":
-  main()

@@ -1,7 +1,8 @@
 application: rpidirectory
 version: 5
-runtime: python
+runtime: python27
 api_version: 1
+threadsafe: true
 
 builtins:
 - appstats: on
@@ -29,20 +30,20 @@ handlers:
   static_dir: images
 
 - url: /crawl/.*
-  script: cron/driver.py
+  script: cron.driver.app
 
 - url: /debugcrawl.*
-  script: cron/crawler.py
+  script: cron.crawler.app
 
 - url: /api.*
-  script: api/api.py
+  script: api.api.app
   
 - url: /_ah/xmpp/message/chat/
-  script: api/chatbot.py
+  script: api.chatbot.app
   
 - url: /admin_page.*
-  script: admin_page.py
+  script: admin_page.app
   login: admin
 
 - url: /.*
-  script: main.py
+  script: main.app
