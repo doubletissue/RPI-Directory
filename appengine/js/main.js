@@ -2,7 +2,7 @@
 // RCOS RPI Directory JavaScript
 
 var delay = 60;
-var keybind_delay = Math.floor(100 + Math.random() * 100);
+var keybind_delay = Math.floor(300 + Math.random() * 100);
 var padding = '15%';
 var last_token = 1;
 var cached_results = {};
@@ -412,7 +412,6 @@ $(document).ready(function() {
   
   // Instantiate and draw our chart, passing in some options.
   major_chart = new google.visualization.PieChart(document.getElementById('major_stats'));
-  
   department_chart = new google.visualization.PieChart(document.getElementById('department_stats'));
   
 });
