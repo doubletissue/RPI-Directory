@@ -138,8 +138,16 @@ class Api(webapp2.RequestHandler):
     queries = map(str, search_query.split())
     queries = sorted(queries)
     query_string = ' AND '.join(queries)
-    results = memcache.get(query_string)
-    if not results:
+    
+    d = {}
+    d['data'] = []
+    d['token'] = token
+    d['q'] = search_query
+    
+    data = memcache.get(query_string)
+    
+    if not data:
+        data = []
         #Sort results by first name descending
         expr_list = [search.SortExpression(
                 expression='first_name', default_value='',
@@ -150,17 +158,14 @@ class Api(webapp2.RequestHandler):
         query_options = search.QueryOptions(limit=page_size, offset=offset_num, ids_only=True, sort_options=sort_opts)
         results = search.Index(name=_INDEX_NAME).search(query=search.Query(
             query_string=query_string, options=query_options))
-        memcache.add(query_string, results, time=2419200)
 
-    d = {}
-    d['data'] = []
-    d['token'] = token
-    d['q'] = search_query
-    for result in results:
-      rcsid = result.doc_id
-      r = Person.get_by_id(rcsid)
-      if r:
-        d['data'].append(Person.buildMap(r))
+        for result in results:
+            rcsid = result.doc_id
+            r = Person.get_by_id(rcsid)
+            if r:
+                data.append(Person.buildMap(r))
+        memcache.add(query_string, data, time=2419200)
+    d['data'] = data
     s = json.dumps(d)
     self.response.out.write(d)
 
