@@ -81,52 +81,52 @@ class Person(ndb.Model):
     d = {}
     
     if p.email is not None:
-      d['email'] = p.email
+      d['email'] = str(p.email)
     if p.rcsid is not None:
-      d['rcsid'] = p.rcsid
+      d['rcsid'] = str(p.rcsid)
     
     name = ''
     if p.first_name is not None:
-      name += p.first_name.title()
+      name += str(p.first_name.title())
     #if p.middle_name is not None:
       #name += ' ' + p.middle_name.title()
     if p.last_name is not None:
-      name += ' ' + p.last_name.title()
+      name += ' ' + str(p.last_name.title())
     if name is not "":
-      d['name'] = name
+      d['name'] = str(name)
     
     if p.year is not None:
-      d['year'] = p.year.title()
+      d['year'] = str(p.year.title())
     
     if p.major is not None:
-      d['major'] = p.major.title()
+      d['major'] = str(p.major.title())
     
     if p.department is not None:
-      d['department'] = p.department.title()
+      d['department'] = str(p.department.title())
     
     if p.title is not None:
-      d['title'] = p.title.title()
+      d['title'] = str(p.title.title())
     
     if p.phone is not None:
-      d['phone'] = p.phone.title()
+      d['phone'] = str(p.phone.title())
     
     if p.fax is not None:
-      d['fax'] = p.fax.title()
+      d['fax'] = str(p.fax.title())
     
     if p.homepage is not None:
-      d['homepage'] = p.homepage.title()
+      d['homepage'] = str(p.homepage.title())
     
     if p.office_location is not None:
-      d['office_location'] = p.office_location.title()
+      d['office_location'] = str(p.office_location.title())
     
     if p.campus_mailstop is not None:
-      d['campus_mailstop'] = p.campus_mailstop.title()
+      d['campus_mailstop'] = str(p.campus_mailstop.title())
     
     if p.mailing_address is not None:
-      d['mailing_address'] = p.mailing_address.title()
+      d['mailing_address'] = str(p.mailing_address.title())
     
     if p.directory_id is not None:
-      d['directory_id'] = p.directory_id
+      d['directory_id'] = str(p.directory_id)
     
     return d
   
