@@ -341,6 +341,11 @@ $(document).ready(function() {
   //Focus on textbox
 	$("#keyword").focus();
 	
+  $(document).ajaxError(function(event, request, settings, exception){
+    console.log("Error: "  + exception);
+    _gaq.push(['_trackEvent', 'Error', 'Parsing Error: ' + exception]);
+  });
+	
 	//Detect LocalStorage (HTML5 Cache)
 	local_storage_supported = DetectLocalStorage();
 	
