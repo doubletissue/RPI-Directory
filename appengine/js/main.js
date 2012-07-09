@@ -2,13 +2,13 @@
 // RCOS RPI Directory JavaScript
 
 var delay = 60;
-var keybind_delay = Math.floor(300 + Math.random() * 100);
+var keybind_delay = Math.floor(150 + Math.random() * 150);
 var padding = '15%';
 var last_token = 1;
 var cached_results = {};
 var local_storage_supported;
-var query = '';
 var request; request_in_progress = false;
+var suffix_cache = ":v2";
 
 //Chart data and charts
 var class_chart_data, department_chart_data;
@@ -102,6 +102,7 @@ function redrawCharts(class_chart_data, department_chart_data){
 }
 
 function parseServerData(data){
+  console.log("Parsing Data...");
   request_in_progress = false;
   
   // Check if quota exceeded
@@ -145,12 +146,12 @@ function parseServerData(data){
     $("#results").css("opacity", "1");
   }
   
-	if (data.data.length > 0 && Math.abs(last_token - data.token) < 2){
+	if (data.data.length > 0 && Math.abs(last_token - data.token) < 3){
 	  AddResultsToTable(data);
   }
   
   // Cache the results
-  var keyword_cache = data.q + ":v2"
+  var keyword_cache = data.q + suffix_cache;
   cached_results[keyword_cache] = data;
   if (local_storage_supported){
     try {
@@ -168,10 +169,11 @@ function parseCachedData(keyword){
   var data = null;
   if (cached_results[keyword]){
     data = cached_results[keyword];
+    console.log("Cached from JS");
   }else if (local_storage_supported && localStorage.getItem(keyword)){
     data = JSON.parse(localStorage.getItem(keyword));
-  }
-  
+    console.log("Cached from HTML5");
+  }  
 	if (data !== null && data.data !== []){
 	  AddResultsToTable(data);
 	}else{
@@ -325,13 +327,21 @@ function callServer(keyword){
   if(request_in_progress){
     request.abort();
   }
-  
   request_in_progress = true;
   
+  payload = {
+    q: keyword,
+    "token": last_token,
+    "delay": keybind_delay,
+    "source": 'website'
+  }
+  
+  url = "/api?q=" + keyword + "&token=" + last_token
+  console.log("Calling API with " + payload.q + ", url: " + url);
+  
   request = $.ajax({
-    type: "GET",
-    url: "/api?q=" + encodeURI(keyword) + "&token=" + last_token + "&delay=" + keybind_delay + "&source=website",
     async: true,
+    url: url,
     dataType: "json",
     success: parseServerData
   });
@@ -378,10 +388,11 @@ $(document).ready(function() {
  	    $("#results").show();
  	    
  	    //Omnibox Search
- 	    var keyword_cache = keyword + ":v2"
+ 	    var keyword_cache = keyword + suffix_cache;
  	    
  	    // Check cache
  	    if (cached_results[keyword_cache] || (local_storage_supported && localStorage.getItem(keyword_cache))){
+ 	      console.log("Pulling from cache");
  	      parseCachedData(keyword_cache);
  	    }else{  // Dim results and call the API
  	      $("#results").css("opacity", ".25");
