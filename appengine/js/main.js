@@ -84,7 +84,7 @@ function redrawCharts(class_chart_data, department_chart_data){
     'height': 300,
     'animation':{
       duration: 250,
-      easing: 'out',
+      easing: 'out'
     }
   };
   
@@ -93,7 +93,7 @@ function redrawCharts(class_chart_data, department_chart_data){
     'height': 300,
     'animation':{
       duration: 250,
-      easing: 'out',
+      easing: 'out'
     }
   };
   
@@ -199,7 +199,7 @@ function AddResultsToTable(data){
     		  LongTrip :20,
     		  ShowOverlay : true,
     		  HorizontalPosition : 'center',
-    		  VerticalPosition : 'center',
+    		  VerticalPosition : 'center'
     		});
     return;
   }
@@ -306,7 +306,7 @@ function animate(flag){
     }, delay, function(){ $("#container").css("margin-top","0%"); });
   }else{
     $("#container").animate({
-      marginTop: padding,
+      marginTop: padding
     }, delay * 1.3);
     $("#sidebar").hide();
     $("#qr").show();
