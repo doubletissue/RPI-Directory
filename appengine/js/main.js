@@ -329,49 +329,48 @@ function callServer(keyword){
   }
   request_in_progress = true;
   
-  payload = {
-    q: keyword,
-    "token": last_token,
-    "delay": keybind_delay,
-    "source": 'website'
-  }
-  
-  url = "/api?q=" + keyword + "&token=" + last_token
-  console.log("Calling API with " + payload.q + ", url: " + url);
-  
-  request = $.ajax({
-    async: true,
-    url: url,
-    dataType: "json",
-    success: parseServerData
-  });
+  url = "/api?q=" + keyword + "&token=" + last_token + "&source=website";
+  console.log("Calling API with " + keyword + ", url: " + url);
+  request = $.getJSON(url, parseServerData);
 }
 
 $(document).ready(function() {
   //Focus on textbox
 	$("#keyword").focus();
-	
-  //AJAX Setup
-  $.ajaxSetup({
-    error: function(x, e) {
-      if (x.status == 500) {
-        jError(
-        		'Our database seems to be having some issues, we apologize.  Lets try refreshing the page to see if that helps.  If not, please try again in a few minutes.',
-        		{
-        		  clickOverlay : false, // added in v2.0
-        		  MinWidth : 250,
-        		  TimeShown : 5000,
-        		  LongTrip :20,
-        		  HorizontalPosition : 'center',
-        		  onClosed : function(){ // added in v2.0
-                location.reload(true);
-        		  }
-        		});
-      }
-    }
+  $(document).ajaxError(function(event, request, settings, exception){
+    console.log("Error: "  + exception);
+    /* jError(
+    		'Our database seems to be having some issues, we apologize.  Lets try refreshing the page to see if that helps.  If not, please try again in a few minutes.',
+    		{
+    		  clickOverlay : false, // added in v2.0
+    		  MinWidth : 250,
+    		  TimeShown : 5000,
+    		  LongTrip :20,
+    		  HorizontalPosition : 'center',
+    		  onClosed : function(){ // added in v2.0
+            location.reload(true);
+    		  }
+    		}); */
   });
-      
-	$("#keyword").bindWithDelay("keyup", function(event) {
+	
+	//Detect LocalStorage (HTML5 Cache)
+	local_storage_supported = DetectLocalStorage();
+	
+	//Class Chart
+	class_chart_data = new google.visualization.DataTable();
+  class_chart_data.addColumn('string', 'Major');
+  class_chart_data.addColumn('number', 'Amount');
+  
+  //Department Chart
+  department_chart_data = new google.visualization.DataTable();
+  department_chart_data.addColumn('string', 'Department');
+  department_chart_data.addColumn('number', 'Amount');
+  
+  // Instantiate and draw our chart, passing in some options.
+  major_chart = new google.visualization.PieChart(document.getElementById('major_stats'));
+  department_chart = new google.visualization.PieChart(document.getElementById('department_stats'));
+  
+  $("#keyword").bindWithDelay("keyup", function(event) {
 	  var keyword = $("#keyword").val().toLowerCase();
 	  var margin = $("#container").css("margin-top");
     
@@ -407,22 +406,5 @@ $(document).ready(function() {
 	    }
     }
   }, keybind_delay);
-	
-	//Detect LocalStorage (HTML5 Cache)
-	local_storage_supported = DetectLocalStorage();
-	
-	//Class Chart
-	class_chart_data = new google.visualization.DataTable();
-  class_chart_data.addColumn('string', 'Major');
-  class_chart_data.addColumn('number', 'Amount');
-  
-  //Department Chart
-  department_chart_data = new google.visualization.DataTable();
-  department_chart_data.addColumn('string', 'Department');
-  department_chart_data.addColumn('number', 'Amount');
-  
-  // Instantiate and draw our chart, passing in some options.
-  major_chart = new google.visualization.PieChart(document.getElementById('major_stats'));
-  department_chart = new google.visualization.PieChart(document.getElementById('department_stats'));
   
 });

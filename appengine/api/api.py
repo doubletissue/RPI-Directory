@@ -86,7 +86,7 @@ class Api(webapp2.RequestHandler):
     self.response.headers['Content-Type'] = 'text/plain'
     search_query = str(urllib.unquote(cgi.escape(self.request.get('q')).lower()[:100]))
     name = str(urllib.unquote(cgi.escape(self.request.get('name')).lower()[:50]))
-    token = urllib.unquote(cgi.escape(self.request.get('token')))
+    token = str(urllib.unquote(cgi.escape(self.request.get('token'))))
     page_num = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
 
@@ -140,9 +140,9 @@ class Api(webapp2.RequestHandler):
     query_string = ' AND '.join(queries)
     
     d = {}
-    d['data'] = []
-    d['token'] = token
-    d['q'] = search_query
+    d["data"] = []
+    d["token"] = token
+    d["q"] = search_query
     
     data = memcache.get(query_string)
     
@@ -155,7 +155,8 @@ class Api(webapp2.RequestHandler):
         # construct the sort options 
         sort_opts = search.SortOptions(expressions=expr_list)
         offset_num = (page_num - 1) * page_size
-        query_options = search.QueryOptions(limit=page_size, offset=offset_num, ids_only=True, sort_options=sort_opts)
+        query_options = search.QueryOptions(limit=page_size, offset=offset_num, 
+            ids_only=True, sort_options=sort_opts)
         results = search.Index(name=_INDEX_NAME).search(query=search.Query(
             query_string=query_string, options=query_options))
 
@@ -165,7 +166,7 @@ class Api(webapp2.RequestHandler):
             if r:
                 data.append(Person.buildMap(r))
         memcache.add(query_string, data, time=2419200)
-    d['data'] = data
+    d["data"] = data
     s = json.dumps(d)
     self.response.out.write(d)
 
