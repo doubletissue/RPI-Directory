@@ -168,7 +168,7 @@ class Api(webapp2.RequestHandler):
         memcache.add(query_string, data, time=2419200)
     d["data"] = data
     s = json.dumps(d)
-    self.response.out.write(d)
+    self.response.out.write(s)
 
 
 app = webapp2.WSGIApplication([
