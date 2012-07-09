@@ -104,7 +104,6 @@ function redrawCharts(class_chart_data, department_chart_data){
 }
 
 function parseServerData(data){
-  console.log("Parsing Data...");
   request_in_progress = false;
   
   // Check if quota exceeded
@@ -333,7 +332,6 @@ function callServer(keyword){
   }
   request_in_progress = true;
   url = "/api?q=" + keyword + "&token=" + last_token + "&source=website";
-  console.log("Calling API with " + keyword + ", url: " + url);
   request = $.getJSON(url, parseServerData);
 }
 
