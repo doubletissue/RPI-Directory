@@ -2,7 +2,7 @@
 // RCOS RPI Directory JavaScript
 
 var delay = 60;
-var keybind_delay = Math.floor(150 + Math.random() * 150);
+var keybind_delay = Math.floor(100 + Math.random() * 150);
 var padding = '15%';
 var last_token = 1;
 var cached_results = {};
@@ -19,6 +19,7 @@ String.prototype.capitalize = function(){
    return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
   };
 
+//Generates the Google Map
 function generateMap(address, div_to_map){
   var geocoder = new google.maps.Geocoder();
   geocoder.geocode( { 'address': address}, 
@@ -46,6 +47,7 @@ function generateMap(address, div_to_map){
     });
 }
 
+//Refreshes the table
 function refreshTable(){
   $("#results tr:odd").addClass("odd-expand");
   $("#results tr:not(.odd-expand)").hide();
@@ -292,8 +294,10 @@ function AddResultsToTable(data){
   redrawCharts(class_chart_data, department_chart_data);
 }
 
-//Function to animate text box:
-// Send true to animate it up, false to animate it down
+/*
+Function to animate text box.
+send true to animate it up, false to animate it down
+*/
 function animate(flag){
   if (flag){    
     $("#qr").hide();
@@ -328,7 +332,6 @@ function callServer(keyword){
     request.abort();
   }
   request_in_progress = true;
-  
   url = "/api?q=" + keyword + "&token=" + last_token + "&source=website";
   console.log("Calling API with " + keyword + ", url: " + url);
   request = $.getJSON(url, parseServerData);
@@ -337,21 +340,6 @@ function callServer(keyword){
 $(document).ready(function() {
   //Focus on textbox
 	$("#keyword").focus();
-  $(document).ajaxError(function(event, request, settings, exception){
-    console.log("Error: "  + exception);
-    /* jError(
-    		'Our database seems to be having some issues, we apologize.  Lets try refreshing the page to see if that helps.  If not, please try again in a few minutes.',
-    		{
-    		  clickOverlay : false, // added in v2.0
-    		  MinWidth : 250,
-    		  TimeShown : 5000,
-    		  LongTrip :20,
-    		  HorizontalPosition : 'center',
-    		  onClosed : function(){ // added in v2.0
-            location.reload(true);
-    		  }
-    		}); */
-  });
 	
 	//Detect LocalStorage (HTML5 Cache)
 	local_storage_supported = DetectLocalStorage();
