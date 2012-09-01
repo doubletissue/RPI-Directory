@@ -10,8 +10,11 @@
 #import "Person.h"
 
 @interface DetailViewController ()
-@property (strong, nonatomic) UIPopoverController *masterPopoverController;
+
 - (void)configureView;
+
+@property (strong, nonatomic) UIPopoverController *masterPopoverController;
+
 @end
 
 @implementation DetailViewController

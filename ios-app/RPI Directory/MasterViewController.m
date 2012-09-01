@@ -12,29 +12,36 @@
 
 #import "Person.h"
 
-const NSString *SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";     //  Base search URL
-const NSTimeInterval SEARCH_INTERVAL = 3.0f;                                //  3 seconds
+//  Base search URL
+const NSString *SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
+//  0.5 seconds
+const NSTimeInterval SEARCH_INTERVAL = 0.5f;
 
-@interface MasterViewController () {
-    NSMutableArray      *m_people;
-    NSTimer             *m_searchTimer;
-    NSString            *m_searchString;
-    NSString            *m_lastString;
-    UITableView         *m_currentTableView;
-    
-    dispatch_queue_t    m_queue;
-    
-    Boolean             m_textChanged;
-}
+@interface MasterViewController ()
 
 - (void)search;
 - (void)searchTimerFunc;
+
+@property (nonatomic, strong) NSTimer           *m_searchTimer;
+@property (nonatomic, strong) NSString          *m_searchString;
+@property (nonatomic, strong) NSString          *m_lastString;
+@property (nonatomic, strong) UITableView       *m_currentTableView;
+@property (nonatomic, strong) NSOperationQueue  *m_queue;
+@property (nonatomic) BOOL                      m_textChanged;
 
 @end
 
 @implementation MasterViewController
 
 @synthesize detailViewController = _detailViewController;
+
+@synthesize people = m_people;
+@synthesize m_searchTimer;
+@synthesize m_searchString;
+@synthesize m_lastString;
+@synthesize m_currentTableView;
+@synthesize m_queue;
+@synthesize m_textChanged;
 
 - (void)awakeFromNib
 {
@@ -53,7 +60,9 @@ const NSTimeInterval SEARCH_INTERVAL = 3.0f;                                //  
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
     m_searchTimer = nil;
-    m_queue = nil;
+    m_queue = [[NSOperationQueue alloc] init];
+    m_queue.name = @"com.brendonjustin.RPI-Directory.search";
+    m_queue.maxConcurrentOperationCount = 1;
     
     //  Update the array of people on the main thread, when a new array is available.
     //  Also make both table views reflect the new data.
@@ -76,8 +85,6 @@ const NSTimeInterval SEARCH_INTERVAL = 3.0f;                                //  
     
     [m_searchTimer invalidate];
     m_searchTimer = nil;
-    
-    dispatch_release(m_queue);
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -92,11 +99,9 @@ const NSTimeInterval SEARCH_INTERVAL = 3.0f;                                //  
 //  Asynchronously search for people with the current query.
 - (void)search
 {
-    if (m_queue == nil) {
-        m_queue = dispatch_queue_create("com.brendonjustin.searchqueue", NULL);
-    }
+    [m_queue cancelAllOperations];
     
-    dispatch_async(m_queue, ^{
+    [m_queue addOperationWithBlock:^{
         NSError *err = nil;
         NSString *query = [m_searchString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
         NSString *searchUrl = [SEARCH_URL stringByAppendingString:query];
@@ -137,7 +142,7 @@ const NSTimeInterval SEARCH_INTERVAL = 3.0f;                                //  
                 [[NSNotificationCenter defaultCenter] postNotification:notification];
             }
         }
-    });
+    }];
 }
 
 - (void)searchTimerFunc
@@ -158,7 +163,7 @@ const NSTimeInterval SEARCH_INTERVAL = 3.0f;                                //  
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     m_lastString = searchText;
-    if (m_searchTimer == nil) {
+    if (m_searchTimer == nil && ![m_lastString isEqualToString:@""]) {
         //  Search
         m_searchString = searchText;
         [self search];

@@ -12,6 +12,7 @@
 
 @interface MasterViewController : UITableViewController <UISearchDisplayDelegate, UISearchBarDelegate>
 
-@property (strong, nonatomic) DetailViewController *detailViewController;
+@property (strong, nonatomic) DetailViewController  *detailViewController;
+@property (nonatomic, strong) NSMutableArray        *people;
 
 @end
