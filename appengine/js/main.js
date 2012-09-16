@@ -19,57 +19,6 @@ String.prototype.capitalize = function(){
    return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
   };
 
-//Generates the Google Map
-function generateMap(address, div_to_map){
-  var geocoder = new google.maps.Geocoder();
-  geocoder.geocode( { 'address': address}, 
-    function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        $("#" + div_to_map).text("");
-        var myOptions = {
-          zoom: 16,
-          center: results[0].geometry.location,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        }
-        var map = new google.maps.Map(document.getElementById(div_to_map), myOptions);
-        var marker = new google.maps.Marker({
-                    map: map,
-                    position: results[0].geometry.location
-        });
-      }else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
-        $("#" + div_to_map).text("Loading Map...");
-        setTimeout(function() {
-                        generateMap(address, div_to_map);
-                    }, 1000);
-      }else{
-        console.log("Geocode was not successful for the following reason: " + status);
-      }
-    });
-}
-
-//Refreshes the table
-function refreshTable(){
-  $("#results tr:odd").addClass("odd-expand");
-  $("#results tr:not(.odd-expand)").hide();
-  $("#results tr:first-child").show();
-  $("#results tr.odd-expand").click(function(){
-      $(this).next("tr").toggle();
-      $(this).find(".arrow").toggleClass("up");
-      
-      //Generate Map if they have address
-      
-      var person = $(this).data('person');
-      var number = $(this).data('number')
-      
-      //Google Maps not working now
-      /*
-      if (person.mailing_address != undefined){
-        console.log(person.office_location + ", 12180 for: map" + number)
-        generateMap(person.office_location + ", 12180", "map" + number); 
-      }
-      */
-  });
-}
 
 function resetCharts(){
   //Reset chart
@@ -210,7 +159,7 @@ function AddResultsToTable(data){
   
   // Loop through JSON
   $.each(data.data, function(i, person){
-    var table_row = "<tr id='row" + i + "'>";
+    var table_row = "<tr>";
     
     //Professor Check
     if (person.major == undefined && person.department == undefined){
@@ -238,20 +187,7 @@ function AddResultsToTable(data){
       email = "N/A";
     }
     
-    table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" +  email + "</td>");
-    
-    // Removed Google Maps
-    //table_row += ("</tr><tr><td colspan='4'><h4>Additional information</h4><div style='float:right; width:200px; height:200px;' id='map" + i + "'></div><ul style='float:left'>");
-    
-    table_row += ("</tr><tr><td colspan='4'><h4>Additional information</h4><ul style='float:left'>");
-    
-    // Details View
-    for (key in person){
-      if (key != "email" && key != "rcsid"){
-        table_row += ("<li>" + key.capitalize() + ": " + person[key] + "</li>"); 
-      }
-    }
-    table_row += "</ul></td></tr>";
+    table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" +  email + "</td></tr>");
     
     $("#results").find("tbody").append(table_row);
     
@@ -272,16 +208,10 @@ function AddResultsToTable(data){
     }else{
       departments[person.major] += 1;
     }
-    
-    //Set person data
-    $("#row" + i).data('person', person);
-    $("#row" + i).data('number', i);
   });
   
-  refreshTable();
-  
   $("#results").css("opacity", "1");
-  
+
   for (key in classes){
     class_chart_data.addRow([key, classes[key]]);
   }
