@@ -49,7 +49,6 @@ function redrawCharts(class_chart_data, department_chart_data){
   //Update graphs
   major_chart.draw(class_chart_data, class_chart_options);
   department_chart.draw(department_chart_data, department_chart_options);
-  
 }
 
 function parseServerData(data){
@@ -160,7 +159,7 @@ function AddResultsToTable(data){
   // Loop through JSON
   $.each(data.data, function(i, person){
     var table_row = "<tr>";
-    
+
     //Professor Check
     if (person.major == undefined && person.department == undefined){
       person.major = "N/A";
@@ -174,9 +173,9 @@ function AddResultsToTable(data){
     }else if (person.year == undefined && person.department != undefined){
       person.year = "Faculty";
     }
-    
+
     var email = "";
-    
+
     //EMail check
     if (person.email != undefined){
       email = person.email.replace("@", " [at] ");
@@ -186,7 +185,7 @@ function AddResultsToTable(data){
     }else{
       email = "N/A";
     }
-    
+
     table_row += ("<td>" + person.name + "</td><td>" + person.major + "</td><td>" + (person.year == undefined ? 'N/A' : person.year) + "</td><td>" +  email + "</td></tr>");
     
     $("#results").find("tbody").append(table_row);
