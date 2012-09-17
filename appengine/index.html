@@ -3,6 +3,13 @@
 {% block content %}
 <div id="container" class="container-fluid">
 		    <h1><a href="/" style="text-decoration: none; color: black; ">RPI Directory</a></h1>
+                    <!-- TODO: Fix this div to conform to the rest of the file -->
+                    <div align="center">
+                      {% if show_dashboard_link %}
+                        <a href="/dashboard">Dashboard</a>
+                      {% endif %}
+                      <a href="{{login_url}}">{{login_url_linktext}}</a>
+                    </dev>
 		    <div id="inputBox">
 			    <input type="search" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
 		    </div>

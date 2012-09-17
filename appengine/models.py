@@ -151,3 +151,23 @@ class SearchPosition(ndb.Model):
       #elif s not in d.departments:
         #d.departments.append(s)
         #d.put()
+
+class Account(ndb.Model):
+  """
+  Model for a user account, may be linked to a directory entry for unrestricted
+  edit access and also used to contribute to other directory entries.
+  """
+  user = ndb.UserProperty()
+  linked_person = ndb.KeyProperty(Person)
+  activation_code = ndb.IntegerProperty()
+
+  @staticmethod
+  def create_from_user(user):
+    account = Account()
+    account.user = user
+    account.put()
+    return account
+
+  @staticmethod
+  def get_by_user(user):
+    return Account.gql("WHERE user = :1", user).get()
