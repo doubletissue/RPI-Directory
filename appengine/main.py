@@ -29,10 +29,19 @@ class MainPage(webapp2.RequestHandler):
 
 class Dashboard(webapp2.RequestHandler):
   def get(self):
-    user = users.get_current_user()
-    account = Account.get_by_user(user)
-    if not account:
-      account = Account.create_from_user(user)
+    account = Account.get_or_create_current_account()
+    person_email = self.request.get("PersonEmail", None)
+    activation_code = self.request.get("ActivationCode", None)
+    person = account.get_linked_person()
+
+    # If the account is not activated
+    if not person:
+      if person_email:
+        person = Person.gql("WHERE email = :1", person_email).get()
+        account.init_linked_person(person, account.activation_code)
+      if activation_code:
+        activation_code = int(activation_code)
+        account.activate_person(activation_code)
     self.response.out.write(account.user.email())
 
 app = webapp2.WSGIApplication([('/', MainPage),

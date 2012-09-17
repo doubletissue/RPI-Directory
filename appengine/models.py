@@ -1,7 +1,12 @@
 #App Engine Models
 
+from emailer import send_activation_email
+
+from google.appengine.api import users
 from google.appengine.ext import ndb
 import string
+import random
+import sys
 
 class Person(ndb.Model):
   """Models a person in the RPI directory."""
@@ -160,6 +165,16 @@ class Account(ndb.Model):
   user = ndb.UserProperty()
   linked_person = ndb.KeyProperty(Person)
   activation_code = ndb.IntegerProperty()
+  is_link_activated = ndb.BooleanProperty()
+
+  @staticmethod
+  def get_or_create_current_account():
+    user = users.get_current_user()
+    account = Account.get_by_user(user)
+    if not account:
+      account = Account.create_from_user(user)
+      account.is_link_activated = False
+    return account
 
   @staticmethod
   def create_from_user(user):
@@ -171,3 +186,23 @@ class Account(ndb.Model):
   @staticmethod
   def get_by_user(user):
     return Account.gql("WHERE user = :1", user).get()
+
+  def init_linked_person(self, person):
+    """
+    Link the account to a person, but the link is not active unless the user
+    acts on the e-mail that is sent to the address on the account.
+    """
+    self.linked_person = person.key
+    self.activation_code = random.randrange(sys.maxint)
+    account.is_link_activated = False
+    send_activation_email(person, self.activation_code)
+
+  def activate_person(self, activation_code):
+    if self.activation_code == activation_code:
+      self.is_link_activated = True
+
+  def get_linked_person(self):
+    if self.is_link_activated:
+      return self.linked_person
+    else:
+      return None
