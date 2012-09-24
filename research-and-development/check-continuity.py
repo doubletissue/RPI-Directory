@@ -4,7 +4,7 @@ import time
 def get_page(key):
   url = "http://prod3.server.rpi.edu/peopledirectory/entry.do?datasetName=directory&key=" + str(key)
 
-  sleep_time = 0.1
+  sleep_time = 0.2
   while True:
     try:
       result = urllib2.urlopen(url)
@@ -12,9 +12,9 @@ def get_page(key):
     except urllib2.URLError:
       print "Sleeping for...",sleep_time
       time.sleep(sleep_time)
-      sleep_time = sleep_time*2
-      if sleep_time > 300:
-        sleep_time = 300
+      sleep_time = sleep_time*5
+      if sleep_time > 600:
+        sleep_time = 600
 
   return result.read()
 
@@ -25,8 +25,8 @@ def is_valid_result(page):
     return True
 
 prev_valid = False
-results = open("results.txt", "w")
-for i in range(20000):
+results = open("results.txt", "a")
+for i in range(13126,20000):
   if i % 1 == 0:
     print i
   current_valid = is_valid_result(get_page(i))
