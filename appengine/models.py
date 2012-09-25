@@ -7,6 +7,7 @@ from google.appengine.ext import ndb
 import string
 import random
 import sys
+from datetime import datetime
 
 class Person(ndb.Model):
   """Models a person in the RPI directory."""
@@ -27,11 +28,12 @@ class Person(ndb.Model):
   mailing_address = ndb.StringProperty()
   date_crawled = ndb.DateTimeProperty(auto_now=True)
   directory_id = ndb.IntegerProperty()
-  
+  date_emailed = ndb.DateTimeProperty()
+
   @staticmethod
   def buildPerson(d):
     person = Person()
-    
+
     if 'email' in d:
       rcsid = string.rsplit(d['email'],'@', 1)[0]
       person = Person(id = rcsid)
@@ -77,6 +79,7 @@ class Person(ndb.Model):
       person.mailing_address = d['mailing_address']
     if 'directory_id' in d:
       person.directory_id = d['directory_id']
+    person.date_emailed = datetime.min
     
     return person
   
@@ -166,6 +169,7 @@ class Account(ndb.Model):
   linked_person = ndb.KeyProperty(Person)
   activation_code = ndb.IntegerProperty()
   is_link_activated = ndb.BooleanProperty()
+  date_emailed = ndb.DateTimeProperty()
 
   @staticmethod
   def get_or_create_current_account():
@@ -174,12 +178,15 @@ class Account(ndb.Model):
     if not account:
       account = Account.create_from_user(user)
       account.is_link_activated = False
-    return account
+      return None
+    else:
+      return account
 
   @staticmethod
   def create_from_user(user):
     account = Account()
     account.user = user
+    account.date_emailed = datetime.min
     account.put()
     return account
 
@@ -194,12 +201,17 @@ class Account(ndb.Model):
     """
     self.linked_person = person.key
     self.activation_code = random.randrange(sys.maxint)
-    account.is_link_activated = False
-    send_activation_email(person, self.activation_code)
+    self.is_link_activated = False
+    self.put()
+    send_activation_email(account, person, self.activation_code)
 
   def activate_person(self, activation_code):
-    if self.activation_code == activation_code:
+    if self.activation_code == activation_code and self.is_link_activated == False:
       self.is_link_activated = True
+      self.put()
+      return True
+    else:
+      return False
 
   def get_linked_person(self):
     if self.is_link_activated:

@@ -7,6 +7,7 @@ from google.appengine.ext.webapp import template
 import logging
 import operator
 from models import Account
+from models import Person
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
@@ -30,15 +31,15 @@ class MainPage(webapp2.RequestHandler):
 class Dashboard(webapp2.RequestHandler):
   def get(self):
     account = Account.get_or_create_current_account()
-    person_email = self.request.get("PersonEmail", None)
+    person_rcsid = self.request.get("PersonRCS", None)
     activation_code = self.request.get("ActivationCode", None)
     person = account.get_linked_person()
 
     # If the account is not activated
     if not person:
-      if person_email:
-        person = Person.gql("WHERE email = :1", person_email).get()
-        account.init_linked_person(person, account.activation_code)
+      if person_rcsid:
+        person = Person.gql("WHERE rcsid = :1", person_rcsid).get()
+        account.init_linked_person(person)
       if activation_code:
         activation_code = int(activation_code)
         account.activate_person(activation_code)
