@@ -101,3 +101,7 @@ table.tablesorter tbody td {
 	background-color: #FFF;
 	vertical-align: top;
 }
+
+table tr:hover {
+  background-color: #CCC;
+}

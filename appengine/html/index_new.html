@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="container" class="container-fluid">
+		    <h2 id="intro-text">
+		      <a href="/" style="text-decoration: none; color: black;">Who are you looking for?
+		      </a>
+		    </h2>
+		    <div id="inputBox">
+			    <input type="search" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()" />
+		    </div>
+		    <div id="output" class="row-fluid"></div>
+		    <div id="noscript" class="row-fluid">
+		      <noscript>Welcome to the RPI Directory!  Sadly you have JavaScript disabled.  This search will not work without it, please turn on JavaScript and refresh your browser.
+		      </noscript>
+		    </div>
+		    <div class="row-fluid">
+		      <div class="span8 offset2">
+		        <table id="results" class="dataTable">
+      		    <thead>
+      		      <tr>
+      			      <th>Name</th>
+        			    <th>Department</th>
+        			    <th>Class/Position</th>
+        			    <th>Email</th>
+      			    </tr>
+      			  </thead>
+      			  <tbody></tbody>
+      		  </table>
+      		</div>
+    		</div>
+    		
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+$.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnCallback, bStandingRedraw )
+{
+    if ( typeof sNewSource != 'undefined' && sNewSource != null ) {
+        oSettings.sAjaxSource = sNewSource;
+    }
+ 
+    // Server-side processing should just call fnDraw
+    if ( oSettings.oFeatures.bServerSide ) {
+        this.fnDraw();
+        return;
+    }
+ 
+    this.oApi._fnProcessingDisplay( oSettings, true );
+    var that = this;
+    var iStart = oSettings._iDisplayStart;
+    var aData = [];
+  
+    this.oApi._fnServerParams( oSettings, aData );
+      
+    oSettings.fnServerData.call( oSettings.oInstance, oSettings.sAjaxSource, aData, function(json) {
+        /* Clear the old information from the table */
+        that.oApi._fnClearTable( oSettings );
+          
+        /* Got the data - add it to the table */
+        var aData =  (oSettings.sAjaxDataProp !== "") ?
+            that.oApi._fnGetObjectDataFn( oSettings.sAjaxDataProp )( json ) : json;
+          
+        for ( var i=0 ; i<aData.length ; i++ )
+        {
+            that.oApi._fnAddData( oSettings, aData[i] );
+        }
+          
+        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+          
+        if ( typeof bStandingRedraw != 'undefined' && bStandingRedraw === true )
+        {
+            oSettings._iDisplayStart = iStart;
+            that.fnDraw( false );
+        }
+        else
+        {
+            that.fnDraw();
+        }
+          
+        that.oApi._fnProcessingDisplay( oSettings, false );
+          
+        /* Callback user function - for event handlers etc */
+        if ( typeof fnCallback == 'function' && fnCallback != null )
+        {
+            fnCallback( oSettings );
+        }
+    }, oSettings );
+};
+</script>
+<script type="text/javascript" src="/js/main_new.js"></script>
+
+{% endblock %}

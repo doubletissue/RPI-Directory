@@ -158,7 +158,7 @@ function AddResultsToTable(data){
   
   // Loop through JSON
   $.each(data.data, function(i, person){
-    var table_row = "<tr>";
+    var table_row = "<tr id='" + person.rcsid + "'>";
 
     //Professor Check
     if (person.major == undefined && person.department == undefined){
@@ -326,5 +326,12 @@ $(document).ready(function() {
 	    }
     }
   }, keybind_delay);
-  
+});
+
+$(document).on('click', 'tr', function(e) {
+  var id = $(this).attr('id');
+  console.log('Clicked on: ' + id);
+  if(id) {
+    window.location = '/detail/' + id;
+  }
 });

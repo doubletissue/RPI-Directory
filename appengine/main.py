@@ -24,7 +24,27 @@ class MainPage(webapp2.RequestHandler):
                        "login_url": login_url,
                        "login_url_linktext": login_url_linktext,
                        "show_dashboard_link": show_dashboard_link}
-    path = os.path.join(os.path.dirname(__file__), 'html/index.html')
+    path = os.path.join(os.path.dirname(__file__), 'html/index_new.html')
+    self.response.out.write(template.render(path, template_values))
+
+
+class DetailPage(webapp2.RequestHandler):
+  def get(self, rcs_id):
+    logging.error('RCSID: ' + rcs_id)
+    user = users.get_current_user()
+    login_url_linktext = "My Account"
+    if user:
+      login_url = users.create_logout_url("/")
+      show_dashboard_link = True
+    else:
+      login_url = users.create_login_url("/")
+      show_dashboard_link = False
+    template_values = {"rcs_id": rcs_id,
+                       "person": Person.get_by_id(rcs_id),
+                       "login_url": login_url,
+                       "login_url_linktext": login_url_linktext,
+                       "show_dashboard_link": show_dashboard_link}
+    path = os.path.join(os.path.dirname(__file__), 'html/detail.html')
     self.response.out.write(template.render(path, template_values))
 
 class Dashboard(webapp2.RequestHandler):
@@ -45,4 +65,5 @@ class Dashboard(webapp2.RequestHandler):
     self.response.out.write(account.user.email())
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/dashboard', Dashboard)])
+                               ('/dashboard', Dashboard),
+                               ('/detail/([^/]+)', DetailPage)])
