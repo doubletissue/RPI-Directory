@@ -14,7 +14,7 @@
 }
 
 #container {
-  margin-top: 15%;
+  margin-top: 10%;
 }
 
 #output {
@@ -24,17 +24,19 @@
 	display: none;
 }
 
-h1 {
+h2 {
 	margin: 25px 5px 15px 5px;
-  font-size: 350%;
   font-family: 'Puritan', 'Trebuchet MS', Helvetica, sans-serif;
   text-align: center;
+}
+
+#keyword {
+  color: black;
 }
 
 #results {
 	margin-left: auto;
 	margin-right:auto;
-	width: 100%;
 	-webkit-transition: opacity .1s ease-in;
 	border-radius: 5px;
 	-moz-border-radius: 5px;

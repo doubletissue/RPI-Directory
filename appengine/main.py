@@ -11,20 +11,19 @@ from models import Account
 class MainPage(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
+    login_url_linktext = "My Account"
     if user:
       login_url = users.create_logout_url("/")
-      login_url_linktext = "Log out"
       show_dashboard_link = True
     else:
       login_url = users.create_login_url("/")
-      login_url_linktext = "Log in/Create Account"
       show_dashboard_link = False
     number_people = 11712
     template_values = {"number_people": number_people,
                        "login_url": login_url,
                        "login_url_linktext": login_url_linktext,
                        "show_dashboard_link": show_dashboard_link}
-    path = os.path.join(os.path.dirname(__file__), 'index.html')
+    path = os.path.join(os.path.dirname(__file__), 'html/index.html')
     self.response.out.write(template.render(path, template_values))
 
 class Dashboard(webapp2.RequestHandler):
