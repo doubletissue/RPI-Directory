@@ -71,6 +71,8 @@ function readfiles(files) {
     if (tests.formdata) formData.append('file', files[i]);
     previewfile(files[i]);
   }
+  //Add rcsid to request
+  formData.append('rcsid', '{{person.rcsid}}');
 
   // now post a new XHR request
   if (tests.formdata) {
@@ -124,7 +126,7 @@ $(document).ready(function() {
    $('#userStats').popover({
      trigger: 'hover',
      title: 'Is this you?',
-     content: '<a href="/dashboard?rcsid_claim={{person.rcsid}}">Claim your profile</a>',
+     content: '<a href="/dashboard?rcsid_claim={{person.rcsid}}">Claim this profile</a>',
      delay: { show: 50, hide: 4000 }
    });
    

@@ -10,6 +10,10 @@ import operator
 from models import Account
 from models import Person
 
+admins = ['christian@christianjohnson.org',
+          'jewishdan18@gmail.com',
+          'michorowitz@gmail.com']
+
 class MainPage(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
@@ -81,8 +85,11 @@ class UploadProfilePic(webapp2.RequestHandler):
   def post(self):
     user = users.get_current_user()
     if user:
-      account = Account.get_by_user(user)
-      person = account.get_linked_person().get()
+      if user.email() in admins:
+        #Allow picture replacement for admins
+        person = Person.get_by_id(self.request.get('rcsid'))
+      else:
+        person = Account.get_by_user(user).get_linked_person().get()
       if person:
         person.picture = images.resize(self.request.get('file'), 150, 150)
         person.put()
