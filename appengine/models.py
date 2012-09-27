@@ -29,7 +29,8 @@ class Person(ndb.Model):
   date_crawled = ndb.DateTimeProperty(auto_now=True)
   directory_id = ndb.IntegerProperty()
   date_emailed = ndb.DateTimeProperty()
-  mailing_address_html = ndb.ComputedProperty(lambda self: self.mailing_address.replace('\n', '<br />'))
+  mailing_address_html = ndb.ComputedProperty(lambda self: self.mailing_address.replace('\n', '<br />') if self.mailing_address else None)
+  picture = ndb.BlobProperty()
   
   @staticmethod
   def buildPerson(d):
@@ -204,7 +205,7 @@ class Account(ndb.Model):
     self.activation_code = random.randrange(sys.maxint)
     self.is_link_activated = False
     self.put()
-    send_activation_email(account, person, self.activation_code)
+    send_activation_email(self, person, self.activation_code)
 
   def activate_person(self, activation_code):
     if self.activation_code == activation_code and self.is_link_activated == False:
