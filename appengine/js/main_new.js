@@ -7,6 +7,7 @@ var cached_results = {};
 var local_storage_supported;
 var suffix_cache = ":v2";
 var data_table = null;
+var type_timeout = null;
 
 
 /*
@@ -117,13 +118,23 @@ function getOrCreateDataTable(){
   return data_table;
 }
 
+function callServer(){
+  table = getOrCreateDataTable();
+  table.fnReloadAjax('/api?q=' + $('#keyword').val());
+}
+
 $(document).ready(function() {
   //Focus on textbox
 	$("#keyword").focus();
   $('#keyword').keydown(function(e){
-    if (e.keyCode == 13 || e.keyCode == 32 || e.keyCode == 8 || Math.random() < .25){
-      table = getOrCreateDataTable();
-      table.fnReloadAjax('/api?q=' + $(this).val());
+    if (e.keyCode == 13 || e.keyCode == 32){
+      clearTimeout(type_timeout);
+      console.log('Clearing the timeout');
+      callServer();
+    }else{
+      clearTimeout(type_timeout);
+      type_timeout = setTimeout(callServer, 500);
+      console.log('Setting the timeout');
     }
   });
   
