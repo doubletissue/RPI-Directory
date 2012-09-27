@@ -2,6 +2,8 @@ from cron.crawler import Crawler
 from models import SearchPosition
 from models import Person
 
+from cron.mutex import Mutex
+
 import cgi
 import logging
 import webapp2
@@ -13,7 +15,7 @@ from google.appengine.api import search
 
 _INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
-NUM_THREADS = 100
+NUM_THREADS = 200
 
 import string
 
@@ -84,55 +86,50 @@ def putResult(d):
 
 
 def crawlPerson(index):
-  logging.info("In CrawlPerson")
-  result = Crawler().getMap(index)
-
-  if 'error' in result.keys():
-    logging.warn("error at index" + str(index) + ", error is " + result['error'])
-    if result['error'] == 'page_not_found':
-      logging.warn("Invalid index: " + str(index))
-      raise Exception()
-    if result['error'] == 'end of database':
-      logging.warn("Index out of range: " + str(index))
-      memcache.set("index", 1, 86400)
-      SearchPosition(id="index", position=1).put()
-  else:
-    logging.info("putting results")
-    putResult(result)
-
-  #if int(index) > 15000:
-    #logging.info("At end of database, reseting " + str(index))
-    #memcache.set("index", 1, 86400)
-    #SearchPosition(key_name="index", position=1).put()
+    logging.info("In CrawlPerson")
+    
+    mutex = Mutex('mutex lock')
+    try:
+        mutex.lock()
+        index_from_ds = SearchPosition.get_by_id("index")
+        if index_from_ds:
+            index = index_from_ds.position
+        else:
+            index_from_ds = SearchPosition(id='index',position=1)
+            index_from_ds.put()
+            index = 1
+            
+        result = Crawler().getMap(index)
+        logging.info(str(result))
+        
+        if 'error' in result.keys():
+            logging.warn("error at index" + str(index) + ", error is " + result['error'])
+            if result['error'] == 'page_not_found':
+                logging.warn("Invalid index: " + str(index))
+                raise Exception()
+            if result['error'] == 'end of database':
+                logging.warn("Index out of range: " + str(index))
+                index_from_ds.position = 1
+                index_from_ds.put()
+        else:
+            logging.info("putting results")
+    
+            putResult(result)
+    
+            index_from_ds.position = (int(index) + 1)
+            logging.info("INCREMENT " + str(index))
+            index_from_ds.put()
+            mutex.unlock()
+    except Exception as e:
+        raise e
+    finally:
+        mutex.unlock()
 
 class Driver(webapp2.RequestHandler):
-  def get(self):
-    index = memcache.get("index")
-    if not index:
-      index_from_ds = SearchPosition.get_by_id("index")
-      if not index_from_ds:
-        index = 1
-        #Add it to datastore
-        SearchPosition(id="index", position=index).put()
-      else:
-        index = index_from_ds.position
-      memcache.add("index", index, 86400)
-
-    #Spawn tasks
-    for i in range(index, index + NUM_THREADS):
-      taskqueue.add(url='/crawl/worker', params={'index': i}) #, target='backend'
-      #Update Memcache
-      if not memcache.incr("index"):
-        logging.error("Memcache set failed")
-
-    #Update Datastore
-    index_from_ds = SearchPosition.get_by_id("index")
-    if index_from_ds:
-      index_from_ds.position = (index + NUM_THREADS)
-    else:
-      index_from_ds = SearchPosition(id="index", position=index)
-    index_from_ds.put()
-
+    def get(self):
+        for i in range(NUM_THREADS):
+            taskqueue.add(url='/crawl/worker') #, target='backend'
+    
 class DriverWorker(webapp2.RequestHandler):
   def post(self):
     logging.info("In DriverWorker")
