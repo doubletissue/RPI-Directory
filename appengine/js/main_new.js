@@ -121,7 +121,7 @@ $(document).ready(function() {
   //Focus on textbox
 	$("#keyword").focus();
   $('#keyword').keydown(function(e){
-    if (e.keyCode == 13 || e.keyCode == 32){
+    if (e.keyCode == 13 || e.keyCode == 32 || e.keyCode == 8 || Math.random() < .25){
       table = getOrCreateDataTable();
       table.fnReloadAjax('/api?q=' + $(this).val());
     }
