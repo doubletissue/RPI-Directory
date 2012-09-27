@@ -120,6 +120,13 @@ if (tests.dnd) {
   };
 }
 
-
+$(document).ready(function() {
+   $('#userStats').popover({
+     trigger: 'hover',
+     title: 'Is this you?',
+     content: '<a href="/dashboard?rcsid_claim={{person.rcsid}}">Claim your profile</a>',
+     delay: { show: 50, hide: 4000 }
+   });
+ });
 </script>
 {% endblock %}

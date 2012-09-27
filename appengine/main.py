@@ -13,19 +13,17 @@ from models import Person
 class MainPage(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
-    login_url_linktext = "My Account/Signin"
-    if user:
-      login_url = users.create_logout_url("/")
-      show_dashboard_link = True
-      login_url_linktext = "My Account"
+    login_url_linktext = "Claim Account"
+    if user and Account.get_by_user(user).get_linked_person():
+      account = Account.get_by_user(user).get_linked_person().get()
+      login_url = '/detail/' + account.rcsid
+      login_url_linktext = "My Profile"
     else:
       login_url = users.create_login_url("/")
-      show_dashboard_link = False
     number_people = 11712
     template_values = {"number_people": number_people,
                        "login_url": login_url,
-                       "login_url_linktext": login_url_linktext,
-                       "show_dashboard_link": show_dashboard_link}
+                       "login_url_linktext": login_url_linktext}
     path = os.path.join(os.path.dirname(__file__), 'html/index_new.html')
     self.response.out.write(template.render(path, template_values))
 
@@ -51,37 +49,50 @@ class DetailPage(webapp2.RequestHandler):
 
 class Dashboard(webapp2.RequestHandler):
   def get(self):
+    # Check if signed in
+    user = users.get_current_user()
+    if not user:
+      self.redirect(users.create_login_url(self.request.uri))
+
     account = Account.get_or_create_current_account()
-    person_rcsid = self.request.get("PersonRCS", None)
-    activation_code = self.request.get("ActivationCode", None)
+    person_rcsid = self.request.get("rcsid_claim", None)
+    activation_code = self.request.get("activate", None)
     person = account.get_linked_person()
+
+    message = 'Signed in as %s, please goto a profile to claim it.' % (user.nickname())
 
     # If the account is not activated
     if not person:
       if person_rcsid:
         person = Person.gql("WHERE rcsid = :1", person_rcsid).get()
         account.init_linked_person(person)
+        #Send email
+        message = 'Sent email to: %s, please click the link in the email'
       if activation_code:
         activation_code = int(activation_code)
         account.activate_person(activation_code)
-    self.response.out.write(account.user.email())
+        #Activated Person
+        message = 'Your account has been activated!'
+    template_values = {"message": message}
+    path = os.path.join(os.path.dirname(__file__), 'html/activate.html')
+    self.response.out.write(template.render(path, template_values))
 
 class UploadProfilePic(webapp2.RequestHandler):
   def post(self):
-    #user = users.get_current_user()
-    #if user:
-    #  account = Account.get_by_user(user)
-    #  person = account.get_linked_person()
-    #  if person:
-    #    person.picture = images.resize(self.request.get('file'), 150, 150)
-    #    person.put()
-    #    logging.debug('Uploaded Picture: ' + account.nickname())
-    #    return
+    user = users.get_current_user()
+    if user:
+      account = Account.get_by_user(user)
+      person = account.get_linked_person().get()
+      if person:
+        person.picture = images.resize(self.request.get('file'), 150, 150)
+        person.put()
+        logging.debug('Uploaded Picture: ' + person.rcsid)
+        return
     #logging.debug('Tried to upload...failed.')
-    person = Person.get_by_id('johnsc12')
-    person.picture = images.resize(self.request.get('file'), 150, 150)
-    person.put()
-    logging.debug('Uploaded Picture!')
+    #person = Person.get_by_id('johnsc12')
+    #person.picture = images.resize(self.request.get('file'), 150, 150)
+    #person.put()
+    #logging.debug('Uploaded Picture!')
     
 class Image(webapp2.RequestHandler):
   def get(self):
