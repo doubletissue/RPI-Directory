@@ -58,12 +58,12 @@
 
 
 /* tables */
-tr {
+#results tr {
   cursor: pointer;
 }
 
-table {
-  font-family: 'Trebuchet MS', Helvetica, sans-serif;
+#results {
+  margin-bottom: 25px;
 }
 
 #results tbody tr.even:hover, #example tbody tr.even td.highlighted {
