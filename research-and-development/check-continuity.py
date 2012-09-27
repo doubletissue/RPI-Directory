@@ -4,7 +4,7 @@ import time
 def get_page(key):
   url = "http://prod3.server.rpi.edu/peopledirectory/entry.do?datasetName=directory&key=" + str(key)
 
-  sleep_time = 0.2
+  sleep_time = 0.01
   while True:
     try:
       result = urllib2.urlopen(url)
