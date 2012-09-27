@@ -6,7 +6,7 @@ var padding = '15%';
 var cached_results = {};
 var local_storage_supported;
 var suffix_cache = ":v2";
-var data_table = 0;
+var data_table = null;
 
 
 /*
@@ -65,33 +65,72 @@ if (typeof(console) !== "undefined") {
   }
 }
 
+function getPersonMajor(person, call, dat){
+  if (call == 'set'){
+    return;
+  }
+  if (person.major != undefined){
+    return person.major;
+  }else if (person.department != undefined){
+    return person.department;
+  }else{
+    return 'N/A';
+  }
+}
+
+function getPersonYear(person, call, dat){
+  if (call == 'set'){
+    return;
+  }
+  if (person.year != undefined){
+    return person.year;
+  }else{
+    return 'N/A';
+  }
+}
+
+function getOrCreateDataTable(){
+  if (!data_table){
+    try{
+  	  data_table = $('#results').dataTable({
+        "sAjaxDataProp": "data",
+        "sDom": 'rt',
+        "iDisplayLength": 20,
+        "sAjaxSource": "/api?q=michael",
+        "sDefaultContent": "hello",
+        "aoColumns": [
+            { "mData": "name" },
+            { "mData": getPersonMajor },
+            { "mData": getPersonYear },
+            { "mData": "email" },
+            { "mData": "rcsid", 
+              "bVisible": false }
+        ]
+      });
+      $('#results').show();
+    }catch(err){
+      console.log(err);
+    } 
+  }
+  return data_table;
+}
+
 $(document).ready(function() {
   //Focus on textbox
 	$("#keyword").focus();
-	
-	try{
-	  data_table = $('#results').dataTable({
-      "bProcessing": true,
-      "bServerSide": true,
-      "sAjaxDataProp": "data",
-      "sDom": 'rt<p>',
-      "sAjaxSource": "/api?q=michael",
-      "aoColumns": [
-          { "mData": "name" },
-          { "mData": "department" },
-          { "mData": "year" },
-          { "mData": "email" }
-      ]
-    });
-  }catch(err){
-    console.log(err);
-  }
-  
   $('#keyword').keydown(function(e){
-    if (e.keyCode == 13){
-      alert('Enter');
-      $('#results').dataTable().fnReloadAjax('/api?q=' + $(this).val());
+    if (e.keyCode == 13 || e.keyCode == 32){
+      table = getOrCreateDataTable();
+      table.fnReloadAjax('/api?q=' + $(this).val());
+      table.fnDraw();
     }
   });
   
+  $("#results tbody").click(function(event) {
+      var pos = getOrCreateDataTable().fnGetPosition(event.target);
+      var data = getOrCreateDataTable().fnGetData()[pos[0]];
+      if (data.rcsid){
+        window.location = '/detail/' + data.rcsid; 
+      }
+  });
 });

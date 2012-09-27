@@ -16,7 +16,7 @@
 		    </div>
 		    <div class="row-fluid">
 		      <div class="span8 offset2">
-		        <table id="results" class="dataTable">
+		        <table id="results" class="dataTable" style="display: none">
       		    <thead>
       		      <tr>
       			      <th>Name</th>
@@ -33,7 +33,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/jquery.dataTables.min.js"></script>
 <script type="text/javascript">
 $.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnCallback, bStandingRedraw )
 {
