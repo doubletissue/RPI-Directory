@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 SENDER = "do-not-reply@rpidirectory.appspotmail.com"
 ACTIVATION_SUBJECT = "Link to your account on RPI directory."
 ACTIVATION_BODY = """
-To activate your account, visit the following this link: http://test-mail.rpidirectory.appspot.com/dashboard?ActivationCode={}
+To activate your account, visit the following this link: http://test-mail.rpidirectory.appspot.com/dashboard?activate={}
 """
 ONE_DAY = timedelta(days=1)
 

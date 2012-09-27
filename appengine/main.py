@@ -14,15 +14,12 @@ class MainPage(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
     login_url_linktext = "Claim Account"
-    if user and Account.get_by_user(user).get_linked_person():
-      account = Account.get_by_user(user).get_linked_person().get()
-      login_url = '/detail/' + account.rcsid
-      login_url_linktext = "My Profile"
+    if user:
+      login_url = '/dashboard'
+      login_url_linktext = "My Account"
     else:
       login_url = users.create_login_url("/")
-    number_people = 11712
-    template_values = {"number_people": number_people,
-                       "login_url": login_url,
+    template_values = {"login_url": login_url,
                        "login_url_linktext": login_url_linktext}
     path = os.path.join(os.path.dirname(__file__), 'html/index_new.html')
     self.response.out.write(template.render(path, template_values))
@@ -57,7 +54,10 @@ class Dashboard(webapp2.RequestHandler):
     account = Account.get_or_create_current_account()
     person_rcsid = self.request.get("rcsid_claim", None)
     activation_code = self.request.get("activate", None)
-    person = account.get_linked_person()
+    if account:
+      person = account.get_linked_person()
+    else:
+      person = None
 
     message = 'Signed in as %s, please goto a profile to claim it.' % (user.nickname())
 
@@ -67,7 +67,7 @@ class Dashboard(webapp2.RequestHandler):
         person = Person.gql("WHERE rcsid = :1", person_rcsid).get()
         account.init_linked_person(person)
         #Send email
-        message = 'Sent email to: %s, please click the link in the email'
+        message = 'Sent email to: %s, please click the link in the email' % (person.email)
       if activation_code:
         activation_code = int(activation_code)
         account.activate_person(activation_code)

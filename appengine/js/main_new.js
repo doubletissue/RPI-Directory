@@ -118,16 +118,31 @@ function getOrCreateDataTable(){
   return data_table;
 }
 
-function callServer(){
+function callServer(keyword){
+  if(typeof(keyword)==='undefined'){
+    keyword = $('#keyword').val(); 
+  }
   table = getOrCreateDataTable();
-  table.fnReloadAjax('/api?q=' + $('#keyword').val());
+  table.fnReloadAjax('/api?q=' + keyword);
+}
+
+function getURLParameter(name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
 }
 
 $(document).ready(function() {
   //Focus on textbox
 	$("#keyword").focus();
-  $('#keyword').keydown(function(e){
+	
+	if (getURLParameter('q')){
+	  keyword = getURLParameter('q');
+    callServer(keyword);
+    $("#keyword").val(keyword);
+  }
+  
+  $('#keyword').keyup(function(e){
     keyword = $('#keyword').val();
+    window.history.replaceState(keyword, 'Searching ' + keyword, '/?q=' + keyword);
     if (!keyword || keyword.length == 0) { return; }
     if (e.keyCode == 13 || e.keyCode == 32){
       clearTimeout(type_timeout);
@@ -136,6 +151,7 @@ $(document).ready(function() {
       clearTimeout(type_timeout);
       type_timeout = setTimeout(callServer, 500);
     }
+    
   });
   
   $("#results tbody").click(function(event) {
