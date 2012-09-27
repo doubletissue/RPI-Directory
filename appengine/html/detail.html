@@ -127,6 +127,13 @@ $(document).ready(function() {
      content: '<a href="/dashboard?rcsid_claim={{person.rcsid}}">Claim your profile</a>',
      delay: { show: 50, hide: 4000 }
    });
+   
+   $('#profile-pic').popover({
+     trigger: 'hover',
+     title: 'Want to change your picture?',
+     content: 'Drag a picture from your computer over this one to replace it',
+     placement: 'left'
+   });   
  });
 </script>
 {% endblock %}
