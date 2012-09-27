@@ -93,6 +93,8 @@ function getOrCreateDataTable(){
   if (!data_table){
     try{
   	  data_table = $('#results').dataTable({
+  	    "bProcessing": true,
+  	    "bAutoWidth": true,
         "sAjaxDataProp": "data",
         "sDom": 'rt',
         "iDisplayLength": 20,
@@ -122,7 +124,6 @@ $(document).ready(function() {
     if (e.keyCode == 13 || e.keyCode == 32){
       table = getOrCreateDataTable();
       table.fnReloadAjax('/api?q=' + $(this).val());
-      table.fnDraw();
     }
   });
   
