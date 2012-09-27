@@ -7,14 +7,12 @@
 	font-size: 130%;
 	margin-bottom: 50px;
 	width: 35%;
-}
-
-.info_chart {
-  width: 100%;
+	font-family: 'Trebuchet MS', Helvetica, sans-serif;
 }
 
 #container {
-  margin-top: 3%;
+  margin-top: 5%;
+  font-family: 'Trebuchet MS', Helvetica, sans-serif;
 }
 
 #output {
@@ -24,9 +22,9 @@
 	display: none;
 }
 
-h2 {
+#intro-text {
 	margin: 25px 5px 15px 5px;
-  font-family: 'Puritan', 'Trebuchet MS', Helvetica, sans-serif;
+  font-family: 'Trebuchet MS', Helvetica, sans-serif;
   text-align: center;
 }
 
@@ -34,50 +32,8 @@ h2 {
   color: black;
 }
 
-#results {
-	margin-left: auto;
-	margin-right:auto;
-	-webkit-transition: opacity .1s ease-in;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-}
-
 #output {
 	font-family: arial, sans-serif;
-}
-
-#qr {
-  font-family: 'Trebuchet MS', Helvetica, sans-serif;
-  text-align: center;
-}
-
-#footer {
-  font-family: 'Trebuchet MS', Helvetica, sans-serif;
-  margin-top: 50px;
-  text-align: center;
-  font-size: 80%;
-  clear: left;
-}
-
-/* Details View */
-#results div.arrow { 
-  background:transparent url(arrows.png) no-repeat scroll 0px -16px; 
-  width:16px; 
-  height:16px; 
-  display:block;
-}
-
-#results div.up { 
-  background-position:0px 0px;
-}
-
-#results img { 
-  float:right;
-}
-
-#results h4 {
-  margin:0px; 
-  padding:0px;
 }
 
 /* @group left */
@@ -106,6 +62,46 @@ tr {
   cursor: pointer;
 }
 
-table tr:hover {
-  background-color: #CCC;
+table {
+  font-family: 'Trebuchet MS', Helvetica, sans-serif;
+}
+
+#results tbody tr.even:hover, #example tbody tr.even td.highlighted {
+	background-color: #ECFFB3;
+}
+
+#results tbody tr.odd:hover, #example tbody tr.odd td.highlighted {
+	background-color: #E6FF99;
+}
+
+#results tr.even:hover {
+	background-color: #ECFFB3;
+}
+
+#results tr.even:hover td.sorting_1 {
+	background-color: #DDFF75;
+}
+
+#results tr.even:hover td.sorting_2 {
+	background-color: #E7FF9E;
+}
+
+#results tr.even:hover td.sorting_3 {
+	background-color: #E2FF89;
+}
+
+#results tr.odd:hover {
+	background-color: #E6FF99;
+}
+
+#results tr.odd:hover td.sorting_1 {
+	background-color: #D6FF5C;
+}
+
+#results tr.odd:hover td.sorting_2 {
+	background-color: #E0FF84;
+}
+
+#results tr.odd:hover td.sorting_3 {
+	background-color: #DBFF70;
 }
