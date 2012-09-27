@@ -127,20 +127,21 @@ $(document).ready(function() {
   //Focus on textbox
 	$("#keyword").focus();
   $('#keyword').keydown(function(e){
+    keyword = $('#keyword').val();
+    if (!keyword || keyword.length == 0) { return; }
     if (e.keyCode == 13 || e.keyCode == 32){
       clearTimeout(type_timeout);
-      console.log('Clearing the timeout');
       callServer();
     }else{
       clearTimeout(type_timeout);
       type_timeout = setTimeout(callServer, 500);
-      console.log('Setting the timeout');
     }
   });
   
   $("#results tbody").click(function(event) {
-      var pos = getOrCreateDataTable().fnGetPosition(event.target);
-      var data = getOrCreateDataTable().fnGetData()[pos[0]];
+      var table = getOrCreateDataTable();
+      var pos = table.fnGetPosition(event.target);
+      var data = table.fnGetData()[pos[0]];
       if (data.rcsid){
         window.location = '/detail/' + data.rcsid; 
       }

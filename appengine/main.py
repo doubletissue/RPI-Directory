@@ -12,10 +12,11 @@ from models import Person
 class MainPage(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
-    login_url_linktext = "My Account"
+    login_url_linktext = "My Account/Signin"
     if user:
       login_url = users.create_logout_url("/")
       show_dashboard_link = True
+      login_url_linktext = "My Account"
     else:
       login_url = users.create_login_url("/")
       show_dashboard_link = False

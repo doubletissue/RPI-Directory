@@ -29,7 +29,8 @@ class Person(ndb.Model):
   date_crawled = ndb.DateTimeProperty(auto_now=True)
   directory_id = ndb.IntegerProperty()
   date_emailed = ndb.DateTimeProperty()
-
+  mailing_address_html = ndb.ComputedProperty(lambda self: self.mailing_address.replace('\n', '<br />'))
+  
   @staticmethod
   def buildPerson(d):
     person = Person()
