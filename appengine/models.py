@@ -30,6 +30,7 @@ class Person(ndb.Model):
   mailing_address_html = ndb.ComputedProperty(lambda self: self.mailing_address.replace('\n', '<br />') if self.mailing_address else None)
   picture = ndb.BlobProperty()
   linked_account = ndb.UserProperty()
+  email_html = ndb.ComputedProperty(lambda self: self.email.replace('@', ' [at] ').replace('.', ' [dot] ') if self.email else None)
   
   @staticmethod
   def buildPerson(d):
@@ -91,6 +92,8 @@ class Person(ndb.Model):
     
     if p.email is not None:
       d['email'] = str(p.email)
+    if p.email_html is not None:
+      d['email_html'] = str(p.email_html)
     if p.rcsid is not None:
       d['rcsid'] = str(p.rcsid)
     

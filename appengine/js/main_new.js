@@ -105,7 +105,7 @@ function getOrCreateDataTable(){
             { "mData": "name" },
             { "mData": getPersonMajor },
             { "mData": getPersonYear },
-            { "mData": "email" },
+            { "mData": "email_html" },
             { "mData": "rcsid", 
               "bVisible": false }
         ]
