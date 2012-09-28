@@ -99,7 +99,7 @@ function getOrCreateDataTable(){
         "sAjaxDataProp": "data",
         "sDom": 'rt',
         "iDisplayLength": 20,
-        "sAjaxSource": "/api?q=michael",
+        "sAjaxSource": "/api?q=",
         "sDefaultContent": "hello",
         "aoColumns": [
             { "mData": "name" },
