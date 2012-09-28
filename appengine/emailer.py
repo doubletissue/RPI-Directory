@@ -11,6 +11,6 @@ def send_activation_email(person, activation_code):
   # Don't spam the president...
   if person.title == "President":
     return False
-  mail.send_mail(SENDER, person.email, ACTIVATION_SUBJECT + str(activation_code), 
+  mail.send_mail(SENDER, person.email, ACTIVATION_SUBJECT, 
                  ACTIVATION_BODY.format(activation_code))
   return True

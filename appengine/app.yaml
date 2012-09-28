@@ -45,5 +45,17 @@ handlers:
   script: admin_page.app
   login: admin
 
+- url: /upload_picture.*
+  script: picture.app
+  
+- url: /picture.*
+  script: picture.app
+  
+- url: /dashboard.*
+  script: dashboard.app
+  
+- url: /detail.*
+  script: detail.app
+
 - url: /.*
   script: main.app

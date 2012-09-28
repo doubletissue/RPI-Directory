@@ -33,9 +33,12 @@
               <a class="brand" href="/">RPI Directory</a>
               <div class="nav-collapse">
                 <ul class="nav">
-                  <li class="active"><a href="/">Home</a></li>
-                  <li><a href="{{login_url}}">{{login_url_linktext}}</a></li>
-                  <li><a href="/about">About</a></li>
+                  <li {% if active == 'home' %} class="active"{% endif %}>
+                    <a href="/">Home</a></li>
+                  <li{% if active == 'dashboard' %} class="active"{% endif %}>
+                    <a href="/dashboard">My Profile</a></li>
+                  <li{% if active == 'about' %} class="active"{% endif %}>
+                    <a href="/about">About</a></li>
                 </ul>
                 <ul class="nav pull-right">
                   <li><a target="_blank"  href="http://itunes.apple.com/us/app/rpi-directory/id519895392?ls=1&mt=8">iPhone</a></li>

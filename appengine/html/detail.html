@@ -4,7 +4,7 @@
 <div id="container" class="container-fluid">
   {% if person %}
   <div class="row-fluid">
-    <div class="span6 offset3">
+    <div class="span5 offset3">
       <div id="userStats" class="clearfix">
         <div id="holder">
       	  <div class="pic">
@@ -16,7 +16,9 @@
       		</div>
       	</div>
       	<div class="data">
-					<h1>{{person.first_name.title}} {{person.last_name.title}}</h1>
+					<h1>{{person.first_name.title}} {{person.last_name.title}}
+					  {% if user and user == person.linked_account %} (You){% endif %}
+					</h1>
 					<h3>{% firstof person.year.title person.title.title %}</h3>
 					<h4>{% firstof person.major.title person.department.title %}</h4>
 					<div class="sep"></div>
@@ -123,19 +125,21 @@ if (tests.dnd) {
 }
 
 $(document).ready(function() {
+{% if not person.linked_account %}
    $('#userStats').popover({
-     trigger: 'hover',
+     trigger: 'manual',
      title: 'Is this you?',
      content: '<a href="/dashboard?rcsid_claim={{person.rcsid}}">Claim this profile</a>',
-     delay: { show: 50, hide: 4000 }
+     delay: { show: 50, hide: 15000 }
    });
-   
+   $('#userStats').popover('show');
+{% endif %}
    $('#profile-pic').popover({
      trigger: 'hover',
      title: 'Want to change your picture?',
      content: 'Drag a picture from your computer over this one to replace it',
      placement: 'left'
-   });   
+   });
  });
 </script>
 {% endblock %}

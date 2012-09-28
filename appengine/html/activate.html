@@ -2,10 +2,56 @@
 
 {% block content %}
 <div id="container" class="container-fluid">
-  <div class="row">
-    <div class="span10 offset2">
+  <div class="row-fluid">
+    <div class="span4 offset4">
+      <style type="text/css">
+      h3 a {
+        color: #777;
+      }
+      
+      li {
+        font-size: 28px;
+        color: #000;
+      }
+      
+      .popover {
+      	width: 300px;
+      }
+      </style>
+      {% if not message %}
+      <h1>How it works:</h1>
+      <ol>
+        <li id='step1'><h3><a href="/">Find</a> your profile</h3></li>
+        <li id='step2'><h3>Click claim link by mousing over profile</h3></li>
+        <li><h3>Check your RPI email for an activation link</h3></li>
+        <li id='step4'><h3>Customize your picture and enjoy!</h3></li>
+      </ol>
+      {% else %}
       <h2>{{message}}</h2>
+      {% endif %}
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+  $('#step1').popover({
+     trigger: 'hover',
+     title: 'Finding Yourself',
+     content: '<img src="/images/step1.png">',
+   });
+   $('#step2').popover({
+     trigger: 'hover',
+     title: 'Claiming your profile',
+     content: '<img src="/images/step2.png">',
+   });
+   $('#step4').popover({
+      trigger: 'hover',
+      title: 'Changing your picture',
+      content: '<img src="/images/step4.png">',
+   });
+ });
+</script>
 {% endblock %}
