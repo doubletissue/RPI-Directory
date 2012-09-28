@@ -13,29 +13,48 @@
 		
 		<title>{% block title %}RPI Directory{% endblock %}</title>
 		<link href='http://fonts.googleapis.com/css?family=Puritan:700' rel='stylesheet' type='text/css'>
-		<link href='css/bootstrap.min.css' rel='stylesheet' type='text/css'>
-		<link href='css/bootstrap-responsive.min.css' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" type="text/css" href="css/jNotify.jquery.css" media="screen" />
-		<link href='css/main.css' rel='stylesheet' type='text/css'>
+		<link href='http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/css/jquery.dataTables.css' rel='stylesheet' type='text/css'>
+		<link href='/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+		<link href='/css/bootstrap-responsive.min.css' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="/css/jNotify.jquery.css" media="screen" />
+		<link href='/css/main.css' rel='stylesheet' type='text/css'>
 	{% block add_head %}{% endblock %}
 	</head>
 	<body id="body">
+	  <section id="navbar">
+	    <div class="navbar navbar-inverse navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="container" style="width: auto;">
+              <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </a>
+              <a class="brand" href="/">RPI Directory</a>
+              <div class="nav-collapse">
+                <ul class="nav">
+                  <li{% if active == 'dashboard' and user and user == person.linked_account %} class="active"{% endif %}>
+                    <a href="/dashboard">My Profile</a>
+                  </li>
+                </ul>
+                <ul class="nav pull-right">
+                  <li><a target="_blank"  href="http://itunes.apple.com/us/app/rpi-directory/id519895392?ls=1&mt=8">iPhone</a></li>
+                  <li><a target="_blank"  href="https://play.google.com/store/apps/details?id=org.rpi.rpinfo">Android</a></li>
+                  <li class="divider-vertical"></li>
+                  <li><a target="_blank" href="http://rcos.rpi.edu">An RCOS Project</a></li>
+                </ul>
+              </div><!-- /.nav-collapse -->
+            </div>
+          </div><!-- /navbar-inner -->
+        </div>
+	  </section>
 	  {% block content %}{% endblock %}
 	  {% block footer %}
-	  <footer>
-	    <div id="footer">
-	      <p>
-	        People in database: {{ number_people }} <!-- - <a href="/stats" target="_blank">Additional Stats</a> --> - <a href="http://rcos.rpi.edu/projects/rpi-directory-app/" target="_blank">An RCOS Project</a>
-	      </p>
-	      <div style="text-align:center" class="g-plusone"></div>
-	    </div>
-	  </footer>
 	  <script type="text/javascript" language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<script type="text/javascript" src="js/bindwithdelay.js"></script>
-		<script type="text/javascript" src="js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="js/jNotify.jquery.min.js"></script>
-		<script type="text/javascript" src="js/main.js"></script>
+		<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/js/jNotify.jquery.min.js"></script>
+		<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/jquery.dataTables.min.js"></script>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
 		  _gaq.push(['_setAccount', 'UA-25705269-1']);
@@ -65,6 +84,8 @@
       })();
     </script>
 	  {% endblock %}
+	  
+	  {% block extra_js %}{% endblock %}
 	  </div>
 	</body>
 </html>

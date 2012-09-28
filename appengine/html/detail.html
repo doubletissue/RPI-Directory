@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="container" class="container-fluid">
+  {% if person %}
+  <div class="row-fluid">
+    <div class="span6 offset3">
+      <div id="userStats" class="clearfix">
+        <div id="holder">
+      	  <div class="pic" id="pic-holder">
+      					  {% if person.picture %}
+      					  <img id="profile-pic" src="/picture?rcsid={{person.rcsid}}" width="150" height="150">
+      					  {% else %}
+      					  <img id="profile-pic" src="https://s3-eu-west-1.amazonaws.com/assimbli/unknown_profile.jpg" width="150" height="150">
+      					  {% endif %}
+      		</div>
+      	</div>
+      	<div class="data">
+					<h1>{{person.first_name.title}} {{person.last_name.title}}
+					  {% if user and user == person.linked_account %} (You){% endif %}
+					</h1>
+					<h3>{% firstof person.year.title person.title.title %}</h3>
+					<h4>{% firstof person.major.title person.department.title %}</h4>
+					<div class="sep"></div>
+					<h4>
+					  <span class="contact-header">Email:</span>
+					  {{person.email_html}}
+					</h4>
+					<h4>
+					  <span class="contact-header">Phone:</span>
+					  {% firstof person.phone "N\A" %}
+					</h4>
+					<h4>
+					  <span class="contact-header">Office:</span>
+					  {% firstof person.office_location.title "N\A" %}
+					</h4>
+					<h4>
+					  <span class="contact-header">Mailing Address:</span><br>
+					  {% firstof person.mailing_address_html.title "N\A" %}
+					</h4>
+				</div>
+      </div>
+  </div>
+  {% else %}
+  <h2 id="intro-text">
+    RCS ID {{rcs_id}} not found...
+  </h2>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+function previewfile(file) {
+  if (tests.filereader === true && acceptedTypes[file.type] === true) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      var image = new Image();
+      image.width = 150;  // a fake resize
+      image.height = 150; // a fake resize
+      document.getElementById('profile-pic').src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  }  else {
+    holder.innerHTML += '<p>Uploaded ' + file.name + ' ' + (file.fileSize ? (file.fileSize/1024|0) + 'K' : '');
+    console.log(file);
+  }
+}
+
+function readfiles(files) {
+  var formData = tests.formdata ? new FormData() : null;
+  for (var i = 0; i < files.length; i++) {
+    if (tests.formdata) formData.append('file', files[i]);
+    previewfile(files[i]);
+  }
+  //Add rcsid to request
+  formData.append('rcsid', '{{person.rcsid}}');
+
+  // now post a new XHR request
+  if (tests.formdata) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/upload_picture');
+    xhr.send(formData);
+  }
+}
+
+var holder = document.getElementById('holder'),
+tests = {
+  filereader: typeof FileReader != 'undefined',
+  dnd: 'draggable' in document.createElement('span'),
+  formdata: !!window.FormData,
+  progress: "upload" in new XMLHttpRequest
+};
+support = {
+  filereader: document.getElementById('filereader'),
+  formdata: document.getElementById('formdata'),
+  progress: document.getElementById('progress')
+};
+acceptedTypes = {
+  'image/png': true,
+  'image/jpeg': true,
+  'image/gif': true
+};
+fileupload = document.getElementById('upload');
+
+if (tests.dnd) { 
+  holder.ondragover = function () { 
+    document.getElementById('profile-pic').className = 'hover'; 
+    return false; 
+  };
+  holder.ondragend = function () { 
+    document.getElementById('profile-pic').className = '';
+    return false; 
+  };
+  holder.ondrop = function (e) {
+    document.getElementById('profile-pic').className = '';
+    e.preventDefault();
+    readfiles(e.dataTransfer.files);
+  }
+} else {
+  fileupload.className = 'hidden';
+  fileupload.querySelector('input').onchange = function () {
+    readfiles(this.files);
+  };
+}
+
+$(document).ready(function() {
+{% if not person.linked_account and not enabled_user %}
+   $('#userStats').popover({
+     trigger: 'manual',
+     title: 'Is this you?',
+     content: '<a href="/dashboard?rcsid_claim={{person.rcsid}}">Claim this profile</a>',
+     delay: { show: 50, hide: 15000 }
+   });
+   $('#userStats').popover('show');
+{% endif %}
+{% if user and user == person.linked_account %}
+   $('#pic-holder').popover({
+     trigger: 'hover',
+     title: 'Want to change your picture?',
+     content: 'Drag a picture from your computer over this one to replace it',
+     placement: 'left'
+   });
+   $('#pic-holder').popover('show');
+   setTimeout(function(){$('#pic-holder').popover('hide');}, 5000);
+{% endif %}
+ });
+</script>
+{% endblock %}

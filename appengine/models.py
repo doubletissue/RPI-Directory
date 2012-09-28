@@ -1,7 +1,5 @@
 #App Engine Models
 
-from emailer import send_activation_email
-
 from google.appengine.api import users
 from google.appengine.ext import ndb
 import string
@@ -29,7 +27,11 @@ class Person(ndb.Model):
   date_crawled = ndb.DateTimeProperty(auto_now=True)
   directory_id = ndb.IntegerProperty()
   date_emailed = ndb.DateTimeProperty()
-
+  mailing_address_html = ndb.ComputedProperty(lambda self: self.mailing_address.replace('\n', '<br />') if self.mailing_address else None)
+  picture = ndb.BlobProperty()
+  linked_account = ndb.UserProperty()
+  email_html = ndb.ComputedProperty(lambda self: self.email.replace('@', ' [at] ').replace('.', ' [dot] ') if self.email else None)
+  
   @staticmethod
   def buildPerson(d):
     person = Person()
@@ -90,6 +92,8 @@ class Person(ndb.Model):
     
     if p.email is not None:
       d['email'] = str(p.email)
+    if p.email_html is not None:
+      d['email_html'] = str(p.email_html)
     if p.rcsid is not None:
       d['rcsid'] = str(p.rcsid)
     
@@ -138,86 +142,10 @@ class Person(ndb.Model):
     
     return d
   
-  
 
 class SearchPosition(ndb.Model):
   """Model to store Crawler position."""
   position = ndb.IntegerProperty()
-
-#class DepartmentKeyword(db.Model):
-  #"""Model to store a single work from a major, for searching purposes"""
-  #departments = db.ListProperty
-  
-  #@staticmethod
-  #def buildKeywords(s):
-    #for word in s.split():
-      #d = DepartmentKeyword.get_by_key_name(word)
-      #if not d:
-        #w = DepartmentKeyword(key_name = word)
-        #w.department = [s]
-        #w.put()
-      #elif s not in d.departments:
-        #d.departments.append(s)
-        #d.put()
-
-class Account(ndb.Model):
-  """
-  Model for a user account, may be linked to a directory entry for unrestricted
-  edit access and also used to contribute to other directory entries.
-  """
-  user = ndb.UserProperty()
-  linked_person = ndb.KeyProperty(Person)
-  activation_code = ndb.IntegerProperty()
-  is_link_activated = ndb.BooleanProperty()
-  date_emailed = ndb.DateTimeProperty()
-
-  @staticmethod
-  def get_or_create_current_account():
-    user = users.get_current_user()
-    account = Account.get_by_user(user)
-    if not account:
-      account = Account.create_from_user(user)
-      account.is_link_activated = False
-      return None
-    else:
-      return account
-
-  @staticmethod
-  def create_from_user(user):
-    account = Account()
-    account.user = user
-    account.date_emailed = datetime.min
-    account.put()
-    return account
-
-  @staticmethod
-  def get_by_user(user):
-    return Account.gql("WHERE user = :1", user).get()
-
-  def init_linked_person(self, person):
-    """
-    Link the account to a person, but the link is not active unless the user
-    acts on the e-mail that is sent to the address on the account.
-    """
-    self.linked_person = person.key
-    self.activation_code = random.randrange(sys.maxint)
-    self.is_link_activated = False
-    self.put()
-    send_activation_email(account, person, self.activation_code)
-
-  def activate_person(self, activation_code):
-    if self.activation_code == activation_code and self.is_link_activated == False:
-      self.is_link_activated = True
-      self.put()
-      return True
-    else:
-      return False
-
-  def get_linked_person(self):
-    if self.is_link_activated:
-      return self.linked_person
-    else:
-      return None
       
 class StatsObject(ndb.Model):
     count = ndb.IntegerProperty()

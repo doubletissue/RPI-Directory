@@ -1,5 +1,5 @@
 application: rpidirectory
-version: 5
+version: 6
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -44,6 +44,18 @@ handlers:
 - url: /admin_page.*
   script: admin_page.app
   login: admin
+
+- url: /upload_picture.*
+  script: picture.app
+  
+- url: /picture.*
+  script: picture.app
+  
+- url: /dashboard.*
+  script: dashboard.app
+  
+- url: /detail.*
+  script: detail.app
 
 - url: /.*
   script: main.app
