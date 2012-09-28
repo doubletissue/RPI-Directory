@@ -17,7 +17,7 @@ class DetailPage(webapp2.RequestHandler):
     if person and person.picture:
       img = 'http://rpidirectory.appspot.com/picture/%s' % (rcs_id)
     else:
-      img = 'http://lh3.googleusercontent.com/16QX8mPZ10EWtlxJ04A9nHNTFA1XrAa4aKOJba5Me_-SXWl-tldF-2WCZX0rjL7nOORe-yJLHHk'
+      img = 'https://dl.dropbox.com/u/1253608/370556590677.png'
     if user:
       enabled_user = Person.query(Person.linked_account == user).get()
     

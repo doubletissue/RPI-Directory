@@ -57,9 +57,6 @@ function previewfile(file) {
       document.getElementById('profile-pic').src = event.target.result;
     };
     reader.readAsDataURL(file);
-  }  else {
-    holder.innerHTML += '<p>Uploaded ' + file.name + ' ' + (file.fileSize ? (file.fileSize/1024|0) + 'K' : '');
-    console.log(file);
   }
 }
 
@@ -76,6 +73,9 @@ function readfiles(files) {
   if (tests.formdata) {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/upload_picture');
+    xhr.onload = function() {
+      window.location.reload();
+    };
     xhr.send(formData);
   }
 }
