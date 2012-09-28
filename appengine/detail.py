@@ -13,18 +13,11 @@ class DetailPage(webapp2.RequestHandler):
   def get(self, rcs_id):
     user = users.get_current_user()
     enabled_user = None
-    default_img = 'http://rpidirectory.appspot.com/picture/%s.png' % (rcs_id)
     person = Person.get_by_id(rcs_id)
-    if person:
-      hashed_email = hashlib.md5(person.email.lower()).hexdigest()
-      gravatar_url = "http://www.gravatar.com/avatar/" + hashed_email  + "?"
-      gravatar_url += urllib.urlencode({
-        'd': default_img, 
-        's': str(150)}
-      )
+    if person and person.picture:
+      img = 'http://rpidirectory.appspot.com/picture/%s' % (rcs_id)
     else:
-      gravatar_url = 'https://s3-eu-west-1.amazonaws.com/assimbli/unknown_profile.jpg'
-
+      img = 'http://lh3.googleusercontent.com/16QX8mPZ10EWtlxJ04A9nHNTFA1XrAa4aKOJba5Me_-SXWl-tldF-2WCZX0rjL7nOORe-yJLHHk'
     if user:
       enabled_user = Person.query(Person.linked_account == user).get()
     
@@ -33,7 +26,7 @@ class DetailPage(webapp2.RequestHandler):
                        "person": person,
                        "user": user,
                        "enabled_user": enabled_user,
-                       "img": gravatar_url}
+                       "img": img}
     path = os.path.join(os.path.dirname(__file__), 'html/detail.html')
     self.response.out.write(template.render(path, template_values))
 

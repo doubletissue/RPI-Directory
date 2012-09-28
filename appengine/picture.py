@@ -40,4 +40,4 @@ class Image(webapp2.RequestHandler):
       self.response.out.write(base64.b64decode(unknown_image))
 
 app = webapp2.WSGIApplication([('/upload_picture', UploadProfilePic),
-                               ('/picture/([^/]+).png', Image)])
+                               ('/picture/([^/]+)', Image)])
