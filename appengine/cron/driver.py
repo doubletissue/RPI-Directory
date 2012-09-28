@@ -15,13 +15,15 @@ from google.appengine.api import search
 
 _INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
-NUM_THREADS = 200
+NUM_THREADS = 5
 
 import string
 
 _INDEX_NAME = 'person'
 
 def split_words(field_name, s):
+    if not s:
+      return []
     field_name = str(field_name)
     s = str(s)
     for c in string.punctuation:
@@ -36,6 +38,22 @@ def split_words(field_name, s):
             pass
         r.append(search.TextField(name=field_name + str(i), value=l[i]))
     return r
+    
+searchableAttributes = [
+  'department',
+  'email',
+  'rcsid',
+  'year',
+  'major',
+  'title',
+  'phone',
+  'fax',
+  'homepage',
+  'office_location',
+  'campus_mailstop',
+  'mailing_address',
+  'middle_name'
+]
 
 #Creates a person and stores it
 def createDocument(person):
@@ -44,43 +62,31 @@ def createDocument(person):
         for i in range(len(person.first_name)):
             for j in range(i + 1, len(person.first_name) + 1):
                 fields.append(search.TextField(name='first_name' + str(i) + 'to' + str(j), value=str(person.first_name[i:j])))
-    if person.middle_name:
-        fields.append(search.TextField(name='middle_name', value=str(person.middle_name)))
     if person.last_name:
         for i in range(len(person.last_name)):
             for j in range(i + 1, len(person.last_name) + 1):
                 fields.append(search.TextField(name='last_name' + str(i) + 'to' + str(j), value=str(person.last_name[i:j])))
-    if person.department:
-        fields.extend(split_words('department', person.department))
-    if person.email:
-        fields.extend(split_words('email', person.email))
-    if person.rcsid:
-        fields.extend(split_words('rcsid', person.rcsid))
-    if person.year:
-        fields.extend(split_words('year', person.year))
-    if person.major:
-        fields.extend(split_words('major', person.major))
-    if person.title:
-        fields.extend(split_words('title', person.title))
-    if person.phone:
-        fields.extend(split_words('phone', person.phone))
-    if person.fax:
-        fields.extend(split_words('fax', person.fax))
-    if person.homepage:
-        fields.extend(split_words('homepage', person.homepage))
-    if person.office_location:
-        fields.extend(split_words('office_location', person.office_location))
-    if person.campus_mailstop:
-        fields.extend(split_words('campus_mailstop', person.campus_mailstop))
-    if person.mailing_address:
-        fields.extend(split_words('mailing_address', person.mailing_address))
+                
+    for attr in searchableAttributes:
+      fields.extend(split_words(attr, getattr(person,attr,'')))
 
-    return search.Document(doc_id=str(person.rcsid.split()[0]) or str(person.first_name + ' ' + person.last_name), fields=fields)
+    return search.Document(doc_id=person.rcsid, fields=fields)
 
 def putResult(d):
-  person = Person.buildPerson(d)
-  #if person.department:
-    #DepartmentKeyword.buildKeywords(person.department)
+  if 'rcsid' not in d:
+    return
+  key = d['rcsid']
+  prev_person = Person.get_by_id(key)
+  if prev_person:
+    logging.info("Updating %s", key)
+    prev_d = Person.buildMap(prev_person)
+    for k,v in d.items():
+      if v:
+        prev_d[k] = v
+    person = Person.buildPerson(prev_d)
+  else:
+    logging.info("New %s", key)
+    person = Person.buildPerson(d)
   person.put()
   search.Index(name=_INDEX_NAME).add(createDocument(person))
 

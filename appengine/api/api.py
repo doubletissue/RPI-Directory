@@ -144,28 +144,26 @@ class Api(webapp2.RequestHandler):
     d["token"] = token
     d["q"] = search_query
     
-    data = memcache.get(query_string)
-    
-    if not data:
-        data = []
-        #Sort results by first name descending
-        expr_list = [search.SortExpression(
+    data = []
+    #Sort results by first name descending
+    expr_list = [search.SortExpression(
                 expression='first_name', default_value='',
                 direction=search.SortExpression.DESCENDING)]
-        # construct the sort options 
-        sort_opts = search.SortOptions(expressions=expr_list)
-        offset_num = (page_num - 1) * page_size
-        query_options = search.QueryOptions(limit=page_size, offset=offset_num, 
-            ids_only=True, sort_options=sort_opts)
-        results = search.Index(name=_INDEX_NAME).search(query=search.Query(
+    # construct the sort options 
+    sort_opts = search.SortOptions(expressions=expr_list)
+    offset_num = (page_num - 1) * page_size
+    query_options = search.QueryOptions(limit=page_size, offset=offset_num, 
+          ids_only=True, sort_options=sort_opts)
+    results = search.Index(name=_INDEX_NAME).search(query=search.Query(
             query_string=query_string, options=query_options))
 
-        for result in results:
-            rcsid = result.doc_id
-            r = Person.get_by_id(rcsid)
-            if r:
-                data.append(Person.buildMap(r))
-        memcache.add(query_string, data, time=2419200)
+    for result in results:
+        rcsid = result.doc_id
+        logging.info(rcsid)
+        r = Person.get_by_id(rcsid)
+        if r:
+            logging.info('got person')
+            data.append(Person.buildMap(r))
     d["data"] = data
     s = json.dumps(d)
     self.response.out.write(s)

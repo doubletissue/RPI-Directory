@@ -4,6 +4,7 @@ import logging
 import cgi
 import re
 import webapp2
+import string
 
 class Crawler(webapp2.RequestHandler):
   def get(self):
@@ -122,7 +123,11 @@ class Crawler(webapp2.RequestHandler):
 
     name = self.findName(string)
     if name is not "":
-      d['name'] = name
+      names = name.split()[:3]
+      if len(names) > 0:
+        d['first_name'] = names[0]
+      if len(names) > 1:
+        d['last_name'] = names[-1]
 
     homepage = self.findHomepage(string)
     if homepage is not "":
@@ -131,6 +136,7 @@ class Crawler(webapp2.RequestHandler):
     email = self.findEmail(string)
     if email is not "":
       d['email'] = email
+      d['rcsid'] = d['email'].rsplit('@', 1)[0]
 
     for k in attributes.keys():
       v = self.findAttribute(string, k)
@@ -142,7 +148,7 @@ class Crawler(webapp2.RequestHandler):
   def parseData(self, key):
     s = self.getPage(key)
     d = self.findStuff(s)
-    d['directory_id'] = int(key)
+    d['directory_id'] = str(key)
     return d
 
 app = webapp2.WSGIApplication(
