@@ -4,7 +4,7 @@
 <div id="container" class="container-fluid">
   {% if person %}
   <div class="row-fluid">
-    <div class="span5 offset3">
+    <div class="span6 offset3">
       <div id="userStats" class="clearfix">
         <div id="holder">
       	  <div class="pic" id="pic-holder">
@@ -141,6 +141,8 @@ $(document).ready(function() {
      content: 'Drag a picture from your computer over this one to replace it',
      placement: 'left'
    });
+   $('#pic-holder').popover('show');
+   setTimeout(function(){$('#pic-holder').popover('hide');}, 5000);
 {% endif %}
  });
 </script>
