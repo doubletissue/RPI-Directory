@@ -125,7 +125,7 @@ if (tests.dnd) {
 }
 
 $(document).ready(function() {
-{% if not person.linked_account %}
+{% if not person.linked_account and not enabled_user %}
    $('#userStats').popover({
      trigger: 'manual',
      title: 'Is this you?',
