@@ -162,4 +162,14 @@ $(document).ready(function() {
         window.location = '/detail/' + data.rcsid; 
       }
   });
+  
+  if (document.getElementById('profile-link') != null){
+    $('#profile-link').popover({
+      placement: 'bottom',
+      trigger: 'hover',
+      title: 'Have you claimed your profile yet?',
+      content: 'Make sure to claim your profile!'
+    });
+    setTimeout(function(){$('#profile-link').popover('show');}, 250);
+  }    
 });

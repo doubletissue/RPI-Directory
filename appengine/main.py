@@ -10,7 +10,7 @@ from models import Person
 class MainPage(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
-    template_values = {}
+    template_values = {'user': user}
     path = os.path.join(os.path.dirname(__file__), 'html/index_new.html')
     self.response.out.write(template.render(path, template_values))
 

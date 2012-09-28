@@ -125,8 +125,7 @@ $(document).ready(function() {
    $('#userStats').popover({
      trigger: 'manual',
      title: 'Is this you?',
-     content: '<a href="/dashboard?rcsid_claim={{person.rcsid}}">Claim this profile</a>',
-     delay: { show: 50, hide: 15000 }
+     content: '<a href="/dashboard?rcsid_claim={{person.rcsid}}">Claim this profile</a>'
    });
    $('#userStats').popover('show');
 {% endif %}
