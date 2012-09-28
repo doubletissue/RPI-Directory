@@ -19,7 +19,9 @@ class UploadProfilePic(webapp2.RequestHandler):
       else:
         person = Person.query(Person.linked_account == user).get()
       if person:
-        person.picture = images.resize(self.request.get('file'), 150, 150)
+        person.picture = images.resize(self.request.get('file'), 
+                                       width=150, height=150,
+                                       correct_orientation=True)
         person.put()
         logging.debug('Uploaded Picture: ' + person.rcsid)
         return
