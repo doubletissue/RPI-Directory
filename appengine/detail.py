@@ -14,19 +14,19 @@ class DetailPage(webapp2.RequestHandler):
     user = users.get_current_user()
     enabled_user = None
     default_img = 'http://rpidirectory.appspot.com/picture/%s.png' % (rcs_id)
-    hashed_email = '000000000000'
+    person = Person.get_by_id(rcs_id)
+    if person:
+      hashed_email = hashlib.md5(person.email.lower()).hexdigest()
+      gravatar_url = "http://www.gravatar.com/avatar/" + hashed_email  + "?"
+      gravatar_url += urllib.urlencode({
+        'd': default_img, 
+        's': str(150)}
+      )
+    else:
+      gravatar_url = 'https://s3-eu-west-1.amazonaws.com/assimbli/unknown_profile.jpg'
+
     if user:
       enabled_user = Person.query(Person.linked_account == user).get()
-    
-    #Check if person we're on is activated, get their email
-    person = Person.get_by_id(rcs_id)
-    if person and person.linked_account:
-      hashed_email = hashlib.md5(person.linked_account.email().lower()).hexdigest()
-    gravatar_url = "http://www.gravatar.com/avatar/" + hashed_email  + "?"
-    gravatar_url += urllib.urlencode({
-      'd': default_img, 
-      's': str(150)}
-    )
     
     template_values = {"active": "dashboard",
                        "rcs_id": rcs_id,
