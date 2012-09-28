@@ -47,3 +47,10 @@ handlers:
 
 - url: /.*
   script: main.app
+
+- url: /mapreduce/pipeline/images
+  static_dir: mapreduce/lib/pipeline/ui/images
+
+- url: /mapreduce(/.*)?
+  script: mapreduce.main.application
+  login: admin

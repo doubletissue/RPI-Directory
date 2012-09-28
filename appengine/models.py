@@ -218,3 +218,8 @@ class Account(ndb.Model):
       return self.linked_person
     else:
       return None
+      
+class StatsObject(ndb.Model):
+    count = ndb.IntegerProperty()
+    stat_type = ndb.StringProperty
+    name = ndb.StringProperty
