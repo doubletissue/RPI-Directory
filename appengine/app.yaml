@@ -56,6 +56,9 @@ handlers:
   
 - url: /detail.*
   script: detail.app
+  
+- url: /insights.*
+  script: stats.app
 
 - url: /.*
   script: main.app
