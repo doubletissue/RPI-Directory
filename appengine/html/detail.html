@@ -7,7 +7,7 @@
     <div class="span5 offset3">
       <div id="userStats" class="clearfix">
         <div id="holder">
-      	  <div class="pic">
+      	  <div class="pic" id="pic-holder">
       					  {% if person.picture %}
       					  <img id="profile-pic" src="/picture?rcsid={{person.rcsid}}" width="150" height="150">
       					  {% else %}
@@ -134,12 +134,14 @@ $(document).ready(function() {
    });
    $('#userStats').popover('show');
 {% endif %}
-   $('#profile-pic').popover({
+{% if user and user == person.linked_account %}
+   $('#pic-holder').popover({
      trigger: 'hover',
      title: 'Want to change your picture?',
      content: 'Drag a picture from your computer over this one to replace it',
      placement: 'left'
    });
+{% endif %}
  });
 </script>
 {% endblock %}
