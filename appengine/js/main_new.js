@@ -151,7 +151,6 @@ $(document).ready(function() {
       clearTimeout(type_timeout);
       type_timeout = setTimeout(callServer, 500);
     }
-    
   });
   
   $("#results tbody").click(function(event) {

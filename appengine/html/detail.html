@@ -8,7 +8,7 @@
       <div id="userStats" class="clearfix">
         <div id="holder">
       	  <div class="pic" id="pic-holder">
-      		  <img id="profile-pic" src="{{img}}" width="150" height="150">
+      		  <img id="profile-pic" src="{{img}}">
       		</div>
       	</div>
       	<div class="data">
@@ -48,16 +48,7 @@
 {% block extra_js %}
 <script type="text/javascript">
 function previewfile(file) {
-  if (tests.filereader === true && acceptedTypes[file.type] === true) {
-    var reader = new FileReader();
-    reader.onload = function (event) {
-      var image = new Image();
-      image.width = 150;  // a fake resize
-      image.height = 150; // a fake resize
-      document.getElementById('profile-pic').src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
+      document.getElementById('profile-pic').src = 'https://dl.dropbox.com/u/1253608/ajax-loader.gif';
 }
 
 function readfiles(files) {
