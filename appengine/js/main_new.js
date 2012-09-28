@@ -168,7 +168,7 @@ $(document).ready(function() {
       placement: 'bottom',
       trigger: 'hover',
       title: 'Have you claimed your profile yet?',
-      content: 'Make sure to claim your profile!'
+      content: 'Make sure to <a href="/dashboard">claim</a> your profile!'
     });
     setTimeout(function(){$('#profile-link').popover('show');}, 250);
   }    
