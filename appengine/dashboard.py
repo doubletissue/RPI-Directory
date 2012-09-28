@@ -31,9 +31,9 @@ class Dashboard(webapp2.RequestHandler):
       if not memcache.add(str(user.user_id()), item, 86400):
         message = 'Already sent activation, please check your email.'
       else:
-        logging.info('Linking %s and %s' % (user.user_id(), rcsid_claim))
         person = Person.get_by_id(rcsid_claim)
         if person:
+          logging.info('Sent email to link %s and %s' % (user.email(), person.rcsid))
           send_activation_email(person, code)
           message = 'Sent activation email to: %s, please check that email.' % (person.email)
         else:

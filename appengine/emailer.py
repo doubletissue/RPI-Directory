@@ -9,7 +9,7 @@ To activate your account, visit the following this link: http://rpidirectory.app
 
 def send_activation_email(person, activation_code):
   # Don't spam the president...
-  if person.title == "President":
+  if person.rcsid == "president":
     return False
   mail.send_mail(SENDER, person.email, ACTIVATION_SUBJECT, 
                  ACTIVATION_BODY.format(activation_code))
