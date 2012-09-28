@@ -7,6 +7,8 @@ from google.appengine.ext.webapp import template
 import logging
 import random
 import sys
+import urllib
+import hashlib
 from models import Person
 from emailer import send_activation_email
 

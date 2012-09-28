@@ -8,11 +8,7 @@
       <div id="userStats" class="clearfix">
         <div id="holder">
       	  <div class="pic" id="pic-holder">
-      					  {% if person.picture %}
-      					  <img id="profile-pic" src="/picture?rcsid={{person.rcsid}}" width="150" height="150">
-      					  {% else %}
-      					  <img id="profile-pic" src="https://s3-eu-west-1.amazonaws.com/assimbli/unknown_profile.jpg" width="150" height="150">
-      					  {% endif %}
+      		  <img id="profile-pic" src="{{img}}" width="150" height="150">
       		</div>
       	</div>
       	<div class="data">
@@ -138,11 +134,10 @@ $(document).ready(function() {
    $('#pic-holder').popover({
      trigger: 'hover',
      title: 'Want to change your picture?',
-     content: 'Drag a picture from your computer over this one to replace it',
-     placement: 'left'
+     content: 'We use your <a href="http://en.gravatar.com/">gravatar</a>.  If you do not have one, sign up using your Google account.  Otherwise skip the gravatar and drag a picture from your computer over this one to replace it.',
+     placement: 'left',
+     delay: { show: 50, hide: 5000 }
    });
-   $('#pic-holder').popover('show');
-   setTimeout(function(){$('#pic-holder').popover('hide');}, 2000);
 {% endif %}
  });
 </script>
