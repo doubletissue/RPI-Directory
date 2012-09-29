@@ -79,16 +79,14 @@ def putResult(d):
   prev_person = Person.get_by_id(key)
   if prev_person:
     logging.info("Updating %s", key)
-    prev_d = Person.buildMap(prev_person)
-    for k,v in d.items():
-      if v:
-        prev_d[k] = v
-    person = Person.buildPerson(prev_d)
+    prev_person.update(d)
+    prev_person.put()
+    search.Index(name=_INDEX_NAME).add(createDocument(person))
   else:
     logging.info("New %s", key)
     person = Person.buildPerson(d)
-  person.put()
-  search.Index(name=_INDEX_NAME).add(createDocument(person))
+    person.put()
+    search.Index(name=_INDEX_NAME).add(createDocument(person))
 
 
 def crawlPerson(index):

@@ -27,31 +27,46 @@ attributes = [
   'directory_id'
 ]
 
+def generateName(strings):
+  s = ''
+  for st in strings:
+    if st:
+      s += st + ' '
+  s = s[:-1]
+  return s
+
 class Person(ndb.Model):
   """Models a person in the RPI directory."""
-  first_name = ndb.StringProperty(default='')
-  middle_name = ndb.StringProperty(default='')
-  last_name = ndb.StringProperty(default='')
-  name = ndb.ComputedProperty(lambda self: string.join([self.first_name,self.middle_name,self.last_name],' '))
-  department = ndb.StringProperty(default='')
-  email = ndb.StringProperty(default='')
-  rcsid = ndb.StringProperty(default='')
-  year = ndb.StringProperty(default='')
-  major = ndb.StringProperty(default='')
-  title = ndb.StringProperty(default='')
-  phone = ndb.StringProperty(default='')
-  fax = ndb.StringProperty(default='')
-  homepage = ndb.StringProperty(default='')
-  office_location = ndb.StringProperty(default='')
-  campus_mailstop = ndb.StringProperty(default='')
-  mailing_address = ndb.StringProperty(default='')
+  first_name = ndb.StringProperty()
+  middle_name = ndb.StringProperty()
+  last_name = ndb.StringProperty()
+  name = ndb.ComputedProperty(lambda self: generateName([self.first_name,self.middle_name,self.last_name]))
+  department = ndb.StringProperty()
+  email = ndb.StringProperty()
+  rcsid = ndb.StringProperty()
+  year = ndb.StringProperty()
+  major = ndb.StringProperty()
+  title = ndb.StringProperty()
+  phone = ndb.StringProperty()
+  fax = ndb.StringProperty()
+  homepage = ndb.StringProperty()
+  office_location = ndb.StringProperty()
+  campus_mailstop = ndb.StringProperty()
+  mailing_address = ndb.StringProperty()
   date_crawled = ndb.DateTimeProperty(auto_now=True)
-  directory_id = ndb.StringProperty(default='')
-  date_emailed = ndb.DateTimeProperty()
+  directory_id = ndb.StringProperty()
   mailing_address_html = ndb.ComputedProperty(lambda self: self.mailing_address.replace('\n', '<br />') if self.mailing_address else None)
   picture = ndb.BlobProperty()
   linked_account = ndb.UserProperty()
   email_html = ndb.ComputedProperty(lambda self: self.email.replace('@', ' [at] ').replace('.', ' [dot] ') if self.email else None)
+  
+  def update(self, d):
+    for attr in attributes:
+      v = d.get(attr,None)
+      if v:
+        if type(v) == type('string'):
+          v = v.lower()
+        setattr(self,attr,v)
   
   @staticmethod
   def buildPerson(d):
@@ -62,9 +77,11 @@ class Person(ndb.Model):
     person = Person(id = d['rcsid'])
     
     for attr in attributes:
-      setattr(person,attr,d.get(attr,'').lower())
-      
-    person.date_emailed = datetime.min
+      v = d.get(attr,None)
+      if v:
+        if type(v) == type('string'):
+          v = v.lower()
+        setattr(person,attr,v)
     
     return person
   
@@ -74,7 +91,11 @@ class Person(ndb.Model):
     d = {}
     
     for attr in attributes:
-      d[attr] = getattr(p,attr).lower()
+      v = getattr(p,attr,None)
+      if v:
+        if type(v) == type('string'):
+          v = v.lower()
+        d[attr] = v
       
     d['name'] = p.name
     
