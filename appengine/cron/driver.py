@@ -15,7 +15,7 @@ from google.appengine.api import search
 
 _INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
-NUM_THREADS = 800
+NUM_THREADS = 5
 
 import string
 
