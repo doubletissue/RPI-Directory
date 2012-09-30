@@ -51,16 +51,17 @@ def stats_map(data):
         continue
       logging.info("MAP GLOBAL: " + str(k) + ' --> ' + str(v))
       yield 'global',{k:{v:1}}
+      r = {k:{}}
       for k2,v2 in d.items():
         if not k2 or not v2 or k == k2 or k2 not in info_stats_attributes:
           continue
         # Ex: First name = Dan, Major = CS
         # For the string 'Dan', when it is used as a first name,
         # Has _x_ CS Majors
-        s = str(v)
-        r = {k:{k2:{v2:1}}}
-        logging.info('MAP FINAL: ' + s + ' --> ' + str(r))
-        yield s,r
+        r[k][k2] = {v2:1}
+      s = str(v)
+      logging.info('MAP FINAL: ' + s + ' --> ' + str(r))
+      yield s,r
 
 # We know all dicts will be mapping from a string to either a dict or an int
 def update_dict(d,d2):

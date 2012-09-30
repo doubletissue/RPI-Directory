@@ -13,9 +13,7 @@ from google.appengine.api import memcache
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import search
 
-_INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
-
-NUM_THREADS = 5
+NUM_THREADS = 100
 
 import string
 
