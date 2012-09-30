@@ -104,8 +104,8 @@ class StatsPipeline(base_handler.PipelineBase):
   def run(self):
     output = yield mapreduce_pipeline.MapreducePipeline(
         "statistics",
-        "mr.stats.stats_map",
-        "mr.stats.stats_reduce",
+        "cron.stats.stats_map",
+        "cron.stats.stats_reduce",
         "mapreduce.input_readers.DatastoreInputReader",
         "mapreduce.output_writers.BlobstoreOutputWriter",
         mapper_params={
