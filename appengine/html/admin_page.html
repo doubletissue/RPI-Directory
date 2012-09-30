@@ -1,0 +1,122 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>RPI Directory Administration</title>
+		<link href='http://fonts.googleapis.com/css?family=Puritan:700' rel='stylesheet' type='text/css'>
+		<link href='css/main.css' rel='stylesheet' type='text/css'>
+		<style type="text/css">
+			#chart {
+				text-align: center;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			
+			#stats {
+				text-align: center;
+			}
+			
+		    .clearButton { 
+				width: 30%;
+				text-align: center;
+				margin-left:auto;
+				margin-right:auto;
+				margin-bottom: 3em;
+				margin-top: 3em;
+			}
+			
+			button{
+				width: 40px;
+			}
+		 </style>
+		<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+		<!--Load the AJAX API-->
+		    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+		    <script type="text/javascript">
+		
+		      // Load the Visualization API and the piechart package.
+		      google.load('visualization', '1.0', {'packages':['corechart']});
+
+		      // Callback that creates and populates a data table, 
+		      // instantiates the pie chart, passes in the data and
+		      // draws it.
+		      function drawChart(hits, misses) {
+
+		      // Create the data table.
+		      var data = new google.visualization.DataTable();
+		      data.addColumn('string', 'Title');
+		      data.addColumn('number', 'Amount');
+		      data.addRows([
+		        ['Hits', hits],
+		        ['Misses', misses],
+		      ]);
+
+		      // Set chart options
+		      var options = {'title':'MemCache Statistics',
+		                     'pieSliceText' : 'value',
+		                     'width':400,
+		                     'height':300};
+
+		      // Instantiate and draw our chart, passing in some options.
+		      var chart = new google.visualization.PieChart(document.getElementById('chart'));
+		      chart.draw(data, options);
+		    }
+		    </script>
+		<script type="text/javascript">
+		
+		  function reDrawMemCache(){
+			// MemCache stats
+			$.ajax({
+		     type: "GET",
+		     url: "/admin_page?getstats=hi",
+		     async: true,
+		     dataType: "json",
+			 success: function(data){
+			     $("#stats").html("Items in MemCache: " + data.items + "<br> Cache Size: " + (data.bytes/1000000) + " MB<br>Index DS: " + data.indexds);
+			     drawChart(data.hits, data.misses);
+		       },
+		    });
+		  }
+		
+		  $(document).ready(function() {
+			
+			$("#memcache").click(function(){
+				$.ajax({
+			     type: "GET",
+			     url: "/admin_page?flushcache=hi",
+			     async: false,
+				 success: function(data){ 
+					reDrawMemCache(); 
+					alert("Cache flushed!");
+				 },
+			   });
+			});
+			
+			$("#counter").click(function(){
+				$.ajax({
+			     type: "GET",
+			     url: "/admin_page?resetpos=hi",
+			     async: false,
+				 success: function(data){ 
+					reDrawMemCache();
+					alert("Position reset!"); 	 
+				 },
+			    });
+			});
+			
+			reDrawMemCache();
+			
+			// Redraw charts and refresh data every so often
+			setInterval("reDrawMemCache()", 15000);
+		  });
+		</script>
+		</head>
+		<body id="body">
+		  <div class="full_width big">RPI Directory Administration</div>
+		  <div class="clearButton" id="memcache"><input type="button" name="keyword" id="keyword" value="Clear MemCache"/></div>
+		  <div class="clearButton" id="counter"><input type="button" name="keyword" id="keyword" value="Reset Counter"/></div>
+		  <div id="chart"></div>
+		  <div id="stats"></div>
+		</body>
+</html>

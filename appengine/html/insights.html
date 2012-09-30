@@ -1,0 +1,52 @@
+{% extends "html/base.html" %}
+
+{% block content %}
+<div id="container" class="container-fluid">
+  <div class="row-fluid">
+		{% for item in stats %}
+    <div class="span4">
+      <div id="chart_{{loop.index}}"></div>
+    </div>
+		{% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawCharts);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawCharts() {
+      // Create the data table.
+			{% for item in stats %}
+        var data_{{loop.index}} = new google.visualization.DataTable();
+        data_{{loop.index}}.addColumn('string', 'Category');
+        data_{{loop.index}}.addColumn('number', 'Amount');
+        data_{{loop.index}}.addRows([
+					{% for data_point, amount in item.data|dictsort(false, 'value') %}
+          	['{{data_point.title()}}', {{amount}}],
+					{% endfor %}
+        ]);
+
+        // Set chart options
+        var options_{{loop.index}} = {'title': '{{item.title}}', 'height': 400};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart_{{loop.index}} = new google.visualization.PieChart(document.getElementById('chart_{{loop.index}}'));
+        chart_{{loop.index}}.draw(data_{{loop.index}}, options_{{loop.index}});
+			{% endfor %}
+      }
+    </script>
+<script type="text/javascript">
+$(document).ready(function() {});
+</script>
+{% endblock %}
