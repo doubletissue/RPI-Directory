@@ -15,7 +15,7 @@ from google.appengine.api import search
 
 _INSTANCE_NAME = "christianjohnson.org:rpidirectory:christianjohnson"
 
-NUM_THREADS = 5
+NUM_THREADS = 800
 
 import string
 
@@ -81,7 +81,7 @@ def putResult(d):
     logging.info("Updating %s", key)
     prev_person.update(d)
     prev_person.put()
-    search.Index(name=_INDEX_NAME).add(createDocument(person))
+    search.Index(name=_INDEX_NAME).add(createDocument(prev_person))
   else:
     logging.info("New %s", key)
     person = Person.buildPerson(d)

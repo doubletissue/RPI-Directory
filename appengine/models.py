@@ -7,7 +7,7 @@ import random
 import sys
 from datetime import datetime
 
-attributes = [
+person_attributes = [
   'email',
   'first_name',
   'middle_name',
@@ -25,6 +25,29 @@ attributes = [
   'campus_mailstop',
   'mailing_address',
   'directory_id'
+]
+
+map_attributes = [
+  'email',
+  'first_name',
+  'middle_name',
+  'last_name',
+  'department',
+  'email',
+  'rcsid',
+  'year',
+  'major',
+  'title',
+  'phone',
+  'fax',
+  'homepage',
+  'office_location',
+  'campus_mailstop',
+  'mailing_address',
+  'directory_id',
+  'mailing_address_html',
+  'email_html',
+  'name'
 ]
 
 def generateName(strings):
@@ -61,7 +84,7 @@ class Person(ndb.Model):
   email_html = ndb.ComputedProperty(lambda self: self.email.replace('@', ' [at] ').replace('.', ' [dot] ') if self.email else None)
   
   def update(self, d):
-    for attr in attributes:
+    for attr in person_attributes:
       v = d.get(attr,None)
       if v:
         if type(v) == type('string'):
@@ -76,7 +99,7 @@ class Person(ndb.Model):
     
     person = Person(id = d['rcsid'])
     
-    for attr in attributes:
+    for attr in person_attributes:
       v = d.get(attr,None)
       if v:
         if type(v) == type('string'):
@@ -90,14 +113,12 @@ class Person(ndb.Model):
     
     d = {}
     
-    for attr in attributes:
+    for attr in map_attributes:
       v = getattr(p,attr,None)
       if v:
         if type(v) == type('string'):
           v = v.lower()
         d[attr] = v
-      
-    d['name'] = p.name
     
     return d
   

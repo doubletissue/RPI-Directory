@@ -19,7 +19,7 @@ class Crawler(webapp2.RequestHandler):
 
   def getPage(self, key):
     url = "http://prod3.server.rpi.edu/peopledirectory/entry.do?datasetName=directory&key=" + str(key)
-    result = urlfetch.fetch(url)
+    result = urlfetch.fetch(url,deadline=60)
     if result.status_code != 200:
       logging.error("Failed to fetch URL: " + url + "; Error code: " + str(result.status_code))
       return ""
