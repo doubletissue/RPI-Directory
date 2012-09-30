@@ -58,10 +58,10 @@ handlers:
   script: detail.app
   
 - url: /insights.*
-  script: stats.app
+  script: insights.app
 
 - url: /ahoy
-  script: mr.stats.app
+  script: cron.stats.app
 
 - url: /mapreduce/.*
   script: mapreduce.main.APP

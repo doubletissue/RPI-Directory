@@ -128,6 +128,5 @@ class SearchPosition(ndb.Model):
   position = ndb.IntegerProperty()
       
 class StatsObject(ndb.Model):
-    count = ndb.IntegerProperty()
-    stat_type = ndb.StringProperty
-    name = ndb.StringProperty
+    name = ndb.StringProperty()
+    json = ndb.JsonProperty(indexed=False)
