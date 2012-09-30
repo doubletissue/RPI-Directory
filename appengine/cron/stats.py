@@ -57,7 +57,7 @@ def stats_map(data):
       if not k or not v or k not in base_stats_attributes:
         continue
       logging.info("MAP GLOBAL: " + str(k) + ' --> ' + str(v))
-      yield k, {v:1}
+      yield ('Global:' + k), {v:1}
       r = {k:{}}
       for k2,v2 in d.items():
         if not k2 or not v2 or k == k2 or k2 not in info_stats_attributes:
