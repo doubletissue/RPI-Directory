@@ -17,16 +17,19 @@ class Stats(webapp2.RequestHandler):
     number_claimed = Person.query(Person.linked_account != None).count()
     unclaimed = Person.query().count(limit=15000) - number_claimed
     
-    majors = StatsObject.get_by_id('major').json
-    first_name = StatsObject.get_by_id('first_name').json
-    last_name = StatsObject.get_by_id('last_name').json
-    year = StatsObject.get_by_id('year').json
-    del year['year']
-    dept = StatsObject.get_by_id('department').json
+    majors = StatsObject.get_by_id('Global:major').json
+    first_name = StatsObject.get_by_id('Global:first_name').json
+    last_name = StatsObject.get_by_id('Global:last_name').json
+    year = StatsObject.get_by_id('Global:year').json
+    dept = StatsObject.get_by_id('Global:department').json
+    title = StatsObject.get_by_id('Global:title').json
     
-    stats = [{'title': 'Major', 'data': majors},
-             {'title': 'Year', 'data': year},
-             {'title': 'First Name', 'data': first_name}]
+    stats = [{'title': 'Breakdown by Major', 'data': majors},
+             {'title': 'Breakdown by Year', 'data': year},
+             {'title': 'Breakdown by First Name', 'data': first_name},
+             {'title': 'Breakdown by Last Name', 'data': last_name},
+             {'title': 'Breakdown by Title', 'data': title},
+             {'title': 'Breakdown by Department', 'data': dept}]
     
     logging.info(majors)
     

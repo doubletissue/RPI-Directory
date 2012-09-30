@@ -2,13 +2,17 @@
 
 {% block content %}
 <div id="container" class="container-fluid">
+	{% for item in stats %}
+	{% if loop.index0 is divisibleby 3 %}
   <div class="row-fluid">
-		{% for item in stats %}
+	{% endif %}
     <div class="span4">
       <div id="chart_{{loop.index}}"></div>
     </div>
-		{% endfor %}
+	{% if loop.index is divisibleby 3 %}
   </div>
+	{% endif %}
+	{% endfor %}
 </div>
 {% endblock %}
 
@@ -33,7 +37,7 @@
         data_{{loop.index}}.addColumn('number', 'Amount');
         data_{{loop.index}}.addRows([
 					{% for data_point, amount in item.data|dictsort(false, 'value') %}
-          	['{{data_point.title()}}', {{amount}}],
+					{% if amount %}['{{data_point.title()}}', {{amount}}],{% endif %}
 					{% endfor %}
         ]);
 
