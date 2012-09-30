@@ -1,7 +1,6 @@
 import webapp2
 from google.appengine.api import users
 from google.appengine.api import images
-from google.appengine.ext.webapp.util import run_wsgi_app
 import logging
 from models import Person
 import base64

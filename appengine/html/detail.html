@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "html/base.html" %}
 
 {% block content %}
 <div id="container" class="container-fluid">
@@ -12,28 +12,34 @@
       		</div>
       	</div>
       	<div class="data">
-					<h1>{{person.first_name.title}} {{person.last_name.title}}
+					<h1>{{person.first_name.title()}} {{person.last_name.title()}}
 					  {% if user and user == person.linked_account %} (You){% endif %}
 					</h1>
-					<h3>{% firstof person.year.title person.title.title %}</h3>
-					<h4>{% firstof person.major.title person.department.title %}</h4>
+					<h3>{{ person.year.title() if person.year else person.title.title() }}</h3>
+					<h4>{{ person.major.title() if person.major else person.department.title() }}</h4>
 					<div class="sep"></div>
 					<h4>
 					  <span class="contact-header">Email:</span>
 					  {{person.email_html}}
 					</h4>
+					{% if person.phone %}
 					<h4>
 					  <span class="contact-header">Phone:</span>
-					  {% firstof person.phone "N\A" %}
+					  {{person.phone}}
 					</h4>
+					{% endif %}
+					{% if person.office_location %}
 					<h4>
 					  <span class="contact-header">Office:</span>
-					  {% firstof person.office_location.title "N\A" %}
+					  {{person.office_location.title()}}
 					</h4>
+					{% endif %}
+					{% if person.mailing_address %}
 					<h4>
 					  <span class="contact-header">Mailing Address:</span><br>
-					  {% firstof person.mailing_address_html.title "N\A" %}
+					  {{person.mailing_address_html.title()}}
 					</h4>
+					{% endif %}
 				</div>
       </div>
   </div>

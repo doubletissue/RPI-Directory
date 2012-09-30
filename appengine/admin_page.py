@@ -1,15 +1,16 @@
-
-from google.appengine.ext.webapp import template
-from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import memcache
 from models import Person
 from models import SearchPosition
 from django.utils import simplejson as json
 import urllib
+import jinja2
 import os
 import logging
 import cgi
 import webapp2
+
+jinja_environment = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class AdminPage(webapp2.RequestHandler):
   def get(self):
@@ -43,8 +44,8 @@ class AdminPage(webapp2.RequestHandler):
       self.response.out.write(s)
     else:
       template_values = {}
-      path = os.path.join(os.path.dirname(__file__), 'admin_page.html')
-      self.response.out.write(template.render(path, template_values))
+      template = jinja_environment.get_template('html/admin_page.html')
+      self.response.out.write(template.render(template_values))
 
 
 app = webapp2.WSGIApplication(

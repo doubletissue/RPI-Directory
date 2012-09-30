@@ -1,9 +1,8 @@
 import webapp2
 from google.appengine.api import users
-from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import memcache
 import os
-from google.appengine.ext.webapp import template
+import jinja2
 import logging
 import random
 import sys
@@ -11,6 +10,9 @@ import urllib
 import hashlib
 from models import Person
 from emailer import send_activation_email
+
+jinja_environment = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class Dashboard(webapp2.RequestHandler):
   def get(self):
@@ -54,7 +56,7 @@ class Dashboard(webapp2.RequestHandler):
       message = None
 
     template_values = {"active": "dashboard", "message": message}
-    path = os.path.join(os.path.dirname(__file__), 'html/activate.html')
-    self.response.out.write(template.render(path, template_values))
+    template = jinja_environment.get_template('html/activate.html')
+    self.response.out.write(template.render(template_values))
 
 app = webapp2.WSGIApplication([('/dashboard', Dashboard)])

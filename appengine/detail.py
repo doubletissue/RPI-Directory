@@ -1,13 +1,14 @@
 import webapp2
 from google.appengine.api import users
-from google.appengine.ext.webapp.util import run_wsgi_app
 import os
-from google.appengine.ext.webapp import template
+import jinja2
 import logging
 from models import Person
 import hashlib
 import urllib
 
+jinja_environment = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class DetailPage(webapp2.RequestHandler):
   def get(self, rcs_id):
@@ -27,7 +28,7 @@ class DetailPage(webapp2.RequestHandler):
                        "user": user,
                        "enabled_user": enabled_user,
                        "img": img}
-    path = os.path.join(os.path.dirname(__file__), 'html/detail.html')
-    self.response.out.write(template.render(path, template_values))
+    template = jinja_environment.get_template('html/detail.html')
+    self.response.out.write(template.render(template_values))
 
 app = webapp2.WSGIApplication([('/detail/([^/]+)', DetailPage)])
