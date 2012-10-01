@@ -122,6 +122,11 @@ class Crawler(webapp2.RequestHandler):
       return {'error':'page_not_found'}
 
     name = self.findName(string)
+
+    if '<' in name or '>' in name:
+      logging.error("Invalid name %s" % string)
+      return {'error':'page_not_found'}
+      
     if name is not "":
       names = name.split()[:3]
       if len(names) > 0:

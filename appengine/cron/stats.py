@@ -39,6 +39,7 @@ def process_string(s):
   while s.find('  ') >= 0:
     s = s.replace('  ',' ')
   l = s.replace('\n', ' ').split()
+  l = list(set(l))
   return l
 
 def stats_map(data):
