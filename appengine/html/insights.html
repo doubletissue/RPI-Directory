@@ -50,7 +50,7 @@
         data_{{loop.index}}.addColumn('number', 'Amount');
         data_{{loop.index}}.addRows([
 					{% for data_point, amount in item.data|dictsort(false, 'value') %}
-					{% if amount > 3 %}["{{data_point.title()}}", {{amount}}],{% endif %}
+					{% if loop.index < 25 %}["{{data_point.title()}}", {{amount}}],{% endif %}
 					{% endfor %}
         ]);
 
