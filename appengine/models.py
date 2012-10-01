@@ -47,7 +47,8 @@ map_attributes = [
   'directory_id',
   'mailing_address_html',
   'email_html',
-  'name'
+  'name',
+  'type'
 ]
 
 def generateName(strings):
@@ -82,6 +83,7 @@ class Person(ndb.Model):
   picture = ndb.BlobProperty()
   linked_account = ndb.UserProperty()
   email_html = ndb.ComputedProperty(lambda self: self.email.replace('@', ' [at] ').replace('.', ' [dot] ') if self.email else None)
+  type = ndb.ComputedProperty(lambda self: 'student' if self.major else ('faculty' if self.department else 'other'))
   
   def update(self, d):
     for attr in person_attributes:
@@ -128,5 +130,5 @@ class SearchPosition(ndb.Model):
   position = ndb.IntegerProperty()
       
 class StatsObject(ndb.Model):
-    name = ndb.StringProperty()
+    name = ndb.StringProperty(indexed=False)
     json = ndb.JsonProperty(indexed=False)
