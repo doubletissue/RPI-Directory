@@ -38,10 +38,12 @@ class Mutex:
     if self.locked == True:
       return
     did_add = mc.add(self.key, True, time=self.mem_timeout, namespace=NS)
-    while did_add is False:
+    #while did_add is False:
       #logging.info("MUTEX: waiting (key==%s)" % (self.key))
-      time.sleep(random.random() * 5) # average .5 second wait
-      did_add = mc.add(self.key, True, time=self.mem_timeout, namespace=NS)
+      #time.sleep(random.random() * 5) # average .5 second wait
+      #did_add = mc.add(self.key, True, time=self.mem_timeout, namespace=NS)
+    if not did_add:
+      raise Exception('mutex was locked!')
     #logging.info("MUTEX: acquired lock (key==%s)" % (self.key))
     self.locked = True
   

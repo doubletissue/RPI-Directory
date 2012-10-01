@@ -65,9 +65,11 @@ handlers:
 
 - url: /ahoy
   script: cron.stats.app
+  login: admin
 
 - url: /mapreduce/.*
   script: mapreduce.main.APP
+  login: admin
 
 - url: /.*
   script: main.app

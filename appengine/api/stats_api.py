@@ -40,7 +40,6 @@ class StatsApi(webapp2.RequestHandler):
         
     s = json.dumps(d)
     self.response.out.write(s)
-    self.response.out.write(s)
 
 
 app = webapp2.WSGIApplication([
