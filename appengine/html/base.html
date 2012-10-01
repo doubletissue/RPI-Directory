@@ -16,11 +16,10 @@
 		<link href='http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/css/jquery.dataTables.css' rel='stylesheet' type='text/css'>
 		<link href='/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
 		<link href='/css/bootstrap-responsive.min.css' rel='stylesheet' type='text/css'>
-		<link href="/css/jNotify.jquery.css" rel="stylesheet" type="text/css"  media="screen" />
 		<link href='/css/main.css' rel='stylesheet' type='text/css'>
 	{% block add_head %}{% endblock %}
 	</head>
-	<body id="body" data-spy="scroll" data-target=".subnav">
+	<body id="body" data-spy="scroll" data-target="#subnav-charts">
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
           <div class="container" style="width: auto;">
@@ -35,9 +34,9 @@
                 <li{% if active == 'dashboard' %} class="active"{% endif %}  {% if not user %} id="profile-link"{% endif %}>
                   <a href="/dashboard">My Profile</a>
                 </li>
-                <!--<li{% if active == 'stats' %} class="active"{% endif %}>
+                <li id="insights-nav">
                   <a href="/insights">Insights</a>
-                </li>-->
+                </li>
               </ul>
               <ul class="nav pull-right">
                 <li><a target="_blank"  href="http://itunes.apple.com/us/app/rpi-directory/id519895392?ls=1&mt=8">iPhone</a></li>
@@ -53,7 +52,6 @@
 	  {% block footer %}
 	  <script type="text/javascript" language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script type="text/javascript" src="/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="/js/jNotify.jquery.min.js"></script>
 		<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/jquery.dataTables.min.js"></script>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];

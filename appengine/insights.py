@@ -36,7 +36,7 @@ class Stats(webapp2.RequestHandler):
     
     logging.info(majors)
     
-    template_values = {'active': 'stats',
+    template_values = {'active': 'insights',
                        'num_people': num_people,
                        'num_stats': num_stats,
                        'stats': stats,
