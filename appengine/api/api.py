@@ -163,7 +163,9 @@ class Api(webapp2.RequestHandler):
         r = Person.get_by_id(rcsid)
         if r:
             logging.info('got person')
-            data.append(Person.buildMap(r))
+            per = Person.buildMap(r)
+            per['name'] = per['name'].title()
+            data.append(per)
     d["data"] = data
     s = json.dumps(d)
     self.response.out.write(s)

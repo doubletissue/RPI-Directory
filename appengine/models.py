@@ -64,7 +64,7 @@ class Person(ndb.Model):
   first_name = ndb.StringProperty(indexed=False)
   middle_name = ndb.StringProperty(indexed=False)
   last_name = ndb.StringProperty(indexed=False)
-  name = ndb.ComputedProperty(lambda self: generateName([self.first_name,self.middle_name,self.last_name]))
+  name = ndb.ComputedProperty(lambda self: generateName([self.first_name, self.middle_name, self.last_name]))
   department = ndb.StringProperty(indexed=False)
   email = ndb.StringProperty(indexed=False)
   rcsid = ndb.StringProperty()
