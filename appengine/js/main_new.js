@@ -141,7 +141,10 @@ $(document).ready(function() {
 
   $('#keyword').keyup(function(e){
     keyword = $('#keyword').val();
-    window.history.replaceState(keyword, 'Searching ' + keyword, '/?q=' + keyword);
+		if (!$.browser.msie) {
+		  window.history.replaceState(keyword, 'Searching ' + keyword, '/?q=' + keyword);
+		}
+    
     if (!keyword || keyword.length == 0) { return; }
     if (e.keyCode == 13 || e.keyCode == 32){
       clearTimeout(type_timeout);
