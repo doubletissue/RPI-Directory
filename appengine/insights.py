@@ -16,8 +16,8 @@ CHOP = 30
 
 class Stats(webapp2.RequestHandler):
   def get(self):
-    num_people = Person.query().count(limit=15000)
-    num_stats = StatsObject.query().count()
+    #num_people = Person.query().count(limit=15000)
+    #num_stats = StatsObject.query().count()
     
     majors = StatsObject.get_by_id('global:major').json
     first_name = StatsObject.get_by_id('global:first_name').json
@@ -44,8 +44,8 @@ class Stats(webapp2.RequestHandler):
              {'title': 'Position', 'data': type_person}]
     
     template_values = {'active': 'insights',
-                       'num_people': num_people,
-                       'num_stats': num_stats,
+                       #'num_people': num_people,
+                       #'num_stats': num_stats,
                        'stats': stats,
                        'chart_height': CHART_HEIGHT}
     template = jinja_environment.get_template('html/insights.html')
