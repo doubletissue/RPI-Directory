@@ -14,8 +14,8 @@ jinja_environment = jinja2.Environment(
 
 class Stats(webapp2.RequestHandler):
   def get(self):
-    number_claimed = Person.query(Person.linked_account != None).count()
-    unclaimed = Person.query().count(limit=15000) - number_claimed
+    num_people = Person.query().count(limit=15000)
+    num_stats = StatsObject.query().count()
     
     majors = StatsObject.get_by_id('global:major').json
     first_name = StatsObject.get_by_id('global:first_name').json
@@ -30,13 +30,14 @@ class Stats(webapp2.RequestHandler):
              {'title': 'Breakdown by First Name', 'data': first_name},
              {'title': 'Breakdown by Last Name', 'data': last_name},
              {'title': 'Breakdown by Title', 'data': title},
-             {'title': 'Breakdown by Department', 'data': dept}]
+             {'title': 'Breakdown by Department', 'data': dept},
+             {'title': 'Breakdown by Position', 'data': type_person}]
     
     logging.info(majors)
     
     template_values = {'active': 'stats',
-                       'number_claimed': number_claimed,
-                       'unclaimed': unclaimed,
+                       'num_people': num_people,
+                       'num_stats': num_stats,
                        'stats': stats}
     template = jinja_environment.get_template('html/insights.html')
     self.response.out.write(template.render(template_values))
