@@ -15,8 +15,12 @@
 					<h1>{{person.first_name.title()}} {{person.last_name.title()}}
 					  {% if user and user == person.linked_account %} (You){% endif %}
 					</h1>
+					{% if person.year or person.title %}
 					<h3>{{ person.year.title() if person.year else person.title.title() }}</h3>
+					{% endif %}
+					{% if person.major or person.department %}
 					<h4>{{ person.major.title() if person.major else person.department.title() }}</h4>
+					{% endif %}
 					<div class="sep"></div>
 					<h4>
 					  <span class="contact-header">Email:</span>
