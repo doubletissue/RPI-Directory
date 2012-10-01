@@ -13,7 +13,7 @@ from google.appengine.api import memcache
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import search
 
-NUM_THREADS = 5
+NUM_THREADS = 500
 
 import string
 

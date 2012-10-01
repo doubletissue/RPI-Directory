@@ -11,7 +11,7 @@ import json
 class StatsApi(webapp2.RequestHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
-    search_query = str(urllib.unquote(cgi.escape(self.request.get('q')).lower()[:100]))
+    search_query = str(urllib.unquote(cgi.escape(self.request.get('q')).lower()[:200]))
 
     if search_query == "":
       d = {}
@@ -22,19 +22,24 @@ class StatsApi(webapp2.RequestHandler):
       self.response.out.write(s)
       return
       
-    queries = map(str, search_query.split())
-    queries = sorted(queries)
+    r = StatsObject.get_by_id(search_query)
     
-    d = {}
+    if r:
+      d = {search_query:r.json}
+    else:  
+      queries = map(str, search_query.split())
     
-    for query in queries:
-      ob = StatsObject.get_by_id(query)
-      if ob:
-        d[query] = ob.json
-      else:
-        d[query] = ''
+      d = {}
+    
+      for query in queries:
+        ob = StatsObject.get_by_id(query)
+        if ob:
+          d[query] = ob.json
+        else:
+          d[query] = ''
         
     s = json.dumps(d)
+    self.response.out.write(s)
     self.response.out.write(s)
 
 
