@@ -36,6 +36,16 @@
 	font-family: arial, sans-serif;
 }
 
+/* Insights Page */
+
+.subnav li.active {
+	border: 1px dashed;
+}
+
+.subnav-fixed {
+	top: 60px;
+}
+
 /* @group left */
 #userStats { display: block; width: auto; background-color: #f9f9f9; border: 1px solid #ccc; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; padding: 12px; margin-top: 5%;}
 

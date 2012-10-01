@@ -1,13 +1,11 @@
 {% extends "html/base.html" %}
 {% block content %}
 <div id="container" class="container-fluid">
-	<div class="subnav subnav-fixed">
+	<div class="subnav">
 	    <ul class="nav nav-pills">
-	      <li class=""><a href="#typography">Typography</a></li>
-	      <li class="active"><a href="#navbar">Navbar</a></li>
-	      <li class=""><a href="#buttons">Buttons</a></li>
-	      <li class=""><a href="#forms">Forms</a></li>
-	      <li class=""><a href="#miscellaneous">Miscellaneous</a></li>
+				{% for item in stats %}
+	      <li class="{% if loop.first %}active{% endif %}"><a href="#{{item.title.replace(' ', '-')}}">{{item.title}}</a></li>
+				{% endfor %}
 	    </ul>
 	  </div>
 	Number of People: {{num_people}} and Number of Stats: {{num_stats}}
@@ -15,9 +13,11 @@
 	{% if loop.index0 is divisibleby 1 %}
   <div class="row-fluid">
 	{% endif %}
-    <div class="span12">
+	<section id="{{item.title.replace(' ', '-')}}">
+    <div class="span12" style="height: {{chart_height}}px">
       <div id="chart_{{loop.index}}"></div>
     </div>
+	</section>
 	{% if loop.index is divisibleby 1 %}
   </div>
 	{% endif %}
@@ -52,7 +52,7 @@
 
         // Set chart options
         var options_{{loop.index}} = {'title': '{{item.title}}', 
-																			'height': 500, 
+																			'height': {{chart_height}}, 
 																			'pieSliceText': 'value',
 																		  'tooltip' : {'text': 'value'},
 																		  'reverseCategories': true,
@@ -65,6 +65,23 @@
       }
     </script>
 <script type="text/javascript">
-$(document).ready(function() {});
+$(document).ready(function() {
+	$('.subnav').scrollspy();
+});
+$(document).scroll(function(){
+    // If has not activated (has no attribute "data-top"
+    if (!$('.subnav').attr('data-top')) {
+        // If already fixed, then do nothing
+        if ($('.subnav').hasClass('subnav-fixed')) return;
+        // Remember top position
+        var offset = $('.subnav').offset();
+        $('.subnav').attr('data-top', offset.top);
+    }
+
+    if ($('.subnav').attr('data-top') - $('.subnav').outerHeight() <= $(this).scrollTop())
+        $('.subnav').addClass('subnav-fixed');
+    else
+        $('.subnav').removeClass('subnav-fixed');
+});
 </script>
 {% endblock %}

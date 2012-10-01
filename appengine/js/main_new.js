@@ -133,13 +133,12 @@ function getURLParameter(name) {
 $(document).ready(function() {
   //Focus on textbox
 	$("#keyword").focus();
-	
 	if (getURLParameter('q')){
 	  keyword = getURLParameter('q');
     callServer(keyword);
     $("#keyword").val(keyword);
   }
-  
+
   $('#keyword').keyup(function(e){
     keyword = $('#keyword').val();
     window.history.replaceState(keyword, 'Searching ' + keyword, '/?q=' + keyword);
@@ -152,7 +151,7 @@ $(document).ready(function() {
       type_timeout = setTimeout(callServer, 500);
     }
   });
-  
+
   $("#results tbody").click(function(event) {
       var table = getOrCreateDataTable();
       var pos = table.fnGetPosition(event.target);
@@ -161,7 +160,7 @@ $(document).ready(function() {
         window.location = '/detail/' + data.rcsid; 
       }
   });
-  
+
   if (document.getElementById('profile-link') != null){
     $('#profile-link').popover({
       placement: 'bottom',

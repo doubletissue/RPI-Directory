@@ -11,6 +11,7 @@ import urllib
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
+CHART_HEIGHT = 500
 
 class Stats(webapp2.RequestHandler):
   def get(self):
@@ -25,20 +26,21 @@ class Stats(webapp2.RequestHandler):
     title = StatsObject.get_by_id('global:title').json
     type_person = StatsObject.get_by_id('global:type').json
     
-    stats = [{'title': 'Breakdown by Major', 'data': majors},
-             {'title': 'Breakdown by Year', 'data': year},
-             {'title': 'Breakdown by First Name', 'data': first_name},
-             {'title': 'Breakdown by Last Name', 'data': last_name},
-             {'title': 'Breakdown by Title', 'data': title},
-             {'title': 'Breakdown by Department', 'data': dept},
-             {'title': 'Breakdown by Position', 'data': type_person}]
+    stats = [{'title': 'Major', 'data': majors},
+             {'title': 'Year', 'data': year},
+             {'title': 'First Name', 'data': first_name},
+             {'title': 'Last Name', 'data': last_name},
+             {'title': 'Title', 'data': title},
+             {'title': 'Department', 'data': dept},
+             {'title': 'Position', 'data': type_person}]
     
     logging.info(majors)
     
     template_values = {'active': 'stats',
                        'num_people': num_people,
                        'num_stats': num_stats,
-                       'stats': stats}
+                       'stats': stats,
+                       'chart_height': CHART_HEIGHT}
     template = jinja_environment.get_template('html/insights.html')
     self.response.out.write(template.render(template_values))
     
