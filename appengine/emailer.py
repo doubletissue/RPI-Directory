@@ -11,6 +11,7 @@ This RCS account was claimed by: {1}.  If this is not you, please visit http://r
 Best,
 The RPI Directory Team
 """
+# Add these back in when it's safer...
 #Web: http://rpidirectory.appspot.com/
 #Chat Bot: Add rpidirectory@rpidirectory.appspotchat.com to your Gmail chat list
 #Android App: https://play.google.com/store/apps/details?id=org.rpi.rpinfo
