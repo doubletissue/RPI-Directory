@@ -7,8 +7,12 @@
 	      <li class="{% if loop.first %}active{% endif %}"><a href="#{{item.title.replace(' ', '-')}}">{{item.title}}</a></li>
 				{% endfor %}
 	    </ul>
-	  </div>
-	Number of People: {{num_people}} and Number of Stats: {{num_stats}}
+	</div>
+	<div class="row-fluid">
+		<div class="span3">
+			Number of People: {{num_people}} and Number of Stats: {{num_stats}}
+		</div>
+	</div>
 	{% for item in stats %}
 	{% if loop.index0 is divisibleby 1 %}
   <div class="row-fluid">
@@ -68,6 +72,7 @@
 $(document).ready(function() {
 	$('.subnav').scrollspy();
 });
+
 $(document).scroll(function(){
     // If has not activated (has no attribute "data-top"
     if (!$('.subnav').attr('data-top')) {
