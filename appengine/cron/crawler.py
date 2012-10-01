@@ -134,7 +134,7 @@ class Crawler(webapp2.RequestHandler):
       if len(names) > 1:
         d['last_name'] = names[-1]
       if len(name) > 2:
-        d['middle_name'] =names[1:-1]
+        d['middle_name'] = ' '.join(names[1:-1])
 
     homepage = self.findHomepage(string)
     if homepage is not "":
