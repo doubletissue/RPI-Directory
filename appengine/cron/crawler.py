@@ -128,7 +128,7 @@ class Crawler(webapp2.RequestHandler):
       return {'error':'page_not_found'}
       
     if name is not "":
-      names = name.split()[:4]
+      names = name.split()
       if len(names) > 0:
         d['first_name'] = names[0]
       if len(names) > 1:
