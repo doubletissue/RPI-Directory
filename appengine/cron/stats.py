@@ -53,7 +53,7 @@ def stats_map(data):
       yield ('global:' + k), {v:1}
       r = {k:{}}
       for k2,v2 in d.items():
-        if not k2 or not v2 or k == k2 or k2 not in stats_attributes:
+        if not k2 or not v2 or k2 not in stats_attributes:
           continue
         v2 = v2.replace("'",'').replace('"','')
         # Ex: First name = Dan, Major = CS
@@ -109,7 +109,7 @@ class StatsPipeline(base_handler.PipelineBase):
         reducer_params={
             "mime_type": "text/plain",
         },
-        shards=16)
+        shards=8)
 
     yield StoreOutput(output)
 
@@ -134,13 +134,13 @@ class IndexHandler(webapp2.RequestHandler):
     pipeline = StatsPipeline()
 
     pipeline.start()
-    #self.redirect(pipeline.base_path + "/status?root=" + pipeline.pipeline_id)
+    self.redirect(pipeline.base_path + "/status?root=" + pipeline.pipeline_id)
 
   def post(self):
     pipeline = StatsPipeline()
 
     pipeline.start()
-    #self.redirect(pipeline.base_path + "/status?root=" + pipeline.pipeline_id)
+    self.redirect(pipeline.base_path + "/status?root=" + pipeline.pipeline_id)
     
 
 app = webapp2.WSGIApplication(
