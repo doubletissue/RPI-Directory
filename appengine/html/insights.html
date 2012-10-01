@@ -1,10 +1,10 @@
 {% extends "html/base.html" %}
 {% block content %}
 <div id="container" class="container-fluid">
-	<div class="subnav">
+	<div class="subnav subnav-fixed">
 	    <ul class="nav nav-pills">
 				{% for item in stats %}
-	      <li class="{% if loop.first %}active{% endif %}"><a href="#{{item.title.replace(' ', '-')}}">{{item.title}}</a></li>
+	      <li><a href="#{{item.title.replace(' ', '-')}}">{{item.title}}</a></li>
 				{% endfor %}
 	    </ul>
 	</div>
@@ -17,7 +17,7 @@
 	{% if loop.index0 is divisibleby 1 %}
   <div class="row-fluid">
 	{% endif %}
-	<section id="{{item.title.replace(' ', '-')}}">
+	<section id="{{item.title.replace(' ', '-')}}" style="padding-top: 100px">
     <div class="span12" style="height: {{chart_height}}px">
       <div id="chart_{{loop.index}}"></div>
     </div>
@@ -78,22 +78,6 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	$('.subnav').scrollspy();
-});
-
-$(document).scroll(function(){
-    // If has not activated (has no attribute "data-top"
-    if (!$('.subnav').attr('data-top')) {
-        // If already fixed, then do nothing
-        if ($('.subnav').hasClass('subnav-fixed')) return;
-        // Remember top position
-        var offset = $('.subnav').offset();
-        $('.subnav').attr('data-top', offset.top);
-    }
-
-    if ($('.subnav').attr('data-top') - $('.subnav').outerHeight() <= $(this).scrollTop())
-        $('.subnav').addClass('subnav-fixed');
-    else
-        $('.subnav').removeClass('subnav-fixed');
 });
 </script>
 {% endblock %}
