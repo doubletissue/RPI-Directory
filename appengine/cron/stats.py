@@ -109,7 +109,7 @@ class StatsPipeline(base_handler.PipelineBase):
         reducer_params={
             "mime_type": "text/plain",
         },
-        shards=1)
+        shards=16)
 
     yield StoreOutput(output)
 
