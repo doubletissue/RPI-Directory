@@ -24,6 +24,7 @@
 	</section>
 	{% if loop.index is divisibleby 1 %}
   </div>
+	<br>
 	{% endif %}
 	{% endfor %}
 </div>
@@ -50,7 +51,7 @@
         data_{{loop.index}}.addColumn('number', 'Amount');
         data_{{loop.index}}.addRows([
 					{% for data_point, amount in item.data|dictsort(false, 'value') %}
-					{% if loop.index < 25 %}["{{data_point.title()}}", {{amount}}],{% endif %}
+					{% if loop.length - loop.index < 30 %}["{{data_point.title()}}", {{amount}}],{% endif %}
 					{% endfor %}
         ]);
 
@@ -60,7 +61,13 @@
 																			'pieSliceText': 'value',
 																		  'tooltip' : {'text': 'value'},
 																		  'reverseCategories': true,
-																			'legend': {'position': 'none'}};
+																			'legend': {'position': 'none'},
+																			'vAxis': {'title': 'Number of People',
+																								'textStyle': {'fontName': 'News Cycle', 'fontSize': 20},
+																							  'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 25}},
+																			'hAxis' : {'textStyle': {'fontName': 'News Cycle', 'fontSize': 17}},
+																			'tooltip' : {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
+																			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 50}};
 
         // Instantiate and draw our chart, passing in some options.
         var chart_{{loop.index}} = new google.visualization.ColumnChart(document.getElementById('chart_{{loop.index}}'));
