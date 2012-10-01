@@ -17,12 +17,13 @@ class Stats(webapp2.RequestHandler):
     number_claimed = Person.query(Person.linked_account != None).count()
     unclaimed = Person.query().count(limit=15000) - number_claimed
     
-    majors = StatsObject.get_by_id('Global:major').json
-    first_name = StatsObject.get_by_id('Global:first_name').json
-    last_name = StatsObject.get_by_id('Global:last_name').json
-    year = StatsObject.get_by_id('Global:year').json
-    dept = StatsObject.get_by_id('Global:department').json
-    title = StatsObject.get_by_id('Global:title').json
+    majors = StatsObject.get_by_id('global:major').json
+    first_name = StatsObject.get_by_id('global:first_name').json
+    last_name = StatsObject.get_by_id('global:last_name').json
+    year = StatsObject.get_by_id('global:year').json
+    dept = StatsObject.get_by_id('global:department').json
+    title = StatsObject.get_by_id('global:title').json
+    type_person = StatsObject.get_by_id('global:type').json
     
     stats = [{'title': 'Breakdown by Major', 'data': majors},
              {'title': 'Breakdown by Year', 'data': year},

@@ -21,36 +21,34 @@
 	{% block add_head %}{% endblock %}
 	</head>
 	<body id="body">
-	  <section id="navbar">
-	    <div class="navbar navbar-inverse navbar-fixed-top">
-          <div class="navbar-inner">
-            <div class="container" style="width: auto;">
-              <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </a>
-              <a class="brand" href="/">RPI Directory</a>
-              <div class="nav-collapse">
-                <ul class="nav">
-                  <li{% if active == 'dashboard' %} class="active"{% endif %}  {% if not user %} id="profile-link"{% endif %}>
-                    <a href="/dashboard">My Profile</a>
-                  </li>
-                  <!--<li{% if active == 'stats' %} class="active"{% endif %}>
-                    <a href="/insights">Insights</a>
-                  </li>-->
-                </ul>
-                <ul class="nav pull-right">
-                  <li><a target="_blank"  href="http://itunes.apple.com/us/app/rpi-directory/id519895392?ls=1&mt=8">iPhone</a></li>
-                  <li><a target="_blank"  href="https://play.google.com/store/apps/details?id=org.rpi.rpinfo">Android</a></li>
-                  <li class="divider-vertical"></li>
-                  <li><a target="_blank" href="http://rcos.rpi.edu">An RCOS Project</a></li>
-                </ul>
-              </div><!-- /.nav-collapse -->
-            </div>
-          </div><!-- /navbar-inner -->
-        </div>
-	  </section>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container" style="width: auto;">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="/">RPI Directory</a>
+            <div class="nav-collapse">
+              <ul class="nav">
+                <li{% if active == 'dashboard' %} class="active"{% endif %}  {% if not user %} id="profile-link"{% endif %}>
+                  <a href="/dashboard">My Profile</a>
+                </li>
+                <!--<li{% if active == 'stats' %} class="active"{% endif %}>
+                  <a href="/insights">Insights</a>
+                </li>-->
+              </ul>
+              <ul class="nav pull-right">
+                <li><a target="_blank"  href="http://itunes.apple.com/us/app/rpi-directory/id519895392?ls=1&mt=8">iPhone</a></li>
+                <li><a target="_blank"  href="https://play.google.com/store/apps/details?id=org.rpi.rpinfo">Android</a></li>
+                <li class="divider-vertical"></li>
+                <li><a target="_blank" href="http://rcos.rpi.edu">An RCOS Project</a></li>
+              </ul>
+            </div><!-- /.nav-collapse -->
+          </div>
+        </div><!-- /navbar-inner -->
+      </div>
 	  {% block content %}{% endblock %}
 	  {% block footer %}
 	  <script type="text/javascript" language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
