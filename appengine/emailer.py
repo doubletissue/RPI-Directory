@@ -6,7 +6,7 @@ ACTIVATION_SUBJECT = "Link your account on RPI directory."
 ACTIVATION_BODY = """
 To activate your account, visit the following this link: http://rpidirectory.appspot.com/dashboard?activation={0}
 
-This RCS account was claimed by: {1}.  If this is not you, please visit http://rpidirectory.appspot.com/ to claim your account.
+This RCS account was claimed by: {1}.  If this is not you, please visit http://rpidirectory.appspot.com/dashboard to claim your account.
 
 Best,
 The RPI Directory Team
