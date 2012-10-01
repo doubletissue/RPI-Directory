@@ -1,4 +1,5 @@
 from google.appengine.api import mail
+import logging
 
 SENDER = "do-not-reply@rpidirectory.appspotmail.com"
 ACTIVATION_SUBJECT = "Link your account on RPI directory." 
