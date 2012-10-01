@@ -14,9 +14,8 @@ The RPI Directory Team
 Web: http://rpidirectory.appspot.com/
 Chat Bot: Add rpidirectory@rpidirectory.appspotchat.com to your Gmail chat list
 Android App: https://play.google.com/store/apps/details?id=org.rpi.rpinfo
-iOS App: http://itunes.apple.com/us/app/rpi-directory/id519895392?mt=8
+iPhone/iPad App: http://itunes.apple.com/us/app/rpi-directory/id519895392
 """
-
 
 def send_activation_email(person, user, activation_code):
   # Don't spam the president...
