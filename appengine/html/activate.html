@@ -13,6 +13,10 @@
         font-size: 28px;
         color: #000;
       }
+			
+			h2 a {
+			  color: #777;
+			}
       
       .popover {
       	width: 300px;
@@ -26,6 +30,8 @@
         <li><h3>Check your RPI email for an activation link</h3></li>
         <li id='step4'><h3>Customize your picture and enjoy!</h3></li>
       </ol>
+			<br><br<br><br>
+			<h2>Already linked your profile? <a href="{{login_url}}">Sign in.</a></h2>
       {% else %}
       <h2>{{message}}</h2>
       {% endif %}

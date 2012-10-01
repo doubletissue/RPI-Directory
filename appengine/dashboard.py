@@ -21,6 +21,7 @@ class Dashboard(webapp2.RequestHandler):
     rcsid_claim = self.request.get("rcsid_claim", None)
     activation_code = self.request.get("activation", None)
     person = Person.query(Person.linked_account == user).get()
+    login_url = users.create_login_url(self.request.uri)
 
     if user and person:
       self.redirect('/detail/' + person.rcsid)
@@ -55,7 +56,9 @@ class Dashboard(webapp2.RequestHandler):
       #Not signed in, offer instructions
       message = None
 
-    template_values = {"active": "dashboard", "message": message}
+    template_values = {"active": "dashboard", 
+                       "message": message,
+                       "login_url": login_url}
     template = jinja_environment.get_template('html/activate.html')
     self.response.out.write(template.render(template_values))
 
