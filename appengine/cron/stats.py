@@ -23,22 +23,14 @@ from models import Person
 from models import StatsObject
 
 
-base_stats_attributes = [
+stats_attributes = [
   'major',
   'department',
   'first_name',
   'last_name',
   'year',
   'title',
-]
-
-info_stats_attributes = [
-  'major',
-  'department',
-  'first_name',
-  'last_name',
-  'year',
-  'title',
+  'type',
 ]
 
 def process_string(s):
@@ -54,14 +46,16 @@ def stats_map(data):
     d = Person.buildMap(data)
     logging.info("MAP: Got %s", str(d))
     for k,v in d.items():
-      if not k or not v or k not in base_stats_attributes:
+      if not k or not v or k not in stats_attributes:
         continue
+      v = v.replace("'",'').replace('"','')
       logging.info("MAP GLOBAL: " + str(k) + ' --> ' + str(v))
-      yield ('Global:' + k), {v:1}
+      yield ('global:' + k), {v:1}
       r = {k:{}}
       for k2,v2 in d.items():
-        if not k2 or not v2 or k == k2 or k2 not in info_stats_attributes:
+        if not k2 or not v2 or k == k2 or k2 not in stats_attributes:
           continue
+        v2 = v2.replace("'",'').replace('"','')
         # Ex: First name = Dan, Major = CS
         # For the string 'Dan', when it is used as a first name,
         # Has _x_ CS Majors
