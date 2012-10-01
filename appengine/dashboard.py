@@ -34,12 +34,12 @@ class Dashboard(webapp2.RequestHandler):
       code = str(random.randrange(sys.maxint))
       item = {'code': code, 'rcsid': rcsid_claim}
       if not memcache.add(str(user.user_id()), item, 86400):
-        message = 'Already sent activation, please check your email.'
+        message = 'Already sent activation, please check your email and your spam folder.'
       else:
         person = Person.get_by_id(rcsid_claim)
         if person:
-          logging.info('Sent email to link %s and %s' % (user.email(), person.rcsid))
-          send_activation_email(person, code)
+          result = send_activation_email(person, user, code)
+          logging.info('Sent email to link %s and %s, result: %s' % (user.email(), person.rcsid, str(result)))
           message = 'Sent activation email to: %s, please check that email.' % (person.email)
         else:
           message = 'Invalid RCS ID: %s...' % (rcsid_claim)
