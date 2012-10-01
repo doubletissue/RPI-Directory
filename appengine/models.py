@@ -80,7 +80,7 @@ class Person(ndb.Model):
   date_crawled = ndb.DateTimeProperty(auto_now=True,indexed=False)
   directory_id = ndb.StringProperty(indexed=False)
   mailing_address_html = ndb.ComputedProperty(lambda self: self.mailing_address.replace('\n', '<br />') if self.mailing_address else None)
-  picture = ndb.BlobProperty()
+  picture = ndb.BlobProperty(indexed=True)
   linked_account = ndb.UserProperty()
   email_html = ndb.ComputedProperty(lambda self: self.email.replace('@', ' [at] ').replace('.', ' [dot] ') if self.email else None)
   type = ndb.ComputedProperty(lambda self: 'student' if self.major else ('faculty' if self.department else 'other'))
