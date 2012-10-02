@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">RPInfo2</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="search_term_hint">Start Typing!</string>
+
+</resources>
