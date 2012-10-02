@@ -58,13 +58,19 @@ searchableAttributes = [
 def createDocument(person):
     fields = []
     if person.first_name:
-        for i in range(len(person.first_name)):
-            for j in range(i + 1, len(person.first_name) + 1):
-                fields.append(search.TextField(name='first_name' + str(i) + 'to' + str(j), value=str(person.first_name[i:j])))
+        n = person.first_name
+        for c in string.punctuation:
+            n = n.replace(c, '')
+        for i in range(len(n)):
+            for j in range(i + 1, len(n) + 1):
+                fields.append(search.TextField(name='first_name' + str(i) + 'to' + str(j), value=str(n[i:j])))
     if person.last_name:
-        for i in range(len(person.last_name)):
-            for j in range(i + 1, len(person.last_name) + 1):
-                fields.append(search.TextField(name='last_name' + str(i) + 'to' + str(j), value=str(person.last_name[i:j])))
+        n = person.last_name
+        for c in string.punctuation:
+            n = n.replace(c, '')
+        for i in range(len(n)):
+            for j in range(i + 1, len(n) + 1):
+                fields.append(search.TextField(name='last_name' + str(i) + 'to' + str(j), value=str(n[i:j])))
                 
     for attr in searchableAttributes:
       fields.extend(split_words(attr, getattr(person,attr,'')))
