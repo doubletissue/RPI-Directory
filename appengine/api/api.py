@@ -93,7 +93,7 @@ class Api(webapp2.RequestHandler):
     
     s = ''
     for c in search_query:
-      if c in string.letters or c in string.digits:
+      if c in string.letters or c in string.digits or c == ' ':
         s += c
     search_query = s
 
