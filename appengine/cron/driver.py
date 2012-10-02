@@ -7,6 +7,7 @@ from cron.mutex import Mutex
 import cgi
 import logging
 import webapp2
+import urllib
 
 from google.appengine.api import taskqueue
 from google.appengine.api import memcache
@@ -89,6 +90,12 @@ def putResult(d):
 
 def crawlPerson(index):
     logging.info("In CrawlPerson")
+
+    if index:    
+      result = Crawler().getMap(index)
+      logging.info(str(result))
+      putResult(result)
+      return
     
     mutex = Mutex('mutex lock')
     try:
@@ -135,12 +142,12 @@ class Driver(webapp2.RequestHandler):
 class DriverWorker(webapp2.RequestHandler):
   def post(self):
     logging.info("In DriverWorker")
-    index = cgi.escape(self.request.get('index'))
+    index = cgi.escape(self.request.get('key'))
     crawlPerson(index)
 
   def get(self):
     logging.info("In DriverWorker")
-    index = cgi.escape(self.request.get('index'))
+    index = cgi.escape(self.request.get('key'))
     crawlPerson(index)
 
 app = webapp2.WSGIApplication([
