@@ -108,7 +108,8 @@ class Crawler(webapp2.RequestHandler):
                     'Fax:'             : 'fax',
                     'Office Location:' : 'office_location',
                     'Campus Mailstop:' : 'campus_mailstop',
-                    'Mailing Address:' : 'mailing_address'}
+                    'Mailing Address:' : 'mailing_address',
+                    'Preferred name:'  : 'prefered_name'}
 
     if full_string.find('wrong state') >= 0:
       logging.warn("end of database!")

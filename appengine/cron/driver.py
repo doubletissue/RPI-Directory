@@ -38,6 +38,18 @@ def split_words(field_name, s):
         r.append(search.TextField(name=field_name + str(i), value=l[i]))
     return r
     
+def makeFullIndex(field_name,s):
+  field_name = str(field_name)
+  s = str(s)
+  for c in string.punctuation:
+    s = s.replace(c, '')
+  r = []
+  for i in range(len(s)):
+      for j in range(i + 1, len(s) + 1):
+          r.append(search.TextField(name=field_name + str(i) + 'to' + str(j), value=str(s[i:j])))
+          
+  return r
+    
 searchableAttributes = [
   'department',
   'email',
@@ -50,27 +62,22 @@ searchableAttributes = [
   'homepage',
   'office_location',
   'campus_mailstop',
-  'mailing_address',
-  'middle_name'
+  'mailing_address'
+]
+
+fullSearchAttributes = [
+  'first_name',
+  'middle_name',
+  'prefered_name',
+  'last_name'
 ]
 
 #Creates a person and stores it
 def createDocument(person):
     fields = []
-    if person.first_name:
-        n = person.first_name
-        for c in string.punctuation:
-            n = n.replace(c, '')
-        for i in range(len(n)):
-            for j in range(i + 1, len(n) + 1):
-                fields.append(search.TextField(name='first_name' + str(i) + 'to' + str(j), value=str(n[i:j])))
-    if person.last_name:
-        n = person.last_name
-        for c in string.punctuation:
-            n = n.replace(c, '')
-        for i in range(len(n)):
-            for j in range(i + 1, len(n) + 1):
-                fields.append(search.TextField(name='last_name' + str(i) + 'to' + str(j), value=str(n[i:j])))
+    
+    for attr in fullSearchAttributes:
+      fields.extend(makeFullIndex(attr, getattr(person,attr,'').split(' ')))
                 
     for attr in searchableAttributes:
       fields.extend(split_words(attr, getattr(person,attr,'')))

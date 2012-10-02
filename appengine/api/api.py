@@ -166,10 +166,8 @@ class Api(webapp2.RequestHandler):
 
     for result in results:
         rcsid = result.doc_id
-        logging.info(rcsid)
         r = Person.get_by_id(rcsid)
         if r:
-            logging.info('got person')
             per = Person.buildMap(r)
             per['name'] = per['name'].title()
             data.append(per)
