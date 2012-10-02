@@ -12,8 +12,8 @@
       		</div>
       	</div>
       	<div class="data">
-					<h1>{{person.first_name.title()}} {{person.last_name.title()}}
-					  {% if user and user == person.linked_account %} (You){% endif %}
+					<h1>
+						{{person.name.title()}} {% if user and user == person.linked_account %} (You){% endif %}
 					</h1>
 					{% if person.year or person.title %}
 					<h3>{{ person.year.title() if person.year else person.title.title() }}</h3>

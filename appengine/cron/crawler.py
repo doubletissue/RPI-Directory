@@ -128,11 +128,13 @@ class Crawler(webapp2.RequestHandler):
       return {'error':'page_not_found'}
       
     if name is not "":
-      names = name.split()[:3]
+      names = name.split()
       if len(names) > 0:
         d['first_name'] = names[0]
       if len(names) > 1:
         d['last_name'] = names[-1]
+      if len(name) > 2:
+        d['middle_name'] = ' '.join(names[1:-1])
 
     homepage = self.findHomepage(string)
     if homepage is not "":

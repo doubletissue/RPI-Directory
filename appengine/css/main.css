@@ -1,3 +1,7 @@
+body {
+	-webkit-text-stroke: 0.25px;
+}
+
 #inputBox {
 	text-align: center;
 }

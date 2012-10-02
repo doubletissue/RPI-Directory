@@ -11,24 +11,54 @@ var type_timeout = null;
 
 
 /*
-Function to animate text box.
-send true to animate it up, false to animate it down
-*/
-function animate(flag){
-  if (flag){    
-    $("#qr").hide();
-    $("#sidebar").show();
-    $("#container").animate({
-      marginTop: '0%'
-    }, delay, function(){ $("#container").css("margin-top","0%"); });
-  }else{
-    $("#container").animate({
-      marginTop: padding
-    }, delay * 1.3);
-    $("#sidebar").hide();
-    $("#qr").show();
-  }
-}
+ * Title Caps
+ * 
+ * Ported to JavaScript By John Resig - http://ejohn.org/ - 21 May 2008
+ * Original by John Gruber - http://daringfireball.net/ - 10 May 2008
+ * License: http://www.opensource.org/licenses/mit-license.php
+ */
+
+(function(){
+	var small = "(a|an|and|as|at|but|by|en|for|if|in|of|on|or|the|to|v[.]?|via|vs[.]?)";
+	var punct = "([!\"#$%&'()*+,./:;<=>?@[\\\\\\]^_`{|}~-]*)";
+  
+	this.titleCaps = function(title){
+		var parts = [], split = /[:.;?!] |(?: |^)["Ò]/g, index = 0;
+		
+		while (true) {
+			var m = split.exec(title);
+
+			parts.push( title.substring(index, m ? m.index : title.length)
+				.replace(/\b([A-Za-z][a-z.'Õ]*)\b/g, function(all){
+					return /[A-Za-z]\.[A-Za-z]/.test(all) ? all : upper(all);
+				})
+				.replace(RegExp("\\b" + small + "\\b", "ig"), lower)
+				.replace(RegExp("^" + punct + small + "\\b", "ig"), function(all, punct, word){
+					return punct + upper(word);
+				})
+				.replace(RegExp("\\b" + small + punct + "$", "ig"), upper));
+			
+			index = split.lastIndex;
+			
+			if ( m ) parts.push( m[0] );
+			else break;
+		}
+		
+		return parts.join("").replace(/ V(s?)\. /ig, " v$1. ")
+			.replace(/(['Õ])S\b/ig, "$1s")
+			.replace(/\b(AT&T|Q&A)\b/ig, function(all){
+				return all.toUpperCase();
+			});
+	};
+    
+	function lower(word){
+		return word.toLowerCase();
+	}
+    
+	function upper(word){
+	  return word.substr(0,1).toUpperCase() + word.substr(1);
+	}
+})();
 
 //Detect HTML5 Local Storage
 function DetectLocalStorage(){
@@ -71,9 +101,9 @@ function getPersonMajor(person, call, dat){
     return;
   }
   if (person.major != undefined){
-    return person.major;
+    return titleCaps(person.major);
   }else if (person.department != undefined){
-    return person.department;
+    return titleCaps(person.department);
   }else{
     return 'N/A';
   }
@@ -83,9 +113,12 @@ function getPersonYear(person, call, dat){
   if (call == 'set'){
     return;
   }
+
   if (person.year != undefined){
-    return person.year;
-  }else{
+    return titleCaps(person.year);
+  }else if (person.title != undefined){
+		return titleCaps(person.title);
+	}else{
     return 'N/A';
   }
 }
@@ -141,7 +174,10 @@ $(document).ready(function() {
 
   $('#keyword').keyup(function(e){
     keyword = $('#keyword').val();
-    window.history.replaceState(keyword, 'Searching ' + keyword, '/?q=' + keyword);
+		if (!$.browser.msie) {
+		  window.history.replaceState(keyword, 'Searching ' + keyword, '/?q=' + keyword);
+		}
+    
     if (!keyword || keyword.length == 0) { return; }
     if (e.keyCode == 13 || e.keyCode == 32){
       clearTimeout(type_timeout);

@@ -7,6 +7,7 @@ import cgi
 import urllib
 from models import Person
 import json
+import string
 
 from google.appengine.api import search
 
@@ -89,6 +90,12 @@ class Api(webapp2.RequestHandler):
     token = str(urllib.unquote(cgi.escape(self.request.get('token'))))
     page_num = parse_int(urllib.unquote(cgi.escape(self.request.get('page_num'))), 1)
     page_size = parse_int(urllib.unquote(cgi.escape(self.request.get('page_size'))), 20)
+    
+    s = ''
+    for c in search_query:
+      if c in string.letters or c in string.digits:
+        s += c
+    search_query = s
 
     if search_query + name == "":
       d = {}
