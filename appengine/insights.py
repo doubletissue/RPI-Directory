@@ -7,6 +7,7 @@ from models import Person
 from models import StatsObject
 import hashlib
 import urllib
+import gviz_api
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -51,5 +52,31 @@ class Stats(webapp2.RequestHandler):
     template = jinja_environment.get_template('html/insights.html')
     self.response.out.write(template.render(template_values))
     
+class ChartsAPI(webapp2.RequestHandler):
+  def get(self):
+    self.response.headers['Content-Type'] = 'text/plain'
+    name = self.request.get('name', 'michael').split()[0].lower()
+    chart_type = self.request.get('type', 'major')
+    tqx = self.request.get('tqx', '')
+    if tqx:
+      req_id = tqx[6:]
+      logging.error('REQID: ' + tqx)
+    else:
+      req_id = ''
+    if chart_type == 'major':
+      description = {("major", "string", "Major"): ("amount", "number", "Amount")}
+    else:
+      description = {("year", "string", "Year"): ("amount", "number", "Amount")}
+    data = StatsObject.get_by_id(name)
+    try:
+      if chart_type == 'major':
+        data = data.json['first_name']['major']
+      else:
+        data = data.json['first_name']['year']
+    except Exception as e:
+      data = {}
+    data_table = gviz_api.DataTable(description)
+    data_table.LoadData(data)
+    self.response.out.write(data_table.ToJSonResponse(order_by="amount", req_id=req_id))
 
-app = webapp2.WSGIApplication([('/insights.*', Stats)])
+app = webapp2.WSGIApplication([('/insights', Stats), ('/insights_chart.*', ChartsAPI)])

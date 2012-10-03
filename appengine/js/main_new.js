@@ -8,7 +8,7 @@ var local_storage_supported;
 var suffix_cache = ":v2";
 var data_table = null;
 var type_timeout = null;
-
+var chart1 = null, chart2 = null;
 
 /*
  * Title Caps
@@ -59,28 +59,6 @@ var type_timeout = null;
 	  return word.substr(0,1).toUpperCase() + word.substr(1);
 	}
 })();
-
-//Detect HTML5 Local Storage
-function DetectLocalStorage(){
-  try{
-    if (window['localStorage'] !== null){
-      _gaq.push(['_trackEvent', 'Local Storage', 'True']);
-      return true;
-    }
-  }catch(e){
-    _gaq.push(['_trackEvent', 'Local Storage', 'False']);
-    return false;
-  }
-}
-
-function callServer(keyword){
-  if(request_in_progress){
-    request.abort();
-  }
-  request_in_progress = true;
-  url = "/api?q=" + keyword + "&token=" + last_token + "&source=website";
-  request = $.getJSON(url, parseServerData);
-}
 	
 $(document).ajaxError(function(event, request, settings, exception){
   console.log("Error: "  + exception);
@@ -123,40 +101,67 @@ function getPersonYear(person, call, dat){
   }
 }
 
-function getOrCreateDataTable(){
-  if (!data_table){
-    try{
-  	  data_table = $('#results').dataTable({
-  	    "bProcessing": true,
-  	    "bAutoWidth": true,
-        "sAjaxDataProp": "data",
-        "sDom": 'rt',
-        "iDisplayLength": 20,
-        "sAjaxSource": "/api?q=",
-        "sDefaultContent": "hello",
-        "aoColumns": [
-            { "mData": "name" },
-            { "mData": getPersonMajor },
-            { "mData": getPersonYear },
-            { "mData": "email_html" },
-            { "mData": "rcsid", 
-              "bVisible": false }
-        ]
-      });
-      $('#results').show();
-    }catch(err){
-      console.log(err);
-    } 
-  }
-  return data_table;
+function CreateDataTable(){
+	try{
+	  data_table = $('#results').dataTable({
+	    "bProcessing": true,
+	    "bAutoWidth": true,
+	    "sAjaxDataProp": "data",
+	    "sDom": 'rt',
+	    "iDisplayLength": 20,
+	    "sAjaxSource": "/api?q=",
+	    "aoColumns": [
+	        { "mData": "name" },
+	        { "mData": getPersonMajor },
+	        { "mData": getPersonYear },
+	        { "mData": "email_html" },
+	        { "mData": "rcsid", "bVisible": false }
+	    ],
+			"fnInitComplete": function(){
+			  //Check for existing query
+				if (getURLParameter('q')){
+				  keyword = getURLParameter('q');
+			    callServer(keyword);
+			    $("#keyword").val(keyword);
+			  }
+				
+				if (getURLParameter('q') && getURLParameter('q') != ''){
+			  	$('#results').show();
+			  }
+			}
+	  });
+	}catch(err){
+	  console.log(err);
+	} 
+}
+
+function drawCharts(keyword){
+	if (chart1 != null && keyword != ''){
+		//Set titles
+		chart1.setOption('title', 'Breakdown by Major');
+		chart1.setDataSourceUrl('/insights_chart?type=major&name=' + keyword);
+		chart1.draw();
+	}
+	
+	if (chart2 != null && keyword != ''){
+		chart2.setOption('title', 'Breakdown by Year');
+		chart2.setDataSourceUrl('/insights_chart?type=year&name=' + keyword);
+		chart2.draw();
+	}
 }
 
 function callServer(keyword){
-  if(typeof(keyword)==='undefined'){
-    keyword = $('#keyword').val(); 
+  if(typeof(keyword) == 'undefined'){
+    keyword = $('#keyword').val();
   }
-  table = getOrCreateDataTable();
-  table.fnReloadAjax('/api?q=' + keyword);
+	
+	if (keyword == ''){
+		return;
+	}
+	
+	$('#results').show();
+  data_table.fnReloadAjax('/api?q=' + keyword);
+	drawCharts(keyword);
 }
 
 function getURLParameter(name) {
@@ -164,14 +169,9 @@ function getURLParameter(name) {
 }
 
 $(document).ready(function() {
-  //Focus on textbox
 	$("#keyword").focus();
-	if (getURLParameter('q')){
-	  keyword = getURLParameter('q');
-    callServer(keyword);
-    $("#keyword").val(keyword);
-  }
-
+	CreateDataTable();
+	
   $('#keyword').keyup(function(e){
     keyword = $('#keyword').val();
 		if (!$.browser.msie) {
@@ -189,9 +189,8 @@ $(document).ready(function() {
   });
 
   $("#results tbody").click(function(event) {
-      var table = getOrCreateDataTable();
-      var pos = table.fnGetPosition(event.target);
-      var data = table.fnGetData()[pos[0]];
+      var pos = data_table.fnGetPosition(event.target);
+      var data = data_table.fnGetData()[pos[0]];
       if (data.rcsid){
         window.location = '/detail/' + data.rcsid; 
       }
@@ -205,5 +204,56 @@ $(document).ready(function() {
       content: 'Make sure to <a href="/dashboard">claim</a> your profile!'
     });
     setTimeout(function(){$('#profile-link').popover('show');}, 250);
-  }    
+  }
 });
+
+// Load the Visualization API and the piechart package.
+google.load('visualization', '1.0', {'packages':['corechart']});
+
+// Set a callback to run when the Google Visualization API is loaded.
+google.setOnLoadCallback(initializeChart);
+
+function initializeChart(){
+	chart1 = new google.visualization.ChartWrapper({
+	  chartType: 'PieChart',
+	  containerId: 'chart1',
+		options : {
+			'title': 'Breakdown by Major',
+			'animation': {
+				'duration': 300,
+			  'easing': 'out',
+			},
+			'chartArea': {'width': '100%', 'height': '80%'},
+			'legend': {'position': 'left', 'textStyle': {'fontName': 'News Cycle'}},
+			'vAxis': {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
+			'hAxis' : {'textStyle': {'fontName': 'News Cycle'}},
+			'height': 400,
+			'tooltip' : {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
+			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 20},
+		}
+	});
+	
+	chart2 = new google.visualization.ChartWrapper({
+	  chartType: 'PieChart',
+	  containerId: 'chart2',
+		options : {
+			'title': 'Breakdown by Year',
+			'animation': {
+				'duration': 300,
+			  'easing': 'out',
+			},
+			'chartArea': {'width': '100%', 'height': '80%'},
+			'legend': {'position': 'left', 'textStyle': {'fontName': 'News Cycle'}},
+			'vAxis': {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
+			'hAxis' : {'textStyle': {'fontName': 'News Cycle'}},
+			'height': 400,
+			'tooltip' : {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
+			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 20},
+		}
+	});
+	
+	keyword = getURLParameter('q');
+	if (keyword){
+		drawCharts(keyword);
+	}
+}

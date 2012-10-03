@@ -22,12 +22,15 @@
 	<br>
 	{% endif %}
 	{% endfor %}
+	<br>
+	<br>
+	<br>
+	<div id="extra"></div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script type="text/javascript" src="/js/jquery.scrollTo.min.js"></script>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
 
       // Load the Visualization API and the piechart package.
@@ -64,6 +67,18 @@
         var chart_{{loop.index}} = new google.visualization.ColumnChart(document.getElementById('chart_{{loop.index}}'));
         chart_{{loop.index}}.draw(data_{{loop.index}}, options_{{loop.index}});
 			{% endfor %}
+			
+			var query = new google.visualization.Query('/insights_chart');
+			query.send(function(response){
+				if (response.isError()) {
+				  alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+				  return;
+				}
+				var data = response.getDataTable();
+				visualization = new google.visualization.PieChart(document.getElementById('extra'));
+				visualization.draw(data);
+			});
+			
       }
     </script>
 <script type="text/javascript">
