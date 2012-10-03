@@ -223,13 +223,16 @@ function initializeChart(){
 				'duration': 300,
 			  'easing': 'out',
 			},
+			'reverseCategories': true,
+			'pieSliceText': 'value',
+			'pieSliceTextStyle': {'fontName': 'News Cycle', 'fontSize': 15},
 			'chartArea': {'width': '100%', 'height': '80%'},
 			'legend': {'position': 'left', 'textStyle': {'fontName': 'News Cycle'}},
 			'vAxis': {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
 			'hAxis' : {'textStyle': {'fontName': 'News Cycle'}},
 			'height': 400,
 			'tooltip' : {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
-			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 20},
+			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 30},
 		}
 	});
 	
@@ -242,13 +245,16 @@ function initializeChart(){
 				'duration': 300,
 			  'easing': 'out',
 			},
+			'reverseCategories': true,
+			'pieSliceText': 'value',
+			'pieSliceTextStyle': {'fontName': 'News Cycle', 'fontSize': 15},
 			'chartArea': {'width': '100%', 'height': '80%'},
 			'legend': {'position': 'left', 'textStyle': {'fontName': 'News Cycle'}},
 			'vAxis': {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
 			'hAxis' : {'textStyle': {'fontName': 'News Cycle'}},
 			'height': 400,
 			'tooltip' : {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
-			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 20},
+			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 30},
 		}
 	});
 	
