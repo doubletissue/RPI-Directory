@@ -221,7 +221,7 @@ function initializeChart(){
 			'title': 'Breakdown by Major',
 			'animation': {
 				'duration': 300,
-			  'easing': 'out',
+			  'easing': 'out'
 			},
 			'reverseCategories': true,
 			'pieSliceText': 'value',
@@ -232,7 +232,7 @@ function initializeChart(){
 			'hAxis' : {'textStyle': {'fontName': 'News Cycle'}},
 			'height': 400,
 			'tooltip' : {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
-			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 30},
+			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 30}
 		}
 	});
 	
@@ -254,7 +254,7 @@ function initializeChart(){
 			'hAxis' : {'textStyle': {'fontName': 'News Cycle'}},
 			'height': 400,
 			'tooltip' : {'textStyle': {'fontName': 'News Cycle', 'fontSize': 20}},
-			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 30},
+			'titleTextStyle': {'fontName': 'News Cycle', 'fontSize': 30}
 		}
 	});
 	

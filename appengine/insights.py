@@ -58,11 +58,7 @@ class ChartsAPI(webapp2.RequestHandler):
     name = self.request.get('name', 'michael').split()[0].lower()
     chart_type = self.request.get('type', 'major')
     tqx = self.request.get('tqx', '')
-    if tqx:
-      req_id = tqx[6:]
-      logging.error('REQID: ' + tqx)
-    else:
-      req_id = ''
+    req_id = tqx[6:]
     if chart_type == 'major':
       description = {("major", "string", "Major"): ("amount", "number", "Amount")}
     else:
