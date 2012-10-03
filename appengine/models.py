@@ -10,6 +10,7 @@ from datetime import datetime
 person_attributes = [
   'email',
   'first_name',
+  'prefered_name',
   'middle_name',
   'last_name',
   'department',
@@ -30,6 +31,7 @@ person_attributes = [
 map_attributes = [
   'email',
   'first_name',
+  'prefered_name',
   'middle_name',
   'last_name',
   'department',
@@ -62,6 +64,7 @@ def generateName(strings):
 class Person(ndb.Model):
   """Models a person in the RPI directory."""
   first_name = ndb.StringProperty(indexed=False)
+  prefered_name = ndb.StringProperty(indexed=False)
   middle_name = ndb.StringProperty(indexed=False)
   last_name = ndb.StringProperty(indexed=False)
   name = ndb.ComputedProperty(lambda self: generateName([self.first_name, self.middle_name, self.last_name]))
@@ -80,7 +83,7 @@ class Person(ndb.Model):
   date_crawled = ndb.DateTimeProperty(auto_now=True,indexed=False)
   directory_id = ndb.StringProperty(indexed=False)
   mailing_address_html = ndb.ComputedProperty(lambda self: self.mailing_address.replace('\n', '<br />') if self.mailing_address else None)
-  picture = ndb.BlobProperty(indexed=True)
+  picture = ndb.BlobProperty()
   linked_account = ndb.UserProperty()
   email_html = ndb.ComputedProperty(lambda self: self.email.replace('@', ' [at] ').replace('.', ' [dot] ') if self.email else None)
   type = ndb.ComputedProperty(lambda self: 'student' if self.major else ('faculty' if self.department else 'other'))

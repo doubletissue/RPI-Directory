@@ -7,6 +7,7 @@ from cron.mutex import Mutex
 import cgi
 import logging
 import webapp2
+import urllib
 
 from google.appengine.api import taskqueue
 from google.appengine.api import memcache
@@ -37,6 +38,21 @@ def split_words(field_name, s):
         r.append(search.TextField(name=field_name + str(i), value=l[i]))
     return r
     
+def makeFullIndex(field_name,s):
+  if not s:
+    return []
+  s = s.split(' ')
+  field_name = str(field_name)
+  s = str(s)
+  for c in string.punctuation:
+    s = s.replace(c, '')
+  r = []
+  for i in range(len(s)):
+      for j in range(i + 1, len(s) + 1):
+          r.append(search.TextField(name=field_name + str(i) + 'to' + str(j), value=str(s[i:j])))
+          
+  return r
+    
 searchableAttributes = [
   'department',
   'email',
@@ -49,21 +65,22 @@ searchableAttributes = [
   'homepage',
   'office_location',
   'campus_mailstop',
-  'mailing_address',
-  'middle_name'
+  'mailing_address'
+]
+
+fullSearchAttributes = [
+  'first_name',
+  'middle_name',
+  'prefered_name',
+  'last_name'
 ]
 
 #Creates a person and stores it
 def createDocument(person):
     fields = []
-    if person.first_name:
-        for i in range(len(person.first_name)):
-            for j in range(i + 1, len(person.first_name) + 1):
-                fields.append(search.TextField(name='first_name' + str(i) + 'to' + str(j), value=str(person.first_name[i:j])))
-    if person.last_name:
-        for i in range(len(person.last_name)):
-            for j in range(i + 1, len(person.last_name) + 1):
-                fields.append(search.TextField(name='last_name' + str(i) + 'to' + str(j), value=str(person.last_name[i:j])))
+    
+    for attr in fullSearchAttributes:
+      fields.extend(makeFullIndex(attr, getattr(person,attr,'')))
                 
     for attr in searchableAttributes:
       fields.extend(split_words(attr, getattr(person,attr,'')))
@@ -89,6 +106,12 @@ def putResult(d):
 
 def crawlPerson(index):
     logging.info("In CrawlPerson")
+
+    if index:    
+      result = Crawler().getMap(index)
+      logging.info(str(result))
+      putResult(result)
+      return
     
     mutex = Mutex('mutex lock')
     try:
@@ -135,12 +158,12 @@ class Driver(webapp2.RequestHandler):
 class DriverWorker(webapp2.RequestHandler):
   def post(self):
     logging.info("In DriverWorker")
-    index = cgi.escape(self.request.get('index'))
+    index = cgi.escape(self.request.get('key'))
     crawlPerson(index)
 
   def get(self):
     logging.info("In DriverWorker")
-    index = cgi.escape(self.request.get('index'))
+    index = cgi.escape(self.request.get('key'))
     crawlPerson(index)
 
 app = webapp2.WSGIApplication([
