@@ -44,6 +44,10 @@ handlers:
 - url: /_ah/xmpp/message/chat/
   script: api.chatbot.app
   
+- url: /_ah/mail/.+
+  script: handle_incoming_email.app
+  login: admin
+
 - url: /admin_page.*
   script: admin_page.app
   login: admin
