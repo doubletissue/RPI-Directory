@@ -11,6 +11,6 @@ class EmailHandler(InboundMailHandler):
   def receive(self, mail_message):
     for content_type, body in mail_message.bodies('text/html'):
       for m in admins:
-        mail.send_mail(SENDER, m, "Feedback from %s: %s" % (mail_message.sender, mail_message.subject), body.decode())
+        mail.send_mail(SENDER, m, "Feedback from %s: %s" % (mail_message.sender, mail_message.subject), body)
 
 app = webapp2.WSGIApplication([EmailHandler.mapping()])
