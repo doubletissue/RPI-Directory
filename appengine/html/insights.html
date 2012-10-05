@@ -22,10 +22,6 @@
 	<br>
 	{% endif %}
 	{% endfor %}
-	<br>
-	<br>
-	<br>
-	<div id="extra"></div>
 </div>
 {% endblock %}
 
@@ -66,19 +62,7 @@
         // Instantiate and draw our chart, passing in some options.
         var chart_{{loop.index}} = new google.visualization.ColumnChart(document.getElementById('chart_{{loop.index}}'));
         chart_{{loop.index}}.draw(data_{{loop.index}}, options_{{loop.index}});
-			{% endfor %}
-			
-			var query = new google.visualization.Query('/insights_chart');
-			query.send(function(response){
-				if (response.isError()) {
-				  alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-				  return;
-				}
-				var data = response.getDataTable();
-				visualization = new google.visualization.PieChart(document.getElementById('extra'));
-				visualization.draw(data);
-			});
-			
+			{% endfor %}			
       }
     </script>
 <script type="text/javascript">
