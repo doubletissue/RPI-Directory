@@ -41,15 +41,17 @@ def split_words(field_name, s):
 def makeFullIndex(field_name,s):
   if not s:
     return []
-  s = s.split(' ')
   field_name = str(field_name)
   s = str(s)
   for c in string.punctuation:
     s = s.replace(c, '')
   r = []
-  for i in range(len(s)):
-      for j in range(i + 1, len(s) + 1):
-          r.append(search.TextField(name=field_name + str(i) + 'to' + str(j), value=str(s[i:j])))
+  
+  s = s.split(' ')
+  for w in s:
+      for i in range(len(w)):
+          for j in range(i + 1, len(w) + 1):
+              r.append(search.TextField(name=field_name + str(i) + 'to' + str(j), value=str(w[i:j])))
           
   return r
     
