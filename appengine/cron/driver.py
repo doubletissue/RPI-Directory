@@ -8,6 +8,7 @@ import cgi
 import logging
 import webapp2
 import urllib
+import random
 
 from google.appengine.api import taskqueue
 from google.appengine.api import memcache
@@ -156,7 +157,8 @@ def crawlPerson(index):
 class Driver(webapp2.RequestHandler):
     def get(self):
         for i in range(NUM_THREADS):
-            taskqueue.add(url='/crawl/worker') #, target='backend'
+            wait_time = i/4
+            taskqueue.add(url='/crawl/worker', countdown = wait_time) #, target='backend'
     
 class DriverWorker(webapp2.RequestHandler):
   def post(self):
