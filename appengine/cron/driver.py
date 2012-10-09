@@ -41,6 +41,7 @@ def split_words(field_name, s):
 def makeFullIndex(field_name,s):
   if not s:
     return []
+  
   field_name = str(field_name)
   s = str(s)
   for c in string.punctuation:
@@ -86,7 +87,7 @@ def createDocument(person):
                 
     for attr in searchableAttributes:
       fields.extend(split_words(attr, getattr(person,attr,'')))
-
+    logging.info("Len of fields: %s" % len(fields))
     return search.Document(doc_id=person.rcsid, fields=fields)
 
 def putResult(d):
