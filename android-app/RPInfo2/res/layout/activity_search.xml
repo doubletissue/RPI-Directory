@@ -9,5 +9,11 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         tools:context=".SearchActivity" />
-    
+	
+	<fragment android:name="org.rpi.rpinfo.SearchListFragment"
+	    android:id="@+id/search_list_fragment"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/search_bar_fragment"
+	    tools:context=".SearchActivity" />
 </RelativeLayout>

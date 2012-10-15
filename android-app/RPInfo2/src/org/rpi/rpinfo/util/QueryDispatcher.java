@@ -2,16 +2,12 @@ package org.rpi.rpinfo.util;
 
 import org.rpi.rpinfo.SearchBarFragment;
 
-import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Handle when queries will be sent out.
  */
 public class QueryDispatcher implements Runnable {
-    private Context context;
     private SearchBarFragment searchBarFragment;
     /**
      * The next ID to use.
@@ -22,41 +18,47 @@ public class QueryDispatcher implements Runnable {
      */
     private Integer minId = 0;
     private String prev = "";
+    /**
+     * Whether or not the UI has been updated for a given current/prev match.
+     */
+    private boolean isUiUpdated = false;
 
-    public QueryDispatcher(Context context, SearchBarFragment searchBarFragment) {
-        this.context = context;
+    public QueryDispatcher(SearchBarFragment searchBarFragment) {
         this.searchBarFragment = searchBarFragment;
     }
 
     @Override
     public void run() {
         String current = searchBarFragment.getText();
-        Log.d("RPINFO", "Prev: " + prev + " Current: " + current);
 
         // If the string is the same twice in a row, assume the user has stopped typing.
         if (prev.equals(current) && !current.equals("")) {
-            new UiUpdater(context, currentId).execute();
-            currentId += 1;
+            if (!isUiUpdated) {
+                new UiUpdater(searchBarFragment, currentId).execute();
+                currentId += 1;
+            }
+            isUiUpdated = true;
+        } else {
+            isUiUpdated = false;
         }
         prev = current;
     }
 
     private class UiUpdater extends AsyncTask<Void, Void, Void> {
-        private Context context;
+        private SearchBarFragment searchBarFragment;
         private int id;
 
-        UiUpdater(Context context, int id) {
-            this.context = context;
+        UiUpdater(SearchBarFragment searchBarFragment, int id) {
+            this.searchBarFragment = searchBarFragment;
             this.id = id;
-            Log.d("RPINFO", "Pre-execute!");
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             synchronized (QueryDispatcher.this.minId) {
-                if (id > QueryDispatcher.this.minId) {
-                    Toast.makeText(context, "Updating...", Toast.LENGTH_SHORT).show();
+                if (id >= QueryDispatcher.this.minId) {
+                    searchBarFragment.doSearchCallback();
                     QueryDispatcher.this.minId = id;
                 }
             }
