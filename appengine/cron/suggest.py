@@ -4,6 +4,7 @@ import re
 import urllib
 import webapp2
 import string
+import simplejson as json
 
 from google.appengine.ext import blobstore
 from google.appengine.ext import db
@@ -20,19 +21,30 @@ from mapreduce import operation as op
 from mapreduce import shuffler
 
 from models import Person
+from models import SuggestObject
 from models import StatsObject
 
-
-stats_attributes = [
+suggest_attributes = [
   'major',
   'department',
   'first_name',
   'last_name',
   'year',
   'title',
-  'type',
   'prefered_name'
 ]
+
+def makeSubstrings(s):
+  if not s:
+    return []
+  s = str(s)
+  r = []
+  #for i in range(len(s)):
+  #   for j in range(i + 1, len(s) + 1):
+  #      r.append(str(s[i:j]))
+  for i in range(len(s)):
+          r.append(str(s[:i+1]))
+  return r
 
 def process_string(s):
   for c in string.punctuation:
@@ -43,33 +55,38 @@ def process_string(s):
   l = list(set(l))
   return l
 
-def stats_map(data):
+def suggest_map(data):
 
+    logging.info(data.name)
+    logging.info(str(data.json))
+    d = eval(str(data.json))
+
+    s = str(data.name)
+    
+    for i in suggest_attributes:
+        if i in d:
+            dic = d[i][i]
+            num = 0
+            for v in dic:
+                num += int(dic[v])
+            for j in makeSubstrings(s):
+                logging.info("MAP: Yield %s -> {%s, %s}" % (j,s,str(num)))
+                yield j,{s:num}
+            
+'''
     d = Person.buildMap(data)
     logging.info("MAP: Got %s", str(d))
+    wordSet = set()
     for k,v in d.items():
-      if not k or not v or k not in stats_attributes:
-        continue
-      v = v.replace("'",'').replace('"','')
-      logging.info("MAP GLOBAL: " + str(k) + ' --> ' + str(v))
-      yield ('global:' + k), {v:1}
-      r = {k:{}}
-      for k2,v2 in d.items():
-        if not k2 or not v2 or k2 not in stats_attributes:
-          continue
-        v2 = v2.replace("'",'').replace('"','')
-        # Ex: First name = Dan, Major = CS
-        # For the string 'Dan', when it is used as a first name,
-        # Has _x_ CS Majors
-        r[k][k2] = {v2:1}
-      s = str(v)
-      logging.info('MAP FINAL: ' + s + ' --> ' + str(r))
-      yield s,r
-      l = process_string(s)
-      if len(l) > 1:
-        for i in l:
-          yield i,r
-
+        if k not in suggest_attributes:
+            continue
+        for i in process_string(v):
+            wordSet.add(i)
+    for i in wordSet:
+        for j in makeSubstrings(i):
+            logging.info("MAP: Yield %s -> %s" % (j,i))
+            yield j,{i:1}
+'''
 # We know all dicts will be mapping from a string to either a dict or an int
 def update_dict(d,d2):
   if type(d2) == type(1):
@@ -81,7 +98,7 @@ def update_dict(d,d2):
       d[k] = d2[k]
   return d
 
-def stats_reduce(key, values):
+def suggest_reduce(key, values):
   d = {}
   logging.info("REDUCE: Got " + str(key) + ' --> ' + str(values))
   for v in values:
@@ -90,22 +107,22 @@ def stats_reduce(key, values):
     d = update_dict(d,v)
   logging.info('REDUCE FINAL: ' + str(key) + " --> " + str(d))
   #yield "%s: %s\n" % (str(key), str(d))
-  entity = StatsObject(id = key)
+  entity = SuggestObject(id = key)
   entity.name = key
   entity.json = d
   yield op.db.Put(entity)
 
-class StatsPipeline(base_handler.PipelineBase):
+class SuggestPipeline(base_handler.PipelineBase):
 
   def run(self):
     output = yield mapreduce_pipeline.MapreducePipeline(
-        "statistics",
-        "cron.stats.stats_map",
-        "cron.stats.stats_reduce",
+        "suggest",
+        "cron.suggest.suggest_map",
+        "cron.suggest.suggest_reduce",
         "mapreduce.input_readers.DatastoreInputReader",
         "mapreduce.output_writers.BlobstoreOutputWriter",
         mapper_params={
-            "entity_kind": 'models.Person',
+            "entity_kind": 'models.StatsObject',
             'namespace':''
         },
         reducer_params={
@@ -133,7 +150,7 @@ class StoreOutput(base_handler.PipelineBase):
 class IndexHandler(webapp2.RequestHandler):
 
   def get(self):
-    pipeline = StatsPipeline()
+    pipeline = SuggestPipeline()
 
     pipeline.start()
     self.redirect(pipeline.base_path + "/status?root=" + pipeline.pipeline_id)
@@ -147,6 +164,6 @@ class IndexHandler(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication(
     [
-        ('/ahoy', IndexHandler)
+        ('/sure', IndexHandler)
     ],
     debug=True)

@@ -40,6 +40,9 @@ handlers:
 
 - url: /stats_api.*
   script: api.stats_api.app
+
+- url: /suggest_api.*
+  script: api.suggest_api.app
   
 - url: /_ah/xmpp/message/chat/
   script: api.chatbot.app
@@ -69,6 +72,10 @@ handlers:
 
 - url: /ahoy
   script: cron.stats.app
+  login: admin
+
+- url: /sure
+  script: cron.suggest.app
   login: admin
 
 - url: /mapreduce/.*

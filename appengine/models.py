@@ -135,3 +135,7 @@ class SearchPosition(ndb.Model):
 class StatsObject(ndb.Model):
     name = ndb.StringProperty(indexed=False)
     json = ndb.JsonProperty(indexed=False)
+    
+class SuggestObject(ndb.Model):
+    name = ndb.StringProperty(indexed=False)
+    json = ndb.JsonProperty(indexed=False)
