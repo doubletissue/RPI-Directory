@@ -62,31 +62,21 @@ def suggest_map(data):
     d = eval(str(data.json))
 
     s = str(data.name)
-    
-    for i in suggest_attributes:
-        if i in d:
-            dic = d[i][i]
-            num = 0
-            for v in dic:
-                num += int(dic[v])
+    if ' ' not in s:
+        num = 0
+        for i in suggest_attributes:
+            if i in d:
+                try:
+                    dic = d[i][i]
+                except:
+                    continue
+                for v in dic:
+                    num += int(dic[v])
+        if num > 0:
             for j in makeSubstrings(s):
                 logging.info("MAP: Yield %s -> {%s, %s}" % (j,s,str(num)))
                 yield j,{s:num}
             
-'''
-    d = Person.buildMap(data)
-    logging.info("MAP: Got %s", str(d))
-    wordSet = set()
-    for k,v in d.items():
-        if k not in suggest_attributes:
-            continue
-        for i in process_string(v):
-            wordSet.add(i)
-    for i in wordSet:
-        for j in makeSubstrings(i):
-            logging.info("MAP: Yield %s -> %s" % (j,i))
-            yield j,{i:1}
-'''
 # We know all dicts will be mapping from a string to either a dict or an int
 def update_dict(d,d2):
   if type(d2) == type(1):
@@ -123,10 +113,11 @@ class SuggestPipeline(base_handler.PipelineBase):
         "mapreduce.output_writers.BlobstoreOutputWriter",
         mapper_params={
             "entity_kind": 'models.StatsObject',
-            'namespace':''
+            'namespace':'',
+            #"enable_quota":"True",
         },
         reducer_params={
-            "mime_type": "text/plain",
+            "mime_type": "text/plain"
         },
         shards=8)
 
