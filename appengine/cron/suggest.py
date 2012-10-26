@@ -4,7 +4,7 @@ import re
 import urllib
 import webapp2
 import string
-import simplejson as json
+import json
 
 from google.appengine.ext import blobstore
 from google.appengine.ext import db
