@@ -85,6 +85,8 @@ handlers:
 - url: /.*
   script: main.app
 
+error_handlers:
+  - file: error.html
 
 libraries:
 - name: jinja2
