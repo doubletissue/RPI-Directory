@@ -11,6 +11,9 @@ inbound_services:
 - mail
 - xmpp_message
 
+error_handlers:
+  - file: error.html
+
 handlers:
 - url: /favicon.ico
   static_files: favicon.ico
@@ -84,9 +87,6 @@ handlers:
 
 - url: /.*
   script: main.app
-
-error_handlers:
-  - file: error.html
 
 libraries:
 - name: jinja2
