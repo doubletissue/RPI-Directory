@@ -27,7 +27,6 @@
 
 {% block extra_js %}
 <script type="text/javascript" src="/js/jquery.scrollTo.min.js"></script>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
 
       // Load the Visualization API and the piechart package.
@@ -63,7 +62,7 @@
         // Instantiate and draw our chart, passing in some options.
         var chart_{{loop.index}} = new google.visualization.ColumnChart(document.getElementById('chart_{{loop.index}}'));
         chart_{{loop.index}}.draw(data_{{loop.index}}, options_{{loop.index}});
-			{% endfor %}
+			{% endfor %}			
       }
     </script>
 <script type="text/javascript">

@@ -93,7 +93,7 @@ class Api(webapp2.RequestHandler):
     
     s = ''
     for c in search_query:
-      if c in string.letters or c in string.digits:
+      if c in string.letters or c in string.digits or c == ' ':
         s += c
     search_query = s
 
@@ -166,10 +166,8 @@ class Api(webapp2.RequestHandler):
 
     for result in results:
         rcsid = result.doc_id
-        logging.info(rcsid)
         r = Person.get_by_id(rcsid)
         if r:
-            logging.info('got person')
             per = Person.buildMap(r)
             per['name'] = per['name'].title()
             data.append(per)

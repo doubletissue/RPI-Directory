@@ -11,14 +11,13 @@
     <meta itemprop="name" content="RPI Directory">
     <meta itemprop="description" content="Need to find an RPI campus member?  Check out this awesome tool I found!">
 		
-		<title>{% block title %}RPI Directory{% endblock %}</title>
+		<title>RPI Directory</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href='http://fonts.googleapis.com/css?family=Puritan:700' rel='stylesheet' type='text/css'>
 		<link href='http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/css/jquery.dataTables.css' rel='stylesheet' type='text/css'>
 		<link href='/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
 		<link href='/css/bootstrap-responsive.min.css' rel='stylesheet' type='text/css'>
 		<link href='/css/main.css' rel='stylesheet' type='text/css'>
-	{% block add_head %}{% endblock %}
 	</head>
 	<body id="body" data-spy="scroll" data-target="#subnav-charts">
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -32,19 +31,13 @@
             <a class="brand" href="/">RPI Directory</a>
             <div class="nav-collapse">
               <ul class="nav">
-                <li{% if active == 'dashboard' %} class="active"{% endif %}{% if not user %} id="profile-link"{% endif %}>
+                <li>
                   <a href="/dashboard">My Profile</a>
                 </li>
                 <li class="divider-vertical"></li>
                 <li id="insights-nav">
                   <a href="/insights">Insights</a>
                 </li>
-                <!--
-                <li class="divider-vertical"></li>
-                <li>
-                  <a href="/explore">Explore</a>
-                </li>
-                -->
               </ul>
               <ul class="nav pull-right">
                 <li><a target="_blank"  href="http://itunes.apple.com/us/app/rpi-directory/id519895392?ls=1&mt=8">iPhone/iPad</a></li>
@@ -58,11 +51,18 @@
           </div>
         </div><!-- /navbar-inner -->
       </div>
-	  {% block content %}{% endblock %}
-	  {% block footer %}
-	  <script type="text/javascript" language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	  
+      <div id="container" class="container-fluid">
+        <div class="row-fluid">
+          <div class="span4 offset4">
+            <h1>We're sorry, the RPI Directory is down for matience.  Please check back again later.</h1>
+            <iframe width="420" height="315" src="http://www.youtube.com/embed/uAxG3lgRKUU" frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+
+    <script type="text/javascript" language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script type="text/javascript" src="/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/jquery.dataTables.min.js"></script>
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
@@ -81,8 +81,6 @@
          _gaq.push(['_trackEvent', 'Exceptions', 'Application', sFormattedMessage, null, true]);
       }
 		</script>
-	  {% endblock %}
 	  </div>
-	{% block extra_js %}{% endblock %}
 	</body>
 </html>

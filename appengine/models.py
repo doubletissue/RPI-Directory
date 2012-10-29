@@ -10,6 +10,7 @@ from datetime import datetime
 person_attributes = [
   'email',
   'first_name',
+  'prefered_name',
   'middle_name',
   'last_name',
   'department',
@@ -30,6 +31,7 @@ person_attributes = [
 map_attributes = [
   'email',
   'first_name',
+  'prefered_name',
   'middle_name',
   'last_name',
   'department',
@@ -62,6 +64,7 @@ def generateName(strings):
 class Person(ndb.Model):
   """Models a person in the RPI directory."""
   first_name = ndb.StringProperty(indexed=False)
+  prefered_name = ndb.StringProperty(indexed=False)
   middle_name = ndb.StringProperty(indexed=False)
   last_name = ndb.StringProperty(indexed=False)
   name = ndb.ComputedProperty(lambda self: generateName([self.first_name, self.middle_name, self.last_name]))
@@ -130,5 +133,9 @@ class SearchPosition(ndb.Model):
   position = ndb.IntegerProperty()
       
 class StatsObject(ndb.Model):
+    name = ndb.StringProperty(indexed=False)
+    json = ndb.JsonProperty(indexed=False)
+    
+class SuggestObject(ndb.Model):
     name = ndb.StringProperty(indexed=False)
     json = ndb.JsonProperty(indexed=False)
