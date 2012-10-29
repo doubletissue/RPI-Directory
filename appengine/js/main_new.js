@@ -205,6 +205,45 @@ $(document).ready(function() {
     });
     setTimeout(function(){$('#profile-link').popover('show');}, 250);
   }
+  
+  $('#keyword').typeahead({
+    items: 5,
+    updater: function(item){
+      $('#keyword').keyup();
+      return item;
+    },
+    source: function (query, process){
+      var last_word = query.split(' ').pop();
+      return $.getJSON(
+        '/suggest_api', 
+        {'q': last_word}, 
+        function (data){
+          
+          var data_unsorted = null;
+          $.each(data, function(word, results){
+            if (word == last_word){
+              data_unsorted = results;
+            }
+          });
+
+          var tuples = [];
+          for (var key in data_unsorted) tuples.push([key, data_unsorted[key]]);
+          tuples.sort(function(a, b) {
+            a = a[1];
+            b = b[1];
+            return a > b ? -1 : (a < b ? 1 : 0);
+          });
+          console.log(last_word, tuples);
+          var ordered_suggestions = [];
+          for (var i = 0; i < tuples.length; i++) {
+            var key = tuples[i][0];
+            ordered_suggestions.push(titleCaps(key));
+          }
+          return process(ordered_suggestions);
+        }
+      );
+    }}
+  );
 });
 
 // Load the Visualization API and the piechart package.
