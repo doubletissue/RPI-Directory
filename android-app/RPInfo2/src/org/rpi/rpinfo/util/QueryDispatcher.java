@@ -1,6 +1,6 @@
 package org.rpi.rpinfo.util;
 
-import org.rpi.rpinfo.SearchBarFragment;
+import org.rpi.rpinfo.SearchFragment;
 
 import android.os.AsyncTask;
 
@@ -8,7 +8,7 @@ import android.os.AsyncTask;
  * Handle when queries will be sent out.
  */
 public class QueryDispatcher implements Runnable {
-    private SearchBarFragment searchBarFragment;
+    private SearchFragment searchFragment;
     /**
      * The next ID to use.
      */
@@ -23,18 +23,18 @@ public class QueryDispatcher implements Runnable {
      */
     private boolean isUiUpdated = false;
 
-    public QueryDispatcher(SearchBarFragment searchBarFragment) {
-        this.searchBarFragment = searchBarFragment;
+    public QueryDispatcher(SearchFragment searchFragment) {
+        this.searchFragment = searchFragment;
     }
 
     @Override
     public void run() {
-        String current = searchBarFragment.getText();
+        String current = searchFragment.getText();
 
         // If the string is the same twice in a row, assume the user has stopped typing.
         if (prev.equals(current) && !current.equals("")) {
             if (!isUiUpdated) {
-                new UiUpdater(searchBarFragment, currentId).execute();
+                new UiUpdater(searchFragment, currentId).execute();
                 currentId += 1;
             }
             isUiUpdated = true;
@@ -45,11 +45,11 @@ public class QueryDispatcher implements Runnable {
     }
 
     private class UiUpdater extends AsyncTask<Void, Void, Void> {
-        private SearchBarFragment searchBarFragment;
+        private SearchFragment searchFragment;
         private int id;
 
-        UiUpdater(SearchBarFragment searchBarFragment, int id) {
-            this.searchBarFragment = searchBarFragment;
+        UiUpdater(SearchFragment searchFragment, int id) {
+            this.searchFragment = searchFragment;
             this.id = id;
         }
 
@@ -58,7 +58,7 @@ public class QueryDispatcher implements Runnable {
             super.onPreExecute();
             synchronized (QueryDispatcher.this.minId) {
                 if (id >= QueryDispatcher.this.minId) {
-                    searchBarFragment.doSearchCallback();
+                    searchFragment.doSearchCallback();
                     QueryDispatcher.this.minId = id;
                 }
             }
