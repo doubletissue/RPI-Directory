@@ -214,7 +214,7 @@ $(document).ready(function() {
   $('#keyword').typeahead({
     items: 5,
     updater: function(item){
-      $('#keyword').keyup();
+      //$('#keyword').keyup();
       return item;
     },
     source: function (query, process){
@@ -223,14 +223,13 @@ $(document).ready(function() {
         '/suggest_api', 
         {'q': last_word}, 
         function (data){
-          
           var data_unsorted = null;
           $.each(data, function(word, results){
-            if (word == last_word){
+            if (word.toLowerCase() == last_word.toLowerCase()){
               data_unsorted = results;
             }
           });
-
+          
           var tuples = [];
           for (var key in data_unsorted) tuples.push([key, data_unsorted[key]]);
           tuples.sort(function(a, b) {
@@ -238,7 +237,7 @@ $(document).ready(function() {
             b = b[1];
             return a > b ? -1 : (a < b ? 1 : 0);
           });
-          console.log(last_word, tuples);
+          //console.log(last_word, tuples);
           var ordered_suggestions = [];
           for (var i = 0; i < tuples.length; i++) {
             var key = tuples[i][0];
