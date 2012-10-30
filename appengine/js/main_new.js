@@ -203,7 +203,12 @@ $(document).ready(function() {
       title: 'Have you claimed your profile yet?',
       content: 'Make sure to <a href="/dashboard">claim</a> your profile!'
     });
-    setTimeout(function(){$('#profile-link').popover('show');}, 250);
+    setTimeout(function(){
+      $('#profile-link').popover('show');
+      setTimeout(function(){
+        $('#profile-link').popover('hide');
+      }, 2000);
+    }, 250);
   }
   
   $('#keyword').typeahead({
