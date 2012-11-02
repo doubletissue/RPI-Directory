@@ -73,6 +73,9 @@ handlers:
 - url: /insights.*
   script: insights.app
 
+- url: /explore.*
+  script: explore.app
+
 - url: /ahoy
   script: cron.stats.app
   login: admin
