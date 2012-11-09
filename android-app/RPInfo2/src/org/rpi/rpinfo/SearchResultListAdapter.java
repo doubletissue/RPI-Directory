@@ -8,10 +8,15 @@ import org.rpi.rpinfo.api.RpinfoApi;
 import org.rpi.rpinfo.util.StringManip;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class SearchResultListAdapter extends ArrayAdapter<PersonModel> {
@@ -78,18 +83,20 @@ public class SearchResultListAdapter extends ArrayAdapter<PersonModel> {
         // Fill the view with all of the data
         if (model != null) {
             TextView name = (TextView) newView.findViewById(R.id.query_result_name);
-            TextView email = (TextView) newView.findViewById(R.id.query_result_email);
+            // TextView email = (TextView) newView.findViewById(R.id.query_result_email);
             TextView year = (TextView) newView.findViewById(R.id.query_result_year);
             TextView major = (TextView) newView.findViewById(R.id.query_result_department);
+            LinearLayout photoContainer = (LinearLayout) newView
+                    .findViewById(R.id.query_person_photo_container);
 
             if (name != null) {
                 String nameData = (String) model.getElement("name", "N/A");
                 name.setText(nameData);
             }
-            if (email != null) {
-                String emailData = (String) model.getElement("email", "N/A");
-                email.setText(emailData);
-            }
+            /*
+             * if (email != null) { String emailData = (String) model.getElement("email", "N/A");
+             * email.setText(emailData); }
+             */
             if (year != null) {
                 String yearData = (String) model.getElement("year", null);
                 // If the person doesn't have a year, is probably faculty or staff and therefore has
@@ -108,9 +115,49 @@ public class SearchResultListAdapter extends ArrayAdapter<PersonModel> {
                 }
                 major.setText(StringManip.toTitleCase(majorData));
             }
+            if (photoContainer != null) {
+                loadImage(model, photoContainer);
+            }
         }
 
         return newView;
     }
 
+    /**
+     * Load an image associated with a RCSID into an asynctask. Do it in the background.
+     * 
+     * @param rcsId
+     *            The RCSID to load the image from.
+     * @param imageView
+     *            The view in which to load the image.
+     */
+    private void loadImage(final PersonModel personModel, final LinearLayout photoContainer) {
+        final ImageView imageView = (ImageView) photoContainer
+                .findViewById(R.id.query_person_photo);
+        final ProgressBar imageProgress = (ProgressBar) photoContainer
+                .findViewById(R.id.query_person_photo_progress);
+
+        new AsyncTask<Void, Void, Drawable>() {
+
+            protected void onPreExecute() {
+                imageView.setVisibility(View.GONE);
+                imageProgress.setVisibility(View.VISIBLE);
+            };
+
+            @Override
+            protected Drawable doInBackground(Void... params) {
+                return personModel.getImage();
+            }
+
+            protected void onPostExecute(Drawable result) {
+                if (result == null) {
+                    imageView.setImageResource(R.drawable.unknown_person);
+                } else {
+                    imageView.setImageDrawable(result);
+                }
+                imageView.setVisibility(View.VISIBLE);
+                imageProgress.setVisibility(View.GONE);
+            };
+        }.execute();
+    }
 }

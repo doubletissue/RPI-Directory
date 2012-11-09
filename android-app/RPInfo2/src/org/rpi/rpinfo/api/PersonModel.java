@@ -1,6 +1,10 @@
 package org.rpi.rpinfo.api;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -8,13 +12,17 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.graphics.drawable.Drawable;
+
 /**
  * A frontend for a JSONObject with data on a particular person
  */
 public class PersonModel implements Serializable {
     // A unique identifier for this class (for serialization)
     private static final long serialVersionUID = -579697907972516780L;
+    private static final String IMAGE_URL_BASE = "http://rpidirectory.appspot.com/picture/";
     private String data = null;
+    private transient Drawable image = null;
 
     /**
      * Constructor
@@ -102,6 +110,30 @@ public class PersonModel implements Serializable {
         HashMap<String, String> results = getMap(JSONData);
 
         return results;
+    }
+
+    /**
+     * @return The image associated with the person.
+     */
+    public Drawable getImage() {
+        if (image == null) {
+            // The person has no associated image
+            if (getElement("has_pic", "false").equals("false")) {
+                return null;
+            }
+            try {
+                URL url = new URL(IMAGE_URL_BASE + getElement("rcsid", "noRcsid"));
+                InputStream is = (InputStream) url.getContent();
+                image = Drawable.createFromStream(is, "src");
+            } catch (MalformedURLException e) {
+                // handle URL exception
+                image = null;
+            } catch (IOException e) {
+                // handle InputStream exception
+                image = null;
+            }
+        }
+        return image;
     }
 
 }

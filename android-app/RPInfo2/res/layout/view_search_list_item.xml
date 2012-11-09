@@ -1,24 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:layout_height="wrap_content"
-    android:orientation="vertical">
-    <TextView android:layout_width="fill_parent"
-        android:layout_height="fill_parent" android:id="@+id/query_result_name"
-        android:padding="0dp" android:textSize="20sp">
-    </TextView>
-    <LinearLayout android:layout_height="wrap_content"
-        android:layout_width="fill_parent" android:orientation="horizontal">
-        <TextView android:layout_width="fill_parent"
-            android:layout_height="wrap_content" android:id="@+id/query_result_email"
-            android:padding="2dp" android:textSize="14sp" android:layout_weight="0.9" android:text="Hello, email">
-        </TextView>
-        <TextView android:layout_width="fill_parent"
-            android:layout_height="wrap_content" android:id="@+id/query_result_year"
-            android:padding="2dp" android:textSize="14sp" android:layout_weight="1" android:text="Hello,year">
-        </TextView>
-        <TextView android:layout_width="fill_parent"
-            android:layout_height="wrap_content" android:id="@+id/query_result_department"
-            android:padding="2dp" android:textSize="14sp" android:layout_weight="1" android:text="Hello, department">
-        </TextView>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:id="@+id/query_person_photo_container"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:padding="2dp" >
+
+        <ImageView
+            android:id="@+id/query_person_photo"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/unknown_person"
+            android:visibility="gone" >
+        </ImageView>
+
+        <ProgressBar
+            android:id="@+id/query_person_photo_progress"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            style="@android:style/Widget.ProgressBar.Large"
+            android:padding="10dp">
+        </ProgressBar>
     </LinearLayout>
-</LinearLayout>
+
+    <TextView
+        android:id="@+id/query_result_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/query_person_photo_container"
+        android:padding="2dp"
+        android:singleLine="true"
+        android:textSize="20dp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/query_result_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/query_result_name"
+        android:layout_toLeftOf="@id/query_person_photo_container"
+        android:padding="2dp"
+        android:singleLine="true"
+        android:text="Hello, department"
+        android:textSize="14dp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/query_result_department"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/query_result_year"
+        android:layout_toLeftOf="@id/query_person_photo_container"
+        android:padding="2dp"
+        android:singleLine="true"
+        android:text="Hello, department"
+        android:textSize="14dp" >
+    </TextView>
+
+</RelativeLayout>

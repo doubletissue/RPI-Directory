@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import org.rpi.rpinfo.R;
 import org.rpi.rpinfo.api.PersonModel;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +17,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class DetailFragment extends Fragment {
@@ -55,6 +61,8 @@ public class DetailFragment extends Fragment {
         // Put the person's name in
         nameTextView.setText(selectedPerson.getElement("name", "N/A"));
 
+        addPersonImage(detailListView, selectedPerson);
+
         // Set up the list view
         detailListView.setAdapter(new DetailListAdapter(getActivity(),
                 R.layout.view_detail_list_item, models));
@@ -83,4 +91,39 @@ public class DetailFragment extends Fragment {
         return rootView;
     }
 
+    private void addPersonImage(final ListView listView, final PersonModel personModel) {
+        // Set up the bottom at the end of the list (must be done before setAdapter)
+        LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout linearLayout = (LinearLayout) layoutInflater.inflate(
+                R.layout.view_detail_list_image, null, false);
+        final ImageView imageView = (ImageView) linearLayout.findViewById(R.id.detail_person_photo);
+        final ProgressBar imageProgress = (ProgressBar) linearLayout
+                .findViewById(R.id.detail_person_photo_progress);
+
+        new AsyncTask<Void, Void, Drawable>() {
+
+            protected void onPreExecute() {
+                imageView.setVisibility(View.GONE);
+                imageProgress.setVisibility(View.VISIBLE);
+            };
+
+            @Override
+            protected Drawable doInBackground(Void... params) {
+                return personModel.getImage();
+            }
+
+            protected void onPostExecute(Drawable result) {
+                if (result == null) {
+                    imageView.setImageResource(R.drawable.unknown_person);
+                } else {
+                    imageView.setImageDrawable(result);
+                }
+                imageView.setVisibility(View.VISIBLE);
+                imageProgress.setVisibility(View.GONE);
+            };
+        }.execute();
+
+        listView.addHeaderView(linearLayout, null, false);
+    }
 }

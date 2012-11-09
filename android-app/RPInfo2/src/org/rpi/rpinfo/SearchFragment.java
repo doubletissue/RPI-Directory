@@ -19,7 +19,7 @@ public class SearchFragment extends Fragment {
     /**
      * Number of milliseconds between subsequent checks of searchBar
      */
-    private static final long INPUT_POLLING_DELAY = 300;
+    private static final long INPUT_POLLING_DELAY = 500;
     private static final String TAG = "SearchFragment";
 
     private long queryCounter = 0;
