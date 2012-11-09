@@ -1,0 +1,91 @@
+{% extends "html/base.html" %}
+
+{% block add_head %}
+<style type="text/css">
+li {
+  line-height: normal;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="container" class="container-fluid">
+  <div class="row-fluid">
+    <div class="span12">
+      <h2 style="text-align: center">Type a name, major, department</h2><br>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div id="inputBox">
+  	    <input type="search" name="keyword" id="keyword" x-webkit-speech x-webkit-grammar="builtin:search" onwebkitspeechchange="$('#keyword').keyup()"/>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <h2 style="text-align: center; a color: #777" id="text-suggest"></h2><br>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span6">
+      <h3 id="results"></h3>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+function callServer(bucket){
+  var cat = null;
+  var keyword = $('#keyword').val().toLowerCase();
+  switch(bucket){
+    case 1:
+      cat = 'first_name';
+      break;
+    case 2:
+      cat = 'last_name';
+      break;
+    case 3:
+      cat = 'department';
+      break;
+    default:
+      cat = 'first_name';
+  }
+
+  $.getJSON('/stats_api', {'q': keyword}, function(data) {
+    var results = data[keyword][cat];
+    var items = [];
+    if (results === undefined){
+      $('#results').text('No Results Found!');
+    }else{
+      console.log(results);
+      $.each(results, function(key, val) {
+        if (key == cat) return;
+        items.push('Breakdown by <b>' + key.replace('_', ' ') + '</b>:<ul>');
+        $.each(val, function(key2, val2) {
+          items.push('<li>' + key2 + ': ' + val2 + '</li>');
+        });
+        items.push('</ul></li>');
+      });
+      $('#results').html(items.join(''));
+    }
+  });
+}
+
+$(document).ready(function() {
+  $('#keyword').keyup(function(e){
+    var keyword = $('#keyword').val();  
+    if (!keyword || keyword.length == 0){
+      $('#text-suggest').hide();
+      return;
+    }
+    $('#text-suggest').show();
+    var text = ' used as a <a onclick="callServer(1);">{first name}</a>, <a onclick="callServer(2);">{last name}</a>, <a onclick="callServer(3);">{department}</a>?'
+    $('#text-suggest').html(keyword + text);
+  });
+  $("#keyword").focus();
+});
+</script>
+{% endblock %}

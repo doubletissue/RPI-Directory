@@ -201,10 +201,48 @@ $(document).ready(function() {
       placement: 'bottom',
       trigger: 'hover',
       title: 'Have you claimed your profile yet?',
-      content: 'Make sure to <a href="/dashboard">claim</a> your profile!'
+      template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content" style="display: none"><p></p></div></div></div>'
     });
-    setTimeout(function(){$('#profile-link').popover('show');}, 250);
+    $('#profile-link').popover('show');
   }
+  
+  $('#keyword').typeahead({
+    items: 5,
+    updater: function(item){
+      //$('#keyword').keyup();
+      return item;
+    },
+    source: function (query, process){
+      var last_word = query.split(' ').pop();
+      return $.getJSON(
+        '/suggest_api', 
+        {'q': last_word}, 
+        function (data){
+          var data_unsorted = null;
+          $.each(data, function(word, results){
+            if (word.toLowerCase() == last_word.toLowerCase()){
+              data_unsorted = results;
+            }
+          });
+          
+          var tuples = [];
+          for (var key in data_unsorted) tuples.push([key, data_unsorted[key]]);
+          tuples.sort(function(a, b) {
+            a = a[1];
+            b = b[1];
+            return a > b ? -1 : (a < b ? 1 : 0);
+          });
+          //console.log(last_word, tuples);
+          var ordered_suggestions = [];
+          for (var i = 0; i < tuples.length; i++) {
+            var key = tuples[i][0];
+            ordered_suggestions.push(titleCaps(key));
+          }
+          return process(ordered_suggestions);
+        }
+      );
+    }}
+  );
 });
 
 // Load the Visualization API and the piechart package.

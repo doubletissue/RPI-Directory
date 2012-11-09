@@ -50,7 +50,8 @@ map_attributes = [
   'mailing_address_html',
   'email_html',
   'name',
-  'type'
+  'type',
+  'has_pic'
 ]
 
 def generateName(strings):
@@ -87,6 +88,7 @@ class Person(ndb.Model):
   linked_account = ndb.UserProperty()
   email_html = ndb.ComputedProperty(lambda self: self.email.replace('@', ' [at] ').replace('.', ' [dot] ') if self.email else None)
   type = ndb.ComputedProperty(lambda self: 'student' if self.major else ('faculty' if self.department else 'other'))
+  has_pic = ndb.ComputedProperty(lambda self: 'true' if self.picture else 'false')
   
   def update(self, d):
     for attr in person_attributes:
