@@ -4,5 +4,8 @@
     <string name="menu_settings">Settings</string>
     <string name="title">RPI Directory</string>
     <string name="search_term_hint">Start Typing!</string>
+    <string name="menu_item_email">Send Email</string>
+    <string name="menu_item_call">Call</string>
+    <string name="menu_item_invite">Add Contact</string>
 
 </resources>
