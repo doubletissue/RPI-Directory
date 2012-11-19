@@ -124,6 +124,7 @@ if (tests.dnd) {
 $(document).ready(function() {
 {% if not person.linked_account and not enabled_user %}
    $('#userStats').popover({
+     html: true,
      trigger: 'manual',
      title: 'Is this you?',
      content: '<a href="/dashboard?rcsid_claim={{person.rcsid}}">Claim this profile</a>'

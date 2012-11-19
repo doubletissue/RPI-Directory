@@ -198,6 +198,7 @@ $(document).ready(function() {
 
   if (document.getElementById('profile-link') != null){
     $('#profile-link').popover({
+      html: true,
       placement: 'bottom',
       trigger: 'hover',
       title: 'Have you claimed your profile yet?',
