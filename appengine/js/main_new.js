@@ -201,9 +201,14 @@ $(document).ready(function() {
       placement: 'bottom',
       trigger: 'hover',
       title: 'Have you claimed your profile yet?',
-      template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content" style="display: none"><p></p></div></div></div>'
+      content: 'Make sure to <a href="/dashboard">claim</a> your profile!'
     });
-    $('#profile-link').popover('show');
+    setTimeout(function(){
+      $('#profile-link').popover('show');
+      setTimeout(function(){
+        $('#profile-link').popover('hide');
+      }, 2000);
+    }, 250);
   }
   
   $('#keyword').typeahead({
