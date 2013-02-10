@@ -13,7 +13,7 @@ class MainPage(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
     template_values = {'user': user}
-    template = jinja_environment.get_template('html/index_new.html')
+    template = jinja_environment.get_template('html/index.html')
     self.response.out.write(template.render(template_values))
 
 
