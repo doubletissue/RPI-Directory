@@ -15,6 +15,10 @@
 					<h1>
 						{{person.name.title()}} {% if user and user == person.linked_account %} (You){% endif %}
 					</h1>
+          <audio controls>
+            <source src="http://translate.google.com/translate_tts?tl=en&q={{person.name.replace(' ', '+').replace('.','')}}" type="audio/mpeg">
+          Your browser does not support the audio element.
+          </audio>
 					{% if person.year or person.title %}
 					<h3>{{ person.year.title() if person.year else person.title.title() }}</h3>
 					{% endif %}
