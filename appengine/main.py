@@ -13,7 +13,9 @@ class MainPage(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
     template_values = {'user': user}
-    template = jinja_environment.get_template('html/index.html')
+    #Site is under maintaince
+    #template = jinja_environment.get_template('html/index.html')
+    template = jinja_environment.get_template('html/maintenance.html')
     self.response.out.write(template.render(template_values))
 
 
