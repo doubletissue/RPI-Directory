@@ -50,11 +50,11 @@ def makeFullIndex(field_name,s):
   r = []
   
   s = s.split(' ')
-  for w in s:
+  for p,w in enumerate(s):
       for i in range(len(w)):
           for j in range(i + 1, len(w) + 1):
-              r.append(search.TextField(name=field_name + str(i) + 'to' + str(j), value=str(w[i:j])))
-          
+              r.append(search.TextField(name=field_name + '_' + str(p) + '_' + str(i) + 'to' + str(j), value=str(w[i:j])))
+  r.append(search.TextField(name=field_name, value=str(s)))
   return r
     
 searchableAttributes = [
@@ -100,12 +100,12 @@ def putResult(d):
     logging.info("Updating %s", key)
     prev_person.update(d)
     prev_person.put()
-    search.Index(name=_INDEX_NAME).add(createDocument(prev_person))
+    search.Index(name=_INDEX_NAME).put(createDocument(prev_person))
   else:
     logging.info("New %s", key)
     person = Person.buildPerson(d)
     person.put()
-    search.Index(name=_INDEX_NAME).add(createDocument(person))
+    search.Index(name=_INDEX_NAME).put(createDocument(person))
 
 
 def crawlPerson(index):
