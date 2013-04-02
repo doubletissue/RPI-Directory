@@ -19,7 +19,7 @@ NUM_THREADS = 500
 
 import string
 
-_INDEX_NAME = 'person'
+_INDEX_NAME = 'person-db'
 
 def split_words(field_name, s):
     if not s:
@@ -100,12 +100,12 @@ def putResult(d):
     logging.info("Updating %s", key)
     prev_person.update(d)
     prev_person.put()
-    search.Index(name=_INDEX_NAME).add(createDocument(prev_person))
+    search.Index(name=_INDEX_NAME).put(createDocument(prev_person))
   else:
     logging.info("New %s", key)
     person = Person.buildPerson(d)
     person.put()
-    search.Index(name=_INDEX_NAME).add(createDocument(person))
+    search.Index(name=_INDEX_NAME).put(createDocument(person))
 
 
 def crawlPerson(index):

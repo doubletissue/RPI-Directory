@@ -11,8 +11,7 @@ import string
 
 from google.appengine.api import search
 
-_INSTANCE_NAME = 'christianjohnson.org:rpidirectory:christianjohnson'
-_INDEX_NAME = 'person'
+_INDEX_NAME = 'person-db'
 _PAGE_SIZE = 20
 
 row_attributes = (['first_name',
@@ -111,36 +110,6 @@ class Api(webapp2.RequestHandler):
 
     if page_size > _PAGE_SIZE or page_size < 1:
       page_size = _PAGE_SIZE
-
-    # Flood Prevention
-    ip = str(self.request.remote_addr)
-    ipCount = memcache.get(ip)
-    if ipCount is not None:
-      if ipCount > 1000:
-        d = {}
-        d['data'] = 'Quota Exceeded'
-        d['token'] = token
-        d['q'] = search_query
-        s = json.dumps(d)
-        self.response.out.write(s)
-
-        ban_time = 600 + 60 * 2 ** ((ipCount - 1000))
-        if ban_time > 7 * 24 * 60 * 60:
-          ban_time = 7 * 24 * 60 * 60
-        logging.info('Quota exceeded for ' + ip + ', count at ' + str(ipCount) + ', banned for ' + str(ban_time))
-        memcache.replace(ip, ipCount + 1, time=ban_time)
-
-        if (ipCount - 1001) % 100 == 0:
-          message = mail.EmailMessage(sender="IP Banning <ip-logger@rpidirectory.appspotmail.com>",
-                                      subject="RPIDirectory IP " + ip + " Banned")
-          message.to = "rpi-directory-ip@googlegroups.com"
-          message.body = "IP: " + ip + "\nban time: " + str(ban_time) + "\nQuery: " + search_query + "\nHit Count: " + str(ipCount)
-          message.send()
-          logging.info("EMail sent about ip: " + ip)
-        return
-      memcache.replace(ip, ipCount + 1, time=600)
-    else:
-      memcache.add(ip, 1, time=600)
 
     queries = map(str, search_query.split())
     queries = sorted(queries)
