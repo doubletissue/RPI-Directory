@@ -50,11 +50,11 @@ def makeFullIndex(field_name,s):
   r = []
   
   s = s.split(' ')
-  for w in s:
+  for p,w in enumerate(s):
       for i in range(len(w)):
           for j in range(i + 1, len(w) + 1):
-              r.append(search.TextField(name=field_name + str(i) + 'to' + str(j), value=str(w[i:j])))
-          
+              r.append(search.TextField(name=field_name + '_' + str(p) + '_' + str(i) + 'to' + str(j), value=str(w[i:j])))
+  r.append(search.TextField(name=field_name, value=str(s)))
   return r
     
 searchableAttributes = [
