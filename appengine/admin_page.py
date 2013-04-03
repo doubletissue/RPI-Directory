@@ -1,7 +1,7 @@
 from google.appengine.api import memcache
 from models import Person
 from models import SearchPosition
-from django.utils import simplejson as json
+import json
 import urllib
 import jinja2
 import os
@@ -25,8 +25,6 @@ class AdminPage(webapp2.RequestHandler):
     if reset_pos:
       memcache.set("index", 1, 86400)
       SearchPosition(key_name="index", position=1).put()
-
-
 
     if get_stats:
       d = memcache.get_stats()

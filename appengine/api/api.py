@@ -11,7 +11,7 @@ import string
 
 from google.appengine.api import search
 
-_INDEX_NAME = 'person-db'
+_INDEX_NAME = 'person-db2'
 _PAGE_SIZE = 20
 
 row_attributes = (['first_name',

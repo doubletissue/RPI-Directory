@@ -19,7 +19,7 @@ NUM_THREADS = 500
 
 import string
 
-_INDEX_NAME = 'person-db'
+_INDEX_NAME = 'person-db2'
 
 def split_words(field_name, s):
     if not s:
@@ -39,7 +39,7 @@ def split_words(field_name, s):
         r.append(search.TextField(name=field_name + str(i), value=l[i]))
     return r
     
-def makeFullIndex(field_name,s):
+def makeFullIndex(field_name, s):
   if not s:
     return []
   
@@ -50,10 +50,11 @@ def makeFullIndex(field_name,s):
   r = []
   
   s = s.split(' ')
-  for p,w in enumerate(s):
+  for p, w in enumerate(s):
       for i in range(len(w)):
-          for j in range(i + 1, len(w) + 1):
-              r.append(search.TextField(name=field_name + '_' + str(p) + '_' + str(i) + 'to' + str(j), value=str(w[i:j])))
+          r.append(search.TextField(name=field_name + '_' + str(p) + '_' + str(i), value=str(w[:i])))
+          #for j in range(i + 1, len(w) + 1):
+          #    r.append(search.TextField(name=field_name + '_' + str(p) + '_' + str(i) + 'to' + str(j), value=str(w[i:j])))
   r.append(search.TextField(name=field_name, value=str(s)))
   return r
     
@@ -84,10 +85,11 @@ def createDocument(person):
     fields = []
     
     for attr in fullSearchAttributes:
-      fields.extend(makeFullIndex(attr, getattr(person,attr,'')))
+      fields.extend(makeFullIndex(attr, getattr(person, attr, '')))
                 
     for attr in searchableAttributes:
-      fields.extend(split_words(attr, getattr(person,attr,'')))
+      fields.extend(split_words(attr, getattr(person, attr, '')))
+
     logging.info("Len of fields: %s" % len(fields))
     return search.Document(doc_id=person.rcsid, fields=fields)
 
