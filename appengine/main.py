@@ -14,11 +14,12 @@ jinja_environment = jinja2.Environment(
 class MainPage(webapp2.RequestHandler):
   def get(self):
     user = users.get_current_user()
-    per_c = int(SearchPosition.get_by_id("index").position) / 150
-    template_values = {'user': user, 'per_c' : per_c}
-    #Site is under maintaince
-    #template = jinja_environment.get_template('html/index.html')
-    template = jinja_environment.get_template('html/maintenance.html')
+    template_values = {'user': user}
+    
+    #If site is under maintaince
+    #template = jinja_environment.get_template('html/maintenance.html')
+    
+    template = jinja_environment.get_template('html/index.html')
     self.response.out.write(template.render(template_values))
 
 

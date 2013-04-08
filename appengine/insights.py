@@ -17,13 +17,6 @@ CHOP = 30
 
 class Stats(webapp2.RequestHandler):
   def get(self):
-    
-    #Site is under maintaince
-    #template = jinja_environment.get_template('html/index.html')
-    template = jinja_environment.get_template('html/maintenance.html')
-    self.response.out.write(template.render({}))
-    exit(0)
-    
     #num_people = Person.query().count(limit=15000)
     #num_stats = StatsObject.query().count()
     
