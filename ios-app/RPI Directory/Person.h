@@ -10,8 +10,8 @@
 
 @interface Person : NSObject
 
-@property (strong, nonatomic) NSString *name;
 @property (strong, nonatomic) NSDictionary *details;
+@property (readonly, nonatomic) NSString *name;
 @property (readonly, nonatomic) NSString *rcsid;
 
 @end

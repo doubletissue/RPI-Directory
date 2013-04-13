@@ -10,8 +10,23 @@
 
 @implementation Person
 
-@synthesize name;
-@synthesize details;
+- (NSDictionary *)details
+{
+    // Remove some fields from the details dictionary that aren't
+    // necessary to display.
+    NSMutableDictionary *editDict = [_details mutableCopy];
+    NSArray *keysToRemove = @[ @"name", @"first_name", @"middle_name", @"last_name",
+                               @"email_html", @"has_pic" ];
+    
+    [editDict removeObjectsForKeys:keysToRemove];
+    
+    return [NSDictionary dictionaryWithDictionary:editDict];
+}
+
+- (NSString *)name
+{
+    return [_details objectForKey:@"name"];
+}
 
 - (NSString *)rcsid
 {

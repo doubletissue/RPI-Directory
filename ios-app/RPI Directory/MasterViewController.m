@@ -124,17 +124,8 @@ const NSTimeInterval SEARCH_INTERVAL = 0.5f;
                 NSMutableArray *people = [NSMutableArray array];
                 
                 for (NSDictionary *personDict in [results objectForKey:@"data"]) {
-                    NSMutableDictionary *editDict;
                     Person *person = [[Person alloc] init];
-                    person.name = [personDict objectForKey:@"name"];
-                    
-                    //  Remove the 'name' field from the details dictionary
-                    //  as it is redundant.
-                    editDict = [personDict mutableCopy];
-                    if ([editDict objectForKey:@"name"] != nil) {
-                        [editDict removeObjectForKey:@"name"];
-                    }
-                    person.details = editDict;
+                    person.details = personDict;
                     
                     [people addObject:person];
                 }
