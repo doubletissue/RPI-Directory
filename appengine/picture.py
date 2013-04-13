@@ -21,18 +21,24 @@ class UploadProfilePic(webapp2.RequestHandler):
       else:
         person = Person.query(Person.linked_account == user).get()
       if person:
-        person.picture = images.resize(self.request.get('file'), 
-                                       width=150, height=150,
-                                       correct_orientation=True)
+        person.picture = images.resize(self.request.get('file'), width=200, height=200,
+                                       correct_orientation=True)                 
         person.put()
-        logging.debug('Uploaded Picture: ' + person.rcsid)
+        logging.info('Uploaded Picture: ' + person.rcsid)
         return
+    else:
+      logging.info('Not Logged in to Modify Image')
     
 class Image(webapp2.RequestHandler):
   def get(self, rcsid):
     person = Person.get_by_id(rcsid)
     if person and person.picture:
       self.response.headers['Content-Type'] = 'image/png'
+      im = images.Image(person.picture)
+      if im.width < 200 and im.height < 200:
+        im.resize(200, 200)
+        person.picture = im.execute_transforms()
+        person.put()
       self.response.out.write(person.picture)
     else:
       self.response.headers['Content-Type'] = 'image/png'
