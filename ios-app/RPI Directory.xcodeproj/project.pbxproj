@@ -29,6 +29,8 @@
 		5C7E82271719D2C800FEEE75 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C7E82201719D2C800FEEE75 /* Icon-Small@2x.png */; };
 		5C7E82281719D2C800FEEE75 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 5C7E82211719D2C800FEEE75 /* iTunesArtwork */; };
 		5C7E82291719D2C800FEEE75 /* photo_placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C7E82231719D2C800FEEE75 /* photo_placeholder.png */; };
+		5C7E822E1719D6E300FEEE75 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C7E822D1719D6E300FEEE75 /* SDWebImage.framework */; };
+		5C7E82301719D6FF00FEEE75 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C7E822F1719D6FF00FEEE75 /* ImageIO.framework */; };
 		5C9386B7153BA81400858CC1 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9386B6153BA81400858CC1 /* Default.png */; };
 		5C9386BA153BA82800858CC1 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9386B9153BA82800858CC1 /* Default@2x.png */; };
 		5C9386BC153BA84200858CC1 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9386BB153BA84200858CC1 /* Default-Portrait~ipad.png */; };
@@ -67,6 +69,8 @@
 		5C7E82201719D2C800FEEE75 /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small@2x.png"; sourceTree = "<group>"; };
 		5C7E82211719D2C800FEEE75 /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		5C7E82231719D2C800FEEE75 /* photo_placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photo_placeholder.png; sourceTree = "<group>"; };
+		5C7E822D1719D6E300FEEE75 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDWebImage.framework; sourceTree = "<group>"; };
+		5C7E822F1719D6FF00FEEE75 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		5C9386B6153BA81400858CC1 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		5C9386B9153BA82800858CC1 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		5C9386BB153BA84200858CC1 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = "<group>"; };
@@ -83,6 +87,8 @@
 				5C0D7E281538A027003B36B6 /* UIKit.framework in Frameworks */,
 				5C0D7E2A1538A027003B36B6 /* Foundation.framework in Frameworks */,
 				5C0D7E2C1538A027003B36B6 /* CoreGraphics.framework in Frameworks */,
+				5C7E82301719D6FF00FEEE75 /* ImageIO.framework in Frameworks */,
+				5C7E822E1719D6E300FEEE75 /* SDWebImage.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,8 +129,11 @@
 				5C0D7E271538A027003B36B6 /* UIKit.framework */,
 				5C0D7E291538A027003B36B6 /* Foundation.framework */,
 				5C0D7E2B1538A027003B36B6 /* CoreGraphics.framework */,
+				5C7E822F1719D6FF00FEEE75 /* ImageIO.framework */,
+				5C7E822D1719D6E300FEEE75 /* SDWebImage.framework */,
 			);
 			name = Frameworks;
+			path = "RPI Directory/Frameworks";
 			sourceTree = "<group>";
 		};
 		5C0D7E2D1538A027003B36B6 /* RPI Directory */ = {
@@ -363,10 +372,15 @@
 		5C0D7E481538A028003B36B6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/RPI Directory/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RPI Directory/RPI Directory-Prefix.pch";
 				INFOPLIST_FILE = "RPI Directory/RPI Directory-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -375,10 +389,15 @@
 		5C0D7E491538A028003B36B6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/RPI Directory/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RPI Directory/RPI Directory-Prefix.pch";
 				INFOPLIST_FILE = "RPI Directory/RPI Directory-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
