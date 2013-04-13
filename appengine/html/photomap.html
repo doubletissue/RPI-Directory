@@ -7,7 +7,7 @@
       {% for person in people %}
       <li class="span3">
         <a class="thumbnail" href="/detail/{{person.rcsid}}" style="min-height: 300px; text-align: center">
-          <img src="/picture/{{person.rcsid}}" alt="{{person.rcsid}}">
+          <img src="/picture/{{person.rcsid}}" alt="{{person.rcsid}}" style="-moz-box-shadow: 3px 3px 4px #999; -webkit-box-shadow: 3px 3px 4px #999;">
           <h3>{{person.name.title()}}</h3>
   				{% if person.year or person.title %}
   				<h4>{{ person.year.title() if person.year else person.title.title() }}</h4>
