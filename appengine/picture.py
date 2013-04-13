@@ -34,11 +34,6 @@ class Image(webapp2.RequestHandler):
     person = Person.get_by_id(rcsid)
     if person and person.picture:
       self.response.headers['Content-Type'] = 'image/png'
-      im = images.Image(person.picture)
-      if im.width < 200 and im.height < 200:
-        im.resize(200, 200)
-        person.picture = im.execute_transforms()
-        person.put()
       self.response.out.write(person.picture)
     else:
       self.response.headers['Content-Type'] = 'image/png'
