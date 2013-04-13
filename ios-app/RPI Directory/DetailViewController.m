@@ -9,6 +9,7 @@
 #import "DetailViewController.h"
 #import "Constants.h"
 #import "Person.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @interface DetailViewController ()
 
@@ -36,7 +37,7 @@
 
     if (self.masterPopoverController != nil) {
         [self.masterPopoverController dismissPopoverAnimated:YES];
-    }        
+    }
 }
 
 - (void)configureView
@@ -45,6 +46,14 @@
 
     if (self.person) {
         [self.tableView reloadData];
+    
+        UIView *view = self.headerView;
+        UIImageView *imageView = (UIImageView *)[view viewWithTag:1];
+        UILabel *label = (UILabel *)[view viewWithTag:2];
+        
+        [imageView setImageWithURL:[NSURL URLWithString:[PHOTO_URL stringByAppendingString:self.person.rcsid]]
+                  placeholderImage:[UIImage imageNamed:@"placeholder_photo"]];
+        label.text = self.person.name;
     }
 }
 
@@ -57,6 +66,7 @@
 
 - (void)viewDidUnload
 {
+    [self setHeaderView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     self.person = nil;
@@ -142,15 +152,6 @@
     }
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    if (self.person) {
-        return person.name;
-    } else {
-        return @"Details for selection will appear here.";
-    }
-}
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"DetailCell"];
@@ -178,6 +179,21 @@
 {
     // Return NO if you do not want the specified item to be editable.
     return NO;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = self.headerView;
+    UIImageView *imageView = (UIImageView *)[view viewWithTag:1];
+    UILabel *label = (UILabel *)[view viewWithTag:2];
+    
+    if (self.person) {
+        [imageView setImageWithURL:[NSURL URLWithString:[PHOTO_URL stringByAppendingString:self.person.rcsid]]
+                  placeholderImage:[UIImage imageNamed:@"placeholder_photo"]];
+        label.text = self.person.name;
+    }
+    
+    return view;
 }
 
 #pragma mark - Split view

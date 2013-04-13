@@ -13,6 +13,7 @@
 @interface DetailViewController : UITableViewController <UISplitViewControllerDelegate>
 
 @property (strong, nonatomic) Person *person;
+@property (weak, nonatomic) IBOutlet UIView *headerView;
 
 
 @end
