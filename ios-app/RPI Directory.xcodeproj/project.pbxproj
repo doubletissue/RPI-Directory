@@ -63,6 +63,7 @@
 		5C0D7E971538C4A3003B36B6 /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
 		5C0D7E981538C4A3003B36B6 /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
 		5C1D66B2170A622C00CA465C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		5C4951C61719FB2C0045E0C6 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		5C7E821D1719D2C800FEEE75 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
 		5C7E821E1719D2C800FEEE75 /* Icon-Small-50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50@2x.png"; sourceTree = "<group>"; };
 		5C7E821F1719D2C800FEEE75 /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
@@ -141,6 +142,7 @@
 			children = (
 				5C0D7E361538A028003B36B6 /* AppDelegate.h */,
 				5C0D7E371538A028003B36B6 /* AppDelegate.m */,
+				5C4951C61719FB2C0045E0C6 /* Constants.h */,
 				5C0D7E391538A028003B36B6 /* MainStoryboard_iPhone.storyboard */,
 				5C0D7E3C1538A028003B36B6 /* MainStoryboard_iPad.storyboard */,
 				5C0D7E971538C4A3003B36B6 /* Person.h */,

@@ -7,6 +7,7 @@
 //
 
 #import "DetailViewController.h"
+#import "Constants.h"
 #import "Person.h"
 
 @interface DetailViewController ()

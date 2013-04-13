@@ -10,12 +10,12 @@
 
 #import "DetailViewController.h"
 
+#import "Constants.h"
 #import "Person.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
 //  Base search URL
 NSString * const SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
-NSString * const PHOTO_URL = @"http://rpidirectory.appspot.com/picture/";
 
 //  0.5 seconds
 const NSTimeInterval SEARCH_INTERVAL = 0.5f;
