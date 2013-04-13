@@ -15,8 +15,11 @@
     // Remove some fields from the details dictionary that aren't
     // necessary to display.
     NSMutableDictionary *editDict = [_details mutableCopy];
-    NSArray *keysToRemove = @[ @"name", @"first_name", @"middle_name", @"last_name",
-                               @"email_html", @"has_pic" ];
+    NSArray *keysToRemove = @[ @"name", @"first_name", @"middle_name", @"last_name", @"has_pic" ];
+    
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF CONTAINS %@", @"html"];
+    NSArray *keysContainingHtml = [[editDict allKeys] filteredArrayUsingPredicate:pred];
+    keysToRemove = [keysToRemove arrayByAddingObjectsFromArray:keysContainingHtml];
     
     [editDict removeObjectsForKeys:keysToRemove];
     
