@@ -12,5 +12,6 @@
 
 @property (strong, nonatomic) NSString *name;
 @property (strong, nonatomic) NSDictionary *details;
+@property (readonly, nonatomic) NSString *rcsid;
 
 @end

@@ -13,4 +13,15 @@
 @synthesize name;
 @synthesize details;
 
+- (NSString *)rcsid
+{
+    NSString *rcsid = nil;
+    
+    if (self.details) {
+        rcsid = [self.details objectForKey:@"rcsid"];
+    }
+    
+    return rcsid;
+}
+
 @end
