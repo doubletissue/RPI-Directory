@@ -11,6 +11,8 @@
 #import "Person.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
+const CGFloat kNameLabelHorizontalOffset = 68.0f;
+
 @interface DetailViewController ()
 
 - (void)configureView;
@@ -43,17 +45,26 @@
 - (void)configureView
 {
     // Update the user interface for the person.
+    UIView *view = self.headerView;
+    UIImageView *imageView = (UIImageView *)[view viewWithTag:1];
+    UILabel *label = (UILabel *)[view viewWithTag:2];
 
     if (self.person) {
         [self.tableView reloadData];
-    
-        UIView *view = self.headerView;
-        UIImageView *imageView = (UIImageView *)[view viewWithTag:1];
-        UILabel *label = (UILabel *)[view viewWithTag:2];
+        
+        if (imageView.hidden) {
+            label.frame = CGRectOffset(label.frame, kNameLabelHorizontalOffset, 0);
+            imageView.hidden = NO;
+        }
         
         [imageView setImageWithURL:[NSURL URLWithString:[PHOTO_URL stringByAppendingString:self.person.rcsid]]
                   placeholderImage:[UIImage imageNamed:@"placeholder_photo"]];
         label.text = self.person.name;
+    } else {
+        if (!imageView.hidden) {
+            imageView.hidden = YES;
+            label.frame = CGRectOffset(label.frame, -kNameLabelHorizontalOffset, 0);
+        }
     }
 }
 
