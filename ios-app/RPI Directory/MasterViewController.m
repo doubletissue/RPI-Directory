@@ -11,9 +11,11 @@
 #import "DetailViewController.h"
 
 #import "Person.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 //  Base search URL
 NSString * const SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
+NSString * const PHOTO_URL = @"http://rpidirectory.appspot.com/picture/";
 
 //  0.5 seconds
 const NSTimeInterval SEARCH_INTERVAL = 0.5f;
@@ -200,6 +202,8 @@ const NSTimeInterval SEARCH_INTERVAL = 0.5f;
     
     Person *person = [m_people objectAtIndex:indexPath.row];
     cell.textLabel.text = [person name];
+    [cell.imageView setImageWithURL:[NSURL URLWithString:[PHOTO_URL stringByAppendingString:person.rcsid]]
+                   placeholderImage:[UIImage imageNamed:@"photo_placeholder"]];
     
     NSString *subtitle = [[person details] objectForKey:@"year"];
     if (subtitle == nil) {
