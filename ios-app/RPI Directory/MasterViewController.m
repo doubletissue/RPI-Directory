@@ -13,7 +13,8 @@
 #import "Person.h"
 
 //  Base search URL
-const NSString *SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
+NSString * const SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
+
 //  0.5 seconds
 const NSTimeInterval SEARCH_INTERVAL = 0.5f;
 
