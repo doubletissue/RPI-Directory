@@ -32,7 +32,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="703" height="80"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" image="photo_placeholder.png" id="EpQ-w4-knB">
+                                <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleAspectFit" image="photo_placeholder.png" id="EpQ-w4-knB">
                                     <rect key="frame" x="51" y="10" width="60" height="60"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </imageView>
@@ -142,7 +142,7 @@
                                             <color key="textColor" red="0.50196078431372548" green="0.50196078431372548" blue="0.50196078431372548" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         </label>
-                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="photo_placeholder.png" id="pnO-rB-Soi">
+                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="photo_placeholder.png" id="pnO-rB-Soi">
                                             <rect key="frame" x="0.0" y="0.0" width="43" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </imageView>
