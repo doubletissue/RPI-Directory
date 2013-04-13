@@ -75,6 +75,9 @@ handlers:
 
 - url: /explore.*
   script: explore.app
+  
+- url: /photomap.*
+  script: photomap.app
 
 - url: /ahoy
   script: cron.stats.app

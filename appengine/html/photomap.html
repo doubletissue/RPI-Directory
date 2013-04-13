@@ -1,0 +1,25 @@
+{% extends "html/base.html" %}
+
+{% block content %}
+<div id="container" class="container-fluid" style="padding-left: 40px">
+  <ul class="thumbnails">
+    <div class="row-fluid">
+      {% for person in people %}
+      <li class="span3">
+        <a class="thumbnail" href="/detail/{{person.rcsid}}" style="min-height: 300px; text-align: center">
+          <img src="/picture/{{person.rcsid}}" alt="{{person.rcsid}}">
+          <h3>{{person.name.title()}}</h3>
+  				{% if person.year or person.title %}
+  				<h4>{{ person.year.title() if person.year else person.title.title() }}</h4>
+  				{% endif %}
+  				{% if person.major or person.department %}
+  				<p>{{ person.major.title() if person.major else person.department.title() }}</p>
+  				{% endif %}
+        </a>
+      </li>
+      {{ loop.cycle('', '', '', '</div><div class="row-fluid" style="margin-top: 10px">') }}
+      {% endfor %}
+    </div>
+  </ul>
+</div>
+{% endblock %}
