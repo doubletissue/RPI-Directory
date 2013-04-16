@@ -32,7 +32,7 @@ class UploadProfilePic(webapp2.RequestHandler):
 class Image(webapp2.RequestHandler):
   def get(self, rcsid):
     person = Person.get_by_id(rcsid)
-    if person and person.picture:
+    if person and person.has_picture:
       self.response.headers['Content-Type'] = 'image/png'
       self.response.out.write(person.picture)
     else:

@@ -15,7 +15,7 @@ class Explore(webapp2.RequestHandler):
     user = users.get_current_user()
     
     # Get all users that have a photo
-    qry = Person.query(Person.has_pic == 'true').fetch(100)
+    qry = Person.query(Person.has_picture == True).fetch(100)
     #Shuffle the list around to make it different every time
     shuffle(qry)
     template_values = {'user': user, 'people': qry}
