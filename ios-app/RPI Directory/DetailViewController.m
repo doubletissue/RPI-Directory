@@ -10,12 +10,18 @@
 #import "Constants.h"
 #import "Person.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <AddressBook/AddressBook.h>
+#import <AddressBookUI/AddressBookUI.h>
 
 const CGFloat kNameLabelHorizontalOffset = 68.0f;
 
-@interface DetailViewController ()
+@interface DetailViewController () <ABPeoplePickerNavigationControllerDelegate>
+
+@property UIImage *personImage;
 
 - (void)configureView;
+- (void)addToExistingContact;
+- (void)createNewContact;
 
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 
@@ -90,6 +96,76 @@ const CGFloat kNameLabelHorizontalOffset = 68.0f;
     } else {
         return YES;
     }
+}
+
+- (void)addToExistingContact
+{
+    ABPeoplePickerNavigationController *peoplePicker = [[ABPeoplePickerNavigationController alloc] init];
+    peoplePicker.peoplePickerDelegate = self;
+    [self presentModalViewController:peoplePicker animated:YES];
+}
+
+- (void)createNewContact
+{
+    NSDictionary *personDetails = self.person.completeDetails;
+    NSString *firstName = nil;
+    NSString *lastName = nil;
+    NSString *office = nil;
+    NSString *email = nil;
+    NSString *phone = nil;
+    UIImage *image = nil;
+    
+    CFErrorRef error = NULL;
+    ABRecordRef record = ABPersonCreate();
+    
+    if ((firstName = personDetails[@"first_name"])) {
+        ABRecordSetValue(record, kABPersonFirstNameProperty, (__bridge CFStringRef)firstName, &error);
+    }
+    
+    if ((lastName = personDetails[@"last_name"])) {
+        ABRecordSetValue(record, kABPersonLastNameProperty, (__bridge CFStringRef)lastName, &error);
+    }
+    
+    if ((office = personDetails[@"office_location"])) {
+        ABRecordSetValue(record, kABPersonAddressProperty, (__bridge CFStringRef)office, &error);
+    }
+    
+    if ((email = personDetails[@"email"])) {
+        ABMutableMultiValueRef multiemail = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+        ABMultiValueAddValueAndLabel(multiemail, (__bridge CFStringRef)email, kABOtherLabel, NULL);
+        ABRecordSetValue(record, kABPersonEmailProperty, multiemail, &error);
+    }
+    
+    if ((phone = personDetails[@"phone"])) {
+        ABMutableMultiValueRef multiphone = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+        ABMultiValueAddValueAndLabel(multiphone, (__bridge CFStringRef)phone, kABPersonPhoneMainLabel, NULL);
+        ABRecordSetValue(record, kABPersonPhoneProperty, multiphone, &error);
+    }
+    
+    // set the person record's image, if we got one
+    if ((image = self.personImage)) {
+        NSData *imageData = UIImagePNGRepresentation(image);
+        ABPersonSetImageData(record, (__bridge CFDataRef)imageData, nil);
+    }
+}
+
+#pragma mark ABPeoplePickerNavigationControllerDelegate methods
+
+- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person
+{
+    [self dismissModalViewControllerAnimated:YES];
+    return NO;
+}
+
+- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
+{
+    [self dismissModalViewControllerAnimated:YES];
+    return NO;
+}
+
+- (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker
+{
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - Table View
@@ -200,7 +276,12 @@ const CGFloat kNameLabelHorizontalOffset = 68.0f;
     
     if (self.person) {
         [imageView setImageWithURL:[NSURL URLWithString:[PHOTO_URL stringByAppendingString:self.person.rcsid]]
-                  placeholderImage:[UIImage imageNamed:@"placeholder_photo"]];
+                  placeholderImage:[UIImage imageNamed:@"placeholder_photo"]
+                         completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+                             if (image) {
+                                 self.personImage = image;
+                             }
+                         }];
         label.text = self.person.name;
     }
     

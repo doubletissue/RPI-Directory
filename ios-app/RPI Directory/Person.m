@@ -26,6 +26,11 @@
     return [NSDictionary dictionaryWithDictionary:editDict];
 }
 
+- (NSDictionary *)completeDetails
+{
+    return _details;
+}
+
 - (NSString *)name
 {
     return [_details objectForKey:@"name"];

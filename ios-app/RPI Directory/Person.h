@@ -11,6 +11,7 @@
 @interface Person : NSObject
 
 @property (strong, nonatomic) NSDictionary *details;
+@property (readonly, nonatomic) NSDictionary *completeDetails;
 @property (readonly, nonatomic) NSString *name;
 @property (readonly, nonatomic) NSString *rcsid;
 
