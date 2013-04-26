@@ -15,13 +15,13 @@
 
 const CGFloat kNameLabelHorizontalOffset = 68.0f;
 
-@interface DetailViewController () <ABPeoplePickerNavigationControllerDelegate>
+@interface DetailViewController ()
 
 @property UIImage *personImage;
+@property UIView *footerView;
 
 - (void)configureView;
-- (void)addToExistingContact;
-- (void)createNewContact;
+- (void)viewAsContact;
 
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 
@@ -29,15 +29,14 @@ const CGFloat kNameLabelHorizontalOffset = 68.0f;
 
 @implementation DetailViewController
 
-@synthesize person;
 @synthesize masterPopoverController = _masterPopoverController;
 
 #pragma mark - Managing the detail item
 
 - (void)setPerson:(Person *)newPerson
 {
-    if (person != newPerson) {
-        person = newPerson;
+    if (_person != newPerson) {
+        _person = newPerson;
         
         // Update the view.
         [self configureView];
@@ -66,6 +65,16 @@ const CGFloat kNameLabelHorizontalOffset = 68.0f;
         [imageView setImageWithURL:[NSURL URLWithString:[PHOTO_URL stringByAppendingString:self.person.rcsid]]
                   placeholderImage:[UIImage imageNamed:@"placeholder_photo"]];
         label.text = self.person.name;
+        
+        UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(10, 0, 280, 44)];
+        UIButton *addButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        [addButton setTitle:@"Create Contact" forState:UIControlStateNormal];
+        addButton.frame = CGRectMake(10, 10, 300, 40);
+        [addButton addTarget:self action:@selector(viewAsContact) forControlEvents:UIControlEventTouchUpInside];
+        
+        [footerView addSubview:addButton];
+        
+        self.footerView = footerView;
     } else {
         if (!imageView.hidden) {
             imageView.hidden = YES;
@@ -98,14 +107,7 @@ const CGFloat kNameLabelHorizontalOffset = 68.0f;
     }
 }
 
-- (void)addToExistingContact
-{
-    ABPeoplePickerNavigationController *peoplePicker = [[ABPeoplePickerNavigationController alloc] init];
-    peoplePicker.peoplePickerDelegate = self;
-    [self presentModalViewController:peoplePicker animated:YES];
-}
-
-- (void)createNewContact
+- (void)viewAsContact
 {
     NSDictionary *personDetails = self.person.completeDetails;
     NSString *firstName = nil;
@@ -116,59 +118,61 @@ const CGFloat kNameLabelHorizontalOffset = 68.0f;
     UIImage *image = nil;
     
     CFErrorRef error = NULL;
-    ABRecordRef record = ABPersonCreate();
+    ABRecordRef personRecord = ABPersonCreate();
     
-    if ((firstName = personDetails[@"first_name"])) {
-        ABRecordSetValue(record, kABPersonFirstNameProperty, (__bridge CFStringRef)firstName, &error);
+    if ((firstName = [personDetails[@"first_name"] capitalizedString])) {
+        ABRecordSetValue(personRecord, kABPersonFirstNameProperty, (__bridge CFStringRef)firstName, &error);
     }
     
-    if ((lastName = personDetails[@"last_name"])) {
-        ABRecordSetValue(record, kABPersonLastNameProperty, (__bridge CFStringRef)lastName, &error);
+    if ((lastName = [personDetails[@"last_name"] capitalizedString])) {
+        ABRecordSetValue(personRecord, kABPersonLastNameProperty, (__bridge CFStringRef)lastName, &error);
     }
     
     if ((office = personDetails[@"office_location"])) {
-        ABRecordSetValue(record, kABPersonAddressProperty, (__bridge CFStringRef)office, &error);
+        ABMutableMultiValueRef address = ABMultiValueCreateMutable(kABMultiDictionaryPropertyType);
+        ABMultiValueAddValueAndLabel(address, (__bridge CFTypeRef)(@{ @"key" : office }),
+                                     (__bridge CFStringRef)@"RPI Office", NULL);
+        ABRecordSetValue(personRecord, kABPersonAddressProperty, address, &error);
+        CFRelease(address);
     }
     
     if ((email = personDetails[@"email"])) {
         ABMutableMultiValueRef multiemail = ABMultiValueCreateMutable(kABMultiStringPropertyType);
-        ABMultiValueAddValueAndLabel(multiemail, (__bridge CFStringRef)email, kABOtherLabel, NULL);
-        ABRecordSetValue(record, kABPersonEmailProperty, multiemail, &error);
+        ABMultiValueAddValueAndLabel(multiemail, (__bridge CFStringRef)email, (__bridge CFStringRef)@"RPI Email", NULL);
+        ABRecordSetValue(personRecord, kABPersonEmailProperty, multiemail, &error);
+        CFRelease(multiemail);
     }
     
     if ((phone = personDetails[@"phone"])) {
         ABMutableMultiValueRef multiphone = ABMultiValueCreateMutable(kABMultiStringPropertyType);
-        ABMultiValueAddValueAndLabel(multiphone, (__bridge CFStringRef)phone, kABPersonPhoneMainLabel, NULL);
-        ABRecordSetValue(record, kABPersonPhoneProperty, multiphone, &error);
+        ABMultiValueAddValueAndLabel(multiphone, (__bridge CFStringRef)phone, (__bridge CFStringRef)@"RPI Phone", NULL);
+        ABRecordSetValue(personRecord, kABPersonPhoneProperty, multiphone, &error);
+        CFRelease(multiphone);
     }
     
     // set the person record's image, if we got one
     if ((image = self.personImage)) {
         NSData *imageData = UIImagePNGRepresentation(image);
-        ABPersonSetImageData(record, (__bridge CFDataRef)imageData, nil);
+        ABPersonSetImageData(personRecord, (__bridge CFDataRef)imageData, nil);
     }
-}
-
-#pragma mark ABPeoplePickerNavigationControllerDelegate methods
-
-- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person
-{
-    [self dismissModalViewControllerAnimated:YES];
-    return NO;
-}
-
-- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
-{
-    [self dismissModalViewControllerAnimated:YES];
-    return NO;
-}
-
-- (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker
-{
-    [self dismissModalViewControllerAnimated:YES];
+    
+    ABUnknownPersonViewController *unknownPersonVC = [[ABUnknownPersonViewController alloc] init];
+    unknownPersonVC.allowsAddingToAddressBook = YES;
+    unknownPersonVC.displayedPerson = personRecord;
+    [self.navigationController pushViewController:unknownPersonVC animated:YES];
 }
 
 #pragma mark - Table View
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return CGRectGetHeight(self.footerView.frame);
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    return self.footerView;
+}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
