@@ -70,9 +70,26 @@ const CGFloat kNameLabelHorizontalOffset = 68.0f;
         UIButton *addButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [addButton setTitle:@"Create Contact" forState:UIControlStateNormal];
         addButton.frame = CGRectMake(10, 10, 300, 40);
+        addButton.translatesAutoresizingMaskIntoConstraints = NO;
         [addButton addTarget:self action:@selector(viewAsContact) forControlEvents:UIControlEventTouchUpInside];
         
         [footerView addSubview:addButton];
+        NSLayoutConstraint *center = [NSLayoutConstraint constraintWithItem:addButton
+                                                                  attribute:NSLayoutAttributeCenterX
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:footerView
+                                                                  attribute:NSLayoutAttributeCenterX
+                                                                 multiplier:1.0
+                                                                   constant:0];
+        NSLayoutConstraint *width = [NSLayoutConstraint constraintWithItem:addButton
+                                                                 attribute:NSLayoutAttributeWidth
+                                                                 relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                    toItem:nil
+                                                                 attribute:NSLayoutAttributeWidth
+                                                                multiplier:1.0
+                                                                  constant:300];
+        [footerView addConstraint:center];
+        [footerView addConstraint:width];
         
         self.footerView = footerView;
     } else {
