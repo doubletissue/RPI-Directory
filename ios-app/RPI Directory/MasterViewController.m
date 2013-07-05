@@ -14,23 +14,18 @@
 #import "Person.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
+#import <ReactiveCocoa/ReactiveCocoa.h>
+#import <ReactiveCocoa/EXTScope.h>
+
 //  Base search URL
 NSString * const SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
 
-//  0.5 seconds
-const NSTimeInterval SEARCH_INTERVAL = 0.5f;
-
 @interface MasterViewController ()
 
-- (void)search;
-- (void)searchTimerFunc;
-
-@property (nonatomic, strong) NSTimer           *m_searchTimer;
-@property (nonatomic, strong) NSString          *m_searchString;
-@property (nonatomic, strong) NSString          *m_lastString;
-@property (nonatomic, strong) UITableView       *m_currentTableView;
-@property (nonatomic, strong) NSOperationQueue  *m_queue;
-@property (nonatomic) BOOL                      m_textChanged;
+@property (nonatomic, strong) RACSubject         *m_searchTextSubject;
+@property (nonatomic, strong) RACSubject         *m_searchResultsSubject;
+@property (nonatomic, strong) UITableView        *m_currentTableView;
+@property (nonatomic) BOOL                       m_textChanged;
 
 @end
 
@@ -39,11 +34,9 @@ const NSTimeInterval SEARCH_INTERVAL = 0.5f;
 @synthesize detailViewController = _detailViewController;
 
 @synthesize people = m_people;
-@synthesize m_searchTimer;
-@synthesize m_searchString;
-@synthesize m_lastString;
+@synthesize m_searchTextSubject;
+@synthesize m_searchResultsSubject;
 @synthesize m_currentTableView;
-@synthesize m_queue;
 @synthesize m_textChanged;
 
 - (void)awakeFromNib
@@ -62,32 +55,52 @@ const NSTimeInterval SEARCH_INTERVAL = 0.5f;
     
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
-    m_searchTimer = nil;
-    m_queue = [[NSOperationQueue alloc] init];
-    m_queue.name = @"com.brendonjustin.RPI-Directory.search";
-    m_queue.maxConcurrentOperationCount = 1;
+    @weakify(self);
     
-    //  Update the array of people on the main thread, when a new array is available.
-    //  Also make both table views reflect the new data.
-    [[NSNotificationCenter defaultCenter] addObserverForName:@"QueryResult" 
-                                                      object:nil 
-                                                       queue:[NSOperationQueue mainQueue]
-                                                  usingBlock:^(NSNotification *notification) {
-                                                      m_people = [notification object];
-                                                      [self.searchDisplayController.searchResultsTableView reloadData];
-                                                      [self.tableView reloadData];
-                                                  }];
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
+    m_searchResultsSubject = [RACSubject subject];
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[m_searchResultsSubject deliverOn:[RACScheduler mainThreadScheduler]]
+     subscribeNext:^(NSArray *people) {
+         @strongify(self);
+         self.people = people;
+         [self.searchDisplayController.searchResultsTableView reloadData];
+         [self.tableView reloadData];
+     }];
     
-    [m_searchTimer invalidate];
-    m_searchTimer = nil;
+    m_searchTextSubject = [RACSubject subject];
+    
+    [[[m_searchTextSubject distinctUntilChanged] deliverOn:[RACScheduler scheduler]]
+     subscribeNext:^(NSString *searchString) {
+         NSError *err = nil;
+         NSString *query = [searchString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+         NSString *searchUrl = [SEARCH_URL stringByAppendingString:query];
+         NSString *resultString = [NSString stringWithContentsOfURL:[NSURL URLWithString:searchUrl]
+                                                           encoding:NSUTF8StringEncoding
+                                                              error:&err];
+         
+         if (err != nil) {
+             NSLog(@"Error retrieving search results for string: %@", searchString);
+         } else {
+             NSData *resultData = [resultString dataUsingEncoding:NSUTF8StringEncoding];
+             id results = [NSJSONSerialization JSONObjectWithData:resultData
+                                                          options:NSJSONReadingMutableLeaves
+                                                            error:&err];
+             
+             if (results && [results isKindOfClass:[NSDictionary class]]) {
+                 NSMutableArray *people = [NSMutableArray array];
+                 
+                 for (NSDictionary *personDict in [results objectForKey:@"data"]) {
+                     Person *person = [[Person alloc] init];
+                     person.details = personDict;
+                     
+                     [people addObject:person];
+                 }
+                 
+                 @strongify(self);
+                 [self.m_searchResultsSubject sendNext:people];
+             }
+         }
+     }];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -99,75 +112,11 @@ const NSTimeInterval SEARCH_INTERVAL = 0.5f;
     }
 }
 
-//  Asynchronously search for people with the current query.
-- (void)search
-{
-    [m_queue cancelAllOperations];
-    
-    [m_queue addOperationWithBlock:^{
-        NSError *err = nil;
-        NSString *query = [m_searchString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-        NSString *searchUrl = [SEARCH_URL stringByAppendingString:query];
-        NSString *resultString = [NSString stringWithContentsOfURL:[NSURL URLWithString:searchUrl]
-                                                    encoding:NSUTF8StringEncoding
-                                                       error:&err];
-        
-        if (err != nil) {
-            NSLog(@"Error retrieving search results for string: %@", m_searchString);
-        } else {
-            NSData *resultData = [resultString dataUsingEncoding:NSUTF8StringEncoding];
-            id results = [NSJSONSerialization JSONObjectWithData:resultData
-                                                         options:NSJSONReadingMutableLeaves
-                                                           error:&err];
-            
-            if (results && [results isKindOfClass:[NSDictionary class]]) {
-                NSMutableArray *people = [NSMutableArray array];
-                
-                for (NSDictionary *personDict in [results objectForKey:@"data"]) {
-                    Person *person = [[Person alloc] init];
-                    person.details = personDict;
-                    
-                    [people addObject:person];
-                }
-                
-                NSNotification *notification = [NSNotification notificationWithName:@"QueryResult"
-                                                                             object:people];
-                
-                [[NSNotificationCenter defaultCenter] postNotification:notification];
-            }
-        }
-    }];
-}
-
-- (void)searchTimerFunc
-{
-    m_searchTimer = nil;
-    
-    if (![m_lastString isEqualToString:m_searchString]) {
-        m_searchString = m_lastString;
-        
-        [self search];
-    }
-}
-
 #pragma mark - Search Delegate
 
-//  Search if the search text has changed since last call of this function,
-//  then set the timer between searches.
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-    m_lastString = searchText;
-    if (m_searchTimer == nil && ![m_lastString isEqualToString:@""]) {
-        //  Search
-        m_searchString = searchText;
-        [self search];
-        
-        m_searchTimer = [NSTimer scheduledTimerWithTimeInterval:SEARCH_INTERVAL 
-                                                         target:self 
-                                                       selector:@selector(searchTimerFunc) 
-                                                       userInfo:nil 
-                                                        repeats:NO];
-    }
+    [m_searchTextSubject sendNext:searchText];
 }
 
 #pragma mark - Table View
