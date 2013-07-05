@@ -3,7 +3,8 @@
 //  RPI Directory
 //
 //  Created by Brendon Justin on 4/13/12.
-//  Copyright (c) 2012 Brendon Justin. All rights reserved.
+//  Copyright (c) 2012-2013 Brendon Justin;
+//                2013 Sierra Bravo Corp., dba The Nerdery (http://nerdery.com)
 //
 
 #import "MasterViewController.h"
