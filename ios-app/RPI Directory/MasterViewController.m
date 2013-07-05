@@ -56,11 +56,13 @@ NSString * const SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
     
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
-    
     m_searchResultsSubject = [RACSubject subject];
     
     @weakify(self);
-    [[[m_searchResultsSubject switchToLatest] deliverOn:[RACScheduler mainThreadScheduler]]
+    [[[[m_searchResultsSubject switchToLatest] deliverOn:[RACScheduler mainThreadScheduler]]
+      doNext:^(id _) {
+          [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+      }]
      subscribeNext:^(NSArray *people) {
          @strongify(self);
          self.people = people;
@@ -70,45 +72,56 @@ NSString * const SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
     
     m_searchTextSubject = [RACSubject subject];
     
-    [[m_searchTextSubject distinctUntilChanged] subscribeNext:^(NSString *searchString) {
-        // Run the network request for the current search term.
-        // -start: calls its block argument on a background thread.
-        RACSignal *sig = [RACSignal start:^NSArray *(BOOL *success, NSError *__autoreleasing *error) {
-            NSError *err = nil;
-            NSString *query = [searchString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-            NSString *searchUrl = [SEARCH_URL stringByAppendingString:query];
-            NSString *resultString = [NSString stringWithContentsOfURL:[NSURL URLWithString:searchUrl]
-                                                              encoding:NSUTF8StringEncoding
-                                                                 error:&err];
-            
-            if (err == nil) {
-                NSData *resultData = [resultString dataUsingEncoding:NSUTF8StringEncoding];
-                id results = [NSJSONSerialization JSONObjectWithData:resultData
-                                                             options:NSJSONReadingMutableLeaves
-                                                               error:&err];
-                
-                if (results && [results isKindOfClass:[NSDictionary class]]) {
-                    NSArray *data = [results objectForKey:@"data"];
-                    RACSequence *people = [data.rac_sequence map:^Person *(NSDictionary *personDict) {
-                        Person *person = [[Person alloc] init];
-                        person.details = personDict;
-                        
-                        return person;
-                    }];
-                    
-                    return people.array;
-                }
-            }
-            
-            NSLog(@"Error retrieving search results for string: %@", searchString);
-            
-            *success = NO;
-            *error = err;
-            return nil;
-        }];
-        
-        [self.m_searchResultsSubject sendNext:sig];
-    }];
+    [[[[m_searchTextSubject distinctUntilChanged]
+       filter:^BOOL(NSString *searchString) {
+           if ([searchString isEqualToString:@""]) {
+               return NO;
+           }
+           
+           return YES;
+       }]
+      doNext:^(id _) {
+          [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+      }]
+     subscribeNext:^(NSString *searchString) {
+         // Run the network request for the current search term.
+         // -start: calls its block argument on a background thread.
+         RACSignal *sig = [RACSignal start:^NSArray *(BOOL *success, NSError *__autoreleasing *error) {
+             NSError *err = nil;
+             NSString *query = [searchString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+             NSString *searchUrl = [SEARCH_URL stringByAppendingString:query];
+             NSString *resultString = [NSString stringWithContentsOfURL:[NSURL URLWithString:searchUrl]
+                                                               encoding:NSUTF8StringEncoding
+                                                                  error:&err];
+             
+             if (err == nil) {
+                 NSData *resultData = [resultString dataUsingEncoding:NSUTF8StringEncoding];
+                 id results = [NSJSONSerialization JSONObjectWithData:resultData
+                                                              options:NSJSONReadingMutableLeaves
+                                                                error:&err];
+                 
+                 if (results && [results isKindOfClass:[NSDictionary class]]) {
+                     NSArray *data = [results objectForKey:@"data"];
+                     RACSequence *people = [data.rac_sequence map:^Person *(NSDictionary *personDict) {
+                         Person *person = [[Person alloc] init];
+                         person.details = personDict;
+                         
+                         return person;
+                     }];
+                     
+                     return people.array;
+                 }
+             }
+             
+             NSLog(@"Error retrieving search results for string: %@", searchString);
+             
+             *success = NO;
+             *error = err;
+             return nil;
+         }];
+         
+         [self.m_searchResultsSubject sendNext:sig];
+     }];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
