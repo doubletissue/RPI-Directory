@@ -59,8 +59,11 @@ NSString * const SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
     m_searchResultsSubject = [RACSubject subject];
     
     @weakify(self);
-    [[[[m_searchResultsSubject switchToLatest] deliverOn:[RACScheduler mainThreadScheduler]]
-      doNext:^(id _) {
+    [[[[[m_searchResultsSubject switchToLatest] deliverOn:[RACScheduler mainThreadScheduler]]
+       doNext:^(id _) {
+           [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+       }]
+      doError:^(NSError *_) {
           [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
       }]
      subscribeNext:^(NSArray *people) {
@@ -117,7 +120,7 @@ NSString * const SEARCH_URL = @"http://rpidirectory.appspot.com/api?q=";
              
              *success = NO;
              *error = err;
-             return nil;
+             return @[];
          }];
          
          [self.m_searchResultsSubject sendNext:sig];
