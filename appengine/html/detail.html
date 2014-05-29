@@ -19,6 +19,8 @@
             <source src="http://tts-api.com/tts.mp3?q={{person.name.replace(' ', '+').replace('.','')}}" type="audio/mpeg">
           Your browser does not support the audio element.
           </audio>
+          <button onclick='
+window.speechSynthesis.speak(SpeechSynthesisUtterance("{{person.name.title()}}"));'>Pronounce {{person.name.title()}}</button>
 					{% if person.year or person.title %}
 					<h3>{{ person.year.title() if person.year else person.title.title() }}</h3>
 					{% endif %}
